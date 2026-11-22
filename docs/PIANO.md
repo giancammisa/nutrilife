@@ -3,7 +3,7 @@
 ## Decisioni prese
 - **Allergie del cliente:** si salvano (solo la lista dei 14 allergeni UE + intolleranze), con consenso specifico. Servono a bloccare gli ordini pericolosi.
 - **Basi:** catalogo unico (`bases`, usato dal nutrizionista) + versione di ogni cucina (`kitchen_bases`, con allergeni e disponibilità).
-- **Login:** link magico via email (niente password).
+- **Login:** senza password, con **codice di 6 cifre via email** (deciso al passo 2 al posto del link: il link apre il browser e non l'app installata sul telefono).
 - **`legacy/`** non va mai su GitHub (contiene PDF caricati e password di prova).
 
 ## Allergeni: modello a tre stati (dalla demo)

@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Cache Components disattivato: le pagine dipendono da chi è collegato (Supabase).
   turbopack: {
     rules: {
       "*.css": {

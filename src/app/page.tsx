@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -30,8 +31,8 @@ export default function Home() {
         </ol>
       </div>
 
-      <Button size="lg" className="h-12 rounded-full text-base" disabled>
-        Accedi (presto disponibile)
+      <Button asChild size="lg" className="h-12 rounded-full text-base">
+        <Link href="/home">Accedi</Link>
       </Button>
     </main>
   );
