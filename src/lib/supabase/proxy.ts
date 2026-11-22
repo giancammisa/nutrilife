@@ -2,11 +2,21 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Pagine aperte a tutti (senza accesso).
-const PUBLIC_PATHS = ["/", "/accedi", "/privacy"];
+const PUBLIC_PATHS = ["/", "/accedi", "/privacy", "/auth/callback"];
 
 // Rinnova la sessione a ogni richiesta e manda chi non è collegato alla pagina di accesso.
 // È solo un primo filtro: i controlli veri li fanno il database (RLS) e le pagine.
 export async function updateSession(request: NextRequest) {
+  // Il link nell'email può riportare sulla pagina principale con ?code=…: lo giriamo al callback.
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && request.nextUrl.pathname !== "/auth/callback") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    url.search = "";
+    url.searchParams.set("code", code);
+    return NextResponse.redirect(url);
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

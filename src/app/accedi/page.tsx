@@ -4,8 +4,14 @@ import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Accedi · NutriLife" };
 
-export default async function AccediPage() {
+export default async function AccediPage({ searchParams }: PageProps<"/accedi">) {
   if (await getProfile()) redirect("/home");
+
+  const { errore } = await searchParams;
+  const initialError =
+    errore === "link"
+      ? "Il link è scaduto o è stato aperto su un altro dispositivo. Chiedi un nuovo codice da qui."
+      : null;
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-6 py-16">
@@ -13,7 +19,7 @@ export default async function AccediPage() {
         <h1 className="text-4xl font-extrabold">Accedi</h1>
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>
       </div>
-      <LoginForm />
+      <LoginForm initialError={initialError} />
     </main>
   );
 }

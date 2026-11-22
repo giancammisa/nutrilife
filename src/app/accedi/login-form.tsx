@@ -9,13 +9,13 @@ import { Label } from "@/components/ui/label";
 
 type Step = "email" | "code";
 
-export function LoginForm() {
+export function LoginForm({ initialError }: { initialError?: string | null }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError ?? null);
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
@@ -24,7 +24,11 @@ export function LoginForm() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        // Se l'email contiene un link invece del codice, riporta qui.
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
     setLoading(false);
     if (error) {
