@@ -1,0 +1,23 @@
+# Demo Emergent: solo riferimento locale, mai su GitHub (contiene PDF caricati e password di prova)
+/legacy/
+
+# Segreti
+.env
+.env*.local
+
+# Next.js / Node
+/node_modules
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# Log e sistema
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Impostazioni locali di Claude Code
+.claude/settings.local.json
