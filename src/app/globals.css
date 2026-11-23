@@ -237,6 +237,23 @@
   .water-blob, .water-caustics { animation: none; }
 }
 
+/* Dentro una scheda nera (accesso): testo chiaro, campi di vetro, pulsante principale lime. */
+.on-ink {
+  --foreground: var(--paper);
+  --muted-foreground: rgb(245 245 244 / 0.72);
+  --primary: var(--lemon);
+  --primary-foreground: var(--ink);
+  --input: rgb(255 255 255 / 0.28);
+  --ring: var(--lemon);
+  --destructive: #FFB0A6;
+  --muted: rgb(255 255 255 / 0.1);
+  color: var(--paper);
+}
+.on-ink input {
+  background: rgb(255 255 255 / 0.08);
+  color: var(--paper);
+}
+
 /* Segno animato della prima pagina: i tre cerchi si allontanano e si riavvicinano. */
 .mark-dot {
   transform-box: fill-box;

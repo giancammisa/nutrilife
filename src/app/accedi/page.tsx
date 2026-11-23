@@ -1,4 +1,4 @@
-import { FoodPhoto } from "@/components/food-art";
+import { AuthStage } from "@/components/auth-stage";
 import { LivingBackground } from "@/components/living-background";
 import { PlainShell } from "@/components/plain-shell";
 import Link from "next/link";
@@ -21,14 +21,13 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
   return (
     <PlainShell>
       <LivingBackground />
-      <div className="bg-grad-fog relative -mb-2 h-36 overflow-hidden rounded-[28px]">
-        <FoodPhoto name="pera-fichi" priority className="absolute inset-0 h-full w-full object-cover object-[50%_30%]" />
-      </div>
       <div className="flex flex-col gap-2">
         <h1 className="text-[2.4rem]">Accedi</h1>
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>
       </div>
-      <LoginForm initialError={initialError} />
+      <AuthStage photo="pera-fichi">
+        <LoginForm initialError={initialError} />
+      </AuthStage>
       {/* SOLO SVILUPPO: scorciatoia per gli utenti di prova con password */}
       {process.env.NODE_ENV === "development" && (
         <Link

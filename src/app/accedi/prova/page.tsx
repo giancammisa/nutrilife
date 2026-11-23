@@ -1,3 +1,5 @@
+import { AuthStage } from "@/components/auth-stage";
+import { LivingBackground } from "@/components/living-background";
 import { PlainShell } from "@/components/plain-shell";
 import { notFound } from "next/navigation";
 import { TestLoginForm } from "./test-login-form";
@@ -10,6 +12,7 @@ export default function AccessoProvaPage() {
 
   return (
     <PlainShell>
+      <LivingBackground />
       <div className="flex flex-col gap-2">
         <p className="w-fit rounded-full bg-warning/15 px-3 py-1 text-sm">Solo in prova, non online</p>
         <h1 className="text-[2.4rem]">Accesso di prova</h1>
@@ -18,7 +21,9 @@ export default function AccessoProvaPage() {
           cucina).
         </p>
       </div>
-      <TestLoginForm />
+      <AuthStage photo="uva-rosa">
+        <TestLoginForm />
+      </AuthStage>
     </PlainShell>
   );
 }
