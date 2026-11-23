@@ -135,7 +135,7 @@ export function DayArc({
       {/* il banner: anello esterno di vetro rosa → bianco, interno un po' più scuro */}
       <div
         aria-hidden
-        className="glass absolute left-1/2 -translate-x-1/2 rounded-full"
+        className="absolute left-1/2 -translate-x-1/2 rounded-full backdrop-blur-xl backdrop-saturate-150"
         style={{
           top: TOP,
           width: R * 2,
@@ -146,7 +146,7 @@ export function DayArc({
       />
       <div
         aria-hidden
-        className="absolute left-1/2 -translate-x-1/2 rounded-full border-t border-white/90 bg-salvia-deep"
+        className="absolute left-1/2 -translate-x-1/2 rounded-full bg-salvia-deep"
         style={{ top: TOP + BAND, width: inner * 2, height: inner * 2 }}
       />
 
