@@ -10,7 +10,8 @@ import { requireProfile } from "@/lib/auth";
 import { categoryLabel } from "@/lib/allergens";
 import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
-import { addBaseToKitchen, updateKitchen } from "../../actions";
+import { Button } from "@/components/ui/button";
+import { addBaseToKitchen, addKitchenMember, removeKitchenMember, updateKitchen } from "../../actions";
 
 type KitchenBaseRow = {
   id: string;
@@ -26,14 +27,24 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: kitchen }, { data: kitchenBases }, { data: catalog }] = await Promise.all([
-    supabase.from("kitchens").select("id, name, address, phone, active, fixed_fee_cents").eq("id", id).maybeSingle(),
-    supabase
-      .from("kitchen_bases")
-      .select("id, allergens, allergens_declared, available, price_per_kg_cents, bases(id, name, category)")
-      .eq("kitchen_id", id),
-    supabase.from("bases").select("id, name, category").eq("active", true).order("name"),
-  ]);
+  const [{ data: kitchen }, { data: kitchenBases }, { data: catalog }, { data: members }, { data: kitchenUsers }] =
+    await Promise.all([
+      supabase.from("kitchens").select("id, name, address, phone, active, fixed_fee_cents").eq("id", id).maybeSingle(),
+      supabase
+        .from("kitchen_bases")
+        .select("id, allergens, allergens_declared, available, price_per_kg_cents, bases(id, name, category)")
+        .eq("kitchen_id", id),
+      supabase.from("bases").select("id, name, category").eq("active", true).order("name"),
+      supabase.from("kitchen_members").select("profile_id, profiles(full_name, email)").eq("kitchen_id", id),
+      supabase.from("profiles").select("id, full_name, email").eq("role", "cucina").order("full_name"),
+    ]);
+
+  const memberRows = (members ?? []) as unknown as {
+    profile_id: string;
+    profiles: { full_name: string | null; email: string | null } | null;
+  }[];
+  const memberIds = new Set(memberRows.map((m) => m.profile_id));
+  const linkable = (kitchenUsers ?? []).filter((u) => !memberIds.has(u.id));
 
   if (!kitchen) notFound();
 
@@ -118,6 +129,63 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
               </select>
             </div>
           </ActionForm>
+        )}
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-extrabold">Chi lavora qui</h2>
+          <p className="text-xs text-muted-foreground">
+            Vedono gli ordini di questa gastronomia e stampano le etichette. Prima dai loro il ruolo
+            “Cucina” nella pagina Utenti.
+          </p>
+        </div>
+        {memberRows.length === 0 && <p className="text-sm text-muted-foreground">Nessuno collegato.</p>}
+        {memberRows.map((m) => (
+          <div key={m.profile_id} className="flex items-center justify-between gap-3 text-sm">
+            <span className="flex min-w-0 flex-col">
+              <span className="truncate font-medium">{m.profiles?.full_name || "Nome non inserito"}</span>
+              <span className="truncate text-muted-foreground">{m.profiles?.email}</span>
+            </span>
+            <form action={removeKitchenMember}>
+              <input type="hidden" name="kitchen_id" value={kitchen.id} />
+              <input type="hidden" name="profile_id" value={m.profile_id} />
+              <Button type="submit" variant="ghost" size="sm" className="text-destructive">
+                Scollega
+              </Button>
+            </form>
+          </div>
+        ))}
+        <Link href={`/cucina?cucina=${kitchen.id}`} className="w-fit text-sm text-primary underline">
+          Apri la vista della cucina
+        </Link>
+        {linkable.length > 0 ? (
+          <ActionForm action={addKitchenMember} submitLabel="Collega" resetOnSuccess>
+            <input type="hidden" name="kitchen_id" value={kitchen.id} />
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="profile_id">Utente con ruolo Cucina</Label>
+              <select
+                id="profile_id"
+                name="profile_id"
+                required
+                defaultValue=""
+                className="h-11 rounded-lg border border-input bg-background px-3 text-base"
+              >
+                <option value="" disabled>
+                  Scegli…
+                </option>
+                {linkable.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.full_name || u.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </ActionForm>
+        ) : (
+          <p className="text-xs text-muted-foreground">
+            Nessun altro utente con ruolo Cucina da collegare.
+          </p>
         )}
       </section>
 

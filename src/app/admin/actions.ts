@@ -237,3 +237,36 @@ export async function setBasePrice(_prev: FormState, formData: FormData): Promis
   revalidatePath(`/admin/cucine/${kitchenId}/basi/${kitchenBaseId}`);
   return { error: null, ok: `Prezzo salvato: ${formatEuro(Number(data))} al kg.` };
 }
+
+// ── Chi lavora nella gastronomia ────────────────────────
+
+export async function addKitchenMember(_prev: FormState, formData: FormData): Promise<FormState> {
+  const kitchenId = id(formData, "kitchen_id");
+  const profileId = id(formData, "profile_id");
+  if (!kitchenId) return { error: "Gastronomia non valida.", ok: null };
+  if (!profileId) return { error: "Scegli un utente.", ok: null };
+
+  const supabase = await adminClient();
+  const { error } = await supabase
+    .from("kitchen_members")
+    .insert({ kitchen_id: kitchenId, profile_id: profileId });
+  if (error) {
+    return {
+      error: error.code === "23505" ? "Questo utente è già collegato." : dbError(error.code),
+      ok: null,
+    };
+  }
+
+  revalidatePath(`/admin/cucine/${kitchenId}`);
+  return { error: null, ok: "Utente collegato alla gastronomia." };
+}
+
+export async function removeKitchenMember(formData: FormData): Promise<void> {
+  const kitchenId = id(formData, "kitchen_id");
+  const profileId = id(formData, "profile_id");
+  if (!kitchenId || !profileId) return;
+
+  const supabase = await adminClient();
+  await supabase.from("kitchen_members").delete().eq("kitchen_id", kitchenId).eq("profile_id", profileId);
+  revalidatePath(`/admin/cucine/${kitchenId}`);
+}
