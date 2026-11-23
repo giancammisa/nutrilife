@@ -122,6 +122,9 @@ export function DayArc({
 
   const day = days[selected];
   const inner = R - BAND;
+  // porzione orizzontale del cerchio grande che si vede nello schermo (in % della sua larghezza)
+  const half = (width / (R * 2)) * 50;
+  const vis = { from: (50 - half).toFixed(1), to: (50 + half).toFixed(1) };
 
   return (
     <section
@@ -129,11 +132,17 @@ export function DayArc({
       className="relative -mx-5 overflow-hidden rounded-b-[36px] sm:mx-0"
       aria-label="Giorni della settimana"
     >
-      {/* il banner: anello esterno di vetro chiaro, interno un po' più scuro */}
+      {/* il banner: anello esterno di vetro rosa → bianco, interno un po' più scuro */}
       <div
         aria-hidden
         className="glass absolute left-1/2 -translate-x-1/2 rounded-full"
-        style={{ top: TOP, width: R * 2, height: R * 2 }}
+        style={{
+          top: TOP,
+          width: R * 2,
+          height: R * 2,
+          // vetro sfumato dal rosa della palette al bianco, solo nella parte visibile dell'arco
+          background: `linear-gradient(90deg, rgb(244 179 172 / 0.8) ${vis.from}%, rgb(255 255 255 / 0.75) ${vis.to}%)`,
+        }}
       />
       <div
         aria-hidden
