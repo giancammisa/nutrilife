@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
 import { Button } from "@/components/ui/button";
+import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
@@ -111,6 +112,13 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         </span>
         <span aria-hidden className="text-primary">→</span>
       </Link>
+      <Link
+        href="/cliente/ordini"
+        className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
+      >
+        <span className="font-medium">I miei ordini</span>
+        <span aria-hidden className="text-primary">→</span>
+      </Link>
 
       <section className="flex flex-col gap-3">
         {days.map((day) => {
@@ -131,16 +139,24 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               </div>
 
               {dayOrders.map((o) => (
-                <div key={o.id} className="flex items-start justify-between gap-3 rounded-lg bg-muted/50 p-3 text-sm">
-                  <span className="flex flex-col">
-                    <span className="font-medium">
-                      {SLOT_LABEL[o.meal_slot]} · {o.template_name}
+                <div key={o.id} className="flex flex-col gap-2 rounded-lg bg-muted/50 p-3 text-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="flex flex-col">
+                      <span className="font-medium">
+                        {SLOT_LABEL[o.meal_slot]} · {o.template_name}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
+                      </span>
                     </span>
-                    <span className="text-muted-foreground">
-                      {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
-                    </span>
-                  </span>
-                  <span className="tabular-nums font-medium">{formatEuro(o.price_cents)}</span>
+                    <span className="tabular-nums font-medium">{formatEuro(o.price_cents)}</span>
+                  </div>
+                  {open && o.status === "confermato" && (
+                    <CancelOrderButton
+                      orderId={o.id}
+                      label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === addDays(today, 1) ? "domani" : formatDay(day)}`}
+                    />
+                  )}
                 </div>
               ))}
 

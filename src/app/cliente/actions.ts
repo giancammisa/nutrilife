@@ -80,3 +80,26 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
   revalidatePath("/cliente");
   redirect(`/cliente?ordinato=${day}`);
 }
+
+// ── Annullamento ────────────────────────────────────────
+
+export async function cancelOrder(_prev: FormState, formData: FormData): Promise<FormState> {
+  const orderId = uuid(formData, "order_id");
+  if (!orderId) return { error: "Ordine non valido.", ok: null };
+
+  const { supabase } = await client();
+  const { error } = await supabase.rpc("cancel_order", { p_order: orderId });
+  if (error) {
+    if (error.message.includes("Orario limite")) {
+      return { error: "L'orario limite è passato: l'ordine non si può più annullare.", ok: null };
+    }
+    if (error.message.includes("non annullabile")) {
+      return { error: "Questo ordine non si può più annullare.", ok: null };
+    }
+    return { error: "Annullamento non riuscito. Riprova.", ok: null };
+  }
+
+  revalidatePath("/cliente");
+  revalidatePath("/cliente/ordini");
+  return { error: null, ok: "Ordine annullato." };
+}
