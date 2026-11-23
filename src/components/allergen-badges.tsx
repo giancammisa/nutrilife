@@ -17,7 +17,7 @@ export function AllergenBadges({
     return (
       <span
         className={cn(
-          "inline-flex w-fit items-center rounded-full bg-warning/15 px-2.5 py-0.5 text-xs font-medium text-foreground",
+          "inline-flex w-fit items-center rounded-full border border-warning/60 bg-warning/12 px-2.5 py-0.5 text-xs font-semibold text-foreground",
           className,
         )}
       >
@@ -30,7 +30,7 @@ export function AllergenBadges({
     return (
       <span
         className={cn(
-          "inline-flex w-fit items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary",
+          "inline-flex w-fit items-center rounded-full bg-sage/12 px-2.5 py-0.5 text-xs font-semibold text-sage",
           className,
         )}
       >
@@ -44,7 +44,7 @@ export function AllergenBadges({
       {allergens.map((code) => (
         <span
           key={code}
-          className="inline-flex items-center rounded-full bg-destructive/10 px-2.5 py-0.5 text-xs font-medium text-destructive"
+          className="inline-flex items-center rounded-full bg-destructive/10 px-2.5 py-0.5 text-xs font-semibold text-destructive"
         >
           {allergenName(code)}
         </span>

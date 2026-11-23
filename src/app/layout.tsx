@@ -1,23 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, Manrope } from "next/font/google";
+import { Archivo } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+// Un'unica famiglia: Archivo. Espansa e pesantissima per titoli, numeri, grammi e prezzi;
+// larghezza normale per i testi. L'asse "wdth" permette entrambe le voci dallo stesso file.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
-  weight: ["300", "500", "800"],
-});
-
-const plex = IBM_Plex_Sans({
-  variable: "--font-plex",
-  subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: "variable",
+  axes: ["wdth"],
 });
 
 export const metadata: Metadata = {
   title: "NutriLife",
   description:
-    "Il piano del tuo nutrizionista, cucinato dalla gastronomia di Altamura. Dimmelo prima.",
+    "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato dalla gastronomia di Altamura.",
   applicationName: "NutriLife",
   // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
   appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },
@@ -25,17 +22,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F7F6F3",
+  themeColor: "#F4E96B",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="it"
-      className={`${manrope.variable} ${plex.variable} h-full antialiased`}
-    >
+    <html lang="it" className={`${archivo.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -1,3 +1,4 @@
+import { PlainShell } from "@/components/plain-shell";
 import { getProfile, hasCurrentConsent } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { rememberInviteAndLogin } from "../actions";
@@ -11,9 +12,9 @@ export default async function InvitoPage({ params }: PageProps<"/invito/[token]"
   const ready = Boolean(profile && hasCurrentConsent(profile));
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-6 py-16">
+    <PlainShell>
       <div className="flex flex-col gap-3">
-        <h1 className="text-4xl font-extrabold">Sei stato invitato</h1>
+        <h1 className="text-[2.4rem]">Sei stato invitato</h1>
         <p className="text-lg text-muted-foreground">
           Il tuo nutrizionista ti invita su NutriLife: preparerà i tuoi pasti tipo, tu sceglierai i
           giorni e la gastronomia ti preparerà il pasto già pesato.
@@ -35,6 +36,6 @@ export default async function InvitoPage({ params }: PageProps<"/invito/[token]"
           </p>
         </form>
       )}
-    </main>
+    </PlainShell>
   );
 }

@@ -10,7 +10,7 @@ export const metadata = { title: "Informativa privacy · NutriLife" };
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-xl font-extrabold">{title}</h2>
+      <h2 className="text-xl">{title}</h2>
       {children}
     </section>
   );
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
       <p className="w-fit rounded-full bg-warning/15 px-3 py-1 text-sm text-foreground">
         Bozza in revisione · versione {PRIVACY_VERSION}
       </p>
-      <h1 className="text-4xl font-extrabold">Informativa privacy</h1>
+      <h1 className="text-[2.4rem]">Informativa privacy</h1>
       <p className="text-muted-foreground">
         NutriLife fa preparare da una gastronomia di Altamura i pasti indicati dal tuo nutrizionista.
         Qui spieghiamo quali dati usiamo, perché e chi li vede.

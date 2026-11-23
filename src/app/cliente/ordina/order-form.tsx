@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { MealBlob } from "@/components/brand";
 
 export type Option = {
   templateId: string;
@@ -26,7 +27,7 @@ type TemplateView = {
   name: string;
   slot: "pranzo" | "cena";
   taken: boolean;
-  items: { name: string; grams: number }[];
+  items: { name: string; grams: number; category: string }[];
 };
 
 const SLOT_LABEL = { pranzo: "Pranzo", cena: "Cena" } as const;
@@ -51,7 +52,7 @@ function Choice({
       onClick={onSelect}
       className={cn(
         "flex w-full flex-col gap-1 rounded-lg border p-4 text-left transition-colors disabled:opacity-50",
-        selected ? "border-primary bg-primary/10" : "bg-card",
+        selected ? "border-ink bg-lemon ring-1 ring-ink" : "bg-card hover:border-ink/40",
       )}
     >
       {children}
@@ -91,7 +92,7 @@ export function OrderForm({
       <input type="hidden" name="kitchen_id" value={kitchenId ?? ""} />
 
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Pasto tipo">
-        <h2 className="text-lg font-extrabold">1. Quale pasto</h2>
+        <h2 className="text-lg">Quale pasto</h2>
         {templates.map((t) => (
           <Choice
             key={t.id}
@@ -102,11 +103,12 @@ export function OrderForm({
               setAck(false);
             }}
           >
-            <span className="flex items-baseline justify-between gap-3">
-              <span className="font-medium">{t.name}</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {SLOT_LABEL[t.slot]}
+            <span className="flex items-center justify-between gap-3">
+              <span className="flex flex-col">
+                <span className="display text-base">{t.name}</span>
+                <span className="text-xs font-semibold uppercase text-muted-foreground">{SLOT_LABEL[t.slot]}</span>
               </span>
+              <MealBlob items={t.items} size={40} />
             </span>
             <span className="text-sm text-muted-foreground">
               {t.taken
@@ -118,7 +120,7 @@ export function OrderForm({
       </section>
 
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Gastronomia">
-        <h2 className="text-lg font-extrabold">2. Dove lo ritiri</h2>
+        <h2 className="text-lg">Dove lo ritiri</h2>
         {kitchens.map((k) => {
           const o = options.find((x) => x.templateId === templateId && x.kitchenId === k.id);
           return (
@@ -133,7 +135,7 @@ export function OrderForm({
             >
               <span className="flex items-baseline justify-between gap-3">
                 <span className="font-medium">{k.name}</span>
-                <span className="tabular-nums font-medium text-primary">
+                <span className="display text-base">
                   {o?.available && o.priceCents != null ? formatEuro(o.priceCents) : "non disponibile"}
                 </span>
               </span>
@@ -145,7 +147,7 @@ export function OrderForm({
 
       {option?.available && (
         <section className="flex flex-col gap-3 rounded-lg border bg-card p-4" aria-live="polite">
-          <h2 className="text-lg font-extrabold">3. Allergeni</h2>
+          <h2 className="text-lg">Allergeni</h2>
 
           {option.allergens.length === 0 && !option.unverified && (
             <p className="text-sm text-primary">Nessun allergene dichiarato in questo pasto.</p>
@@ -199,11 +201,11 @@ export function OrderForm({
         </p>
       )}
 
-      <div className="sticky bottom-0 -mx-6 flex flex-col gap-2 border-t bg-background/95 px-6 py-4 backdrop-blur">
+      <div className="sticky bottom-0 -mx-6 flex flex-col gap-3 bg-lemon px-6 pt-4 pb-5 text-ink">
         {option?.available && option.priceCents != null && (
           <p className="flex items-baseline justify-between">
-            <span className="text-muted-foreground">Totale, paghi al ritiro</span>
-            <span className="text-xl font-extrabold tabular-nums">{formatEuro(option.priceCents)}</span>
+            <span className="text-sm font-medium">Totale, paghi al ritiro</span>
+            <span className="display text-3xl">{formatEuro(option.priceCents)}</span>
           </p>
         )}
         <Button type="submit" size="lg" className="h-12 rounded-full text-base" disabled={!canSubmit || pending}>

@@ -64,8 +64,9 @@
 
 Regole nel database: l'ordine passa da un'unica funzione che controlla orario limite e allergeni, calcola e fotografa il prezzo. Vincolo: un solo ordine per cliente, giorno e momento.
 
-## Grafica (dalla demo)
-- Font: Manrope (titoli), IBM Plex Sans (testo)
-- Chiaro: sfondo #F7F6F3, testo #1A1A1A, card #FFFFFF, primario #4A7C59, accento #E8B275
-- Scuro: sfondo #141413, testo #F7F6F3, card #1E1E1C, primario #6B9B78, accento #E8B275
-- Pulsanti a pillola, niente blu, niente nero/bianco puri.
+## Grafica — "Cucina 3.0" (24/11/2026)
+- Regole complete in `DESIGN.md` (direzione ispirata a Behance "Omnui", logo e grafiche originali).
+- Carta #F3F2EE, inchiostro #121210, giallo burro #F4E96B, salvia #3E7A55; rosso/arancio solo per allergeni.
+- Archivo: espanso 125% peso 800 maiuscolo per titoli e numeri; normale per i testi.
+- Segno: tre cerchi fusi. Mossa firma: ogni pasto disegnato in cerchi fusi proporzionali ai grammi (`MealBlob`).
+- Motto: **Cucina 3.0** (sostituisce "Dimmelo prima").

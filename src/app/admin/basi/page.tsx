@@ -35,7 +35,7 @@ export default async function BasiPage() {
         if (items.length === 0) return null;
         return (
           <section key={cat.value} className="flex flex-col gap-2">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">{cat.label}</h2>
+            <h2 className="text-sm text-muted-foreground">{cat.label}</h2>
             {items.map((b) => (
               <Link
                 key={b.id}
@@ -53,7 +53,7 @@ export default async function BasiPage() {
       })}
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl font-extrabold">Nuova base</h2>
+        <h2 className="text-xl">Nuova base</h2>
         <ActionForm action={createBase} submitLabel="Aggiungi al catalogo" resetOnSuccess>
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Nome</Label>

@@ -1,3 +1,4 @@
+import { PlainShell } from "@/components/plain-shell";
 import { redirect } from "next/navigation";
 import { getProfile, hasCurrentConsent } from "@/lib/auth";
 import { ConsentForm } from "./consent-form";
@@ -13,9 +14,9 @@ export default async function ConsensoPage() {
   const updated = Boolean(profile.privacy_consent_at);
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-6 py-16">
+    <PlainShell>
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-extrabold">{updated ? "Informativa aggiornata" : "Benvenuto"}</h1>
+        <h1 className="text-[2.4rem]">{updated ? "Informativa aggiornata" : "Benvenuto"}</h1>
         <p className="text-muted-foreground">
           {updated
             ? "Abbiamo aggiornato l'informativa privacy. Leggila e conferma per continuare a usare NutriLife."
@@ -23,6 +24,6 @@ export default async function ConsensoPage() {
         </p>
       </div>
       <ConsentForm defaultName={profile.full_name ?? ""} />
-    </main>
+    </PlainShell>
   );
 }

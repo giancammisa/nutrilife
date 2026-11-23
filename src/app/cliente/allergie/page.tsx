@@ -29,7 +29,7 @@ export default async function AllergiePage() {
 
       <ActionForm action={saveAllergies} submitLabel="Salva">
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-lg font-extrabold">Allergie</legend>
+          <legend className="display mb-2 text-lg">Allergie</legend>
           {ALLERGENS.map((a) => (
             <CheckboxField
               key={a.code}
@@ -43,7 +43,7 @@ export default async function AllergiePage() {
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="mb-2 text-lg font-extrabold">Intolleranze</legend>
+          <legend className="display mb-2 text-lg">Intolleranze</legend>
           {ALLERGENS.map((a) => (
             <CheckboxField
               key={a.code}

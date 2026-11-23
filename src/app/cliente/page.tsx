@@ -1,9 +1,11 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
 import { Button } from "@/components/ui/button";
 import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
+import { MealBlob } from "@/components/brand";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
@@ -110,14 +112,14 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
             {myAllergies.length === 0 ? "Nessuna indicata" : myAllergies.map(allergenName).join(", ")}
           </span>
         </span>
-        <span aria-hidden className="text-primary">→</span>
+        <ArrowRight aria-hidden className="size-5 shrink-0" />
       </Link>
       <Link
         href="/cliente/ordini"
         className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
       >
         <span className="font-medium">I miei ordini</span>
-        <span aria-hidden className="text-primary">→</span>
+        <ArrowRight aria-hidden className="size-5 shrink-0" />
       </Link>
 
       <section className="flex flex-col gap-3">
@@ -130,7 +132,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
           return (
             <article key={day} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="font-heading text-lg font-extrabold first-letter:uppercase">
+                <h2 className="text-lg">
                   {day === today ? "Oggi" : day === addDays(today, 1) ? "Domani" : formatDay(day)}
                 </h2>
                 <span className="text-xs text-muted-foreground">
@@ -178,16 +180,22 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
       {templates.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col">
-            <h2 className="text-xl font-extrabold">I tuoi pasti tipo</h2>
+            <h2 className="text-xl">I tuoi pasti tipo</h2>
             <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
           </div>
           {templates.map((t) => (
             <article key={t.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="font-heading text-lg font-extrabold">{t.name}</h3>
-                <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  {SLOT_LABEL[t.meal_slot]}
-                </span>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col">
+                  <h3 className="text-lg">{t.name}</h3>
+                  <span className="text-xs font-semibold uppercase text-muted-foreground">
+                    {SLOT_LABEL[t.meal_slot]}
+                  </span>
+                </div>
+                <MealBlob
+                  items={t.meal_template_items.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))}
+                  size={44}
+                />
               </div>
               <ul className="flex flex-col gap-1">
                 {[...t.meal_template_items]
@@ -195,7 +203,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
                   .map((i) => (
                     <li key={i.id} className="flex justify-between gap-3 text-sm">
                       <span>{i.bases?.name}</span>
-                      <span className="tabular-nums text-muted-foreground">{i.grams} g</span>
+                      <span className="num">{i.grams} g</span>
                     </li>
                   ))}
               </ul>

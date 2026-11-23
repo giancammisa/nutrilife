@@ -60,7 +60,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
     <RoleArea profile={profile} title={kitchen.name} back={{ href: "/admin/cucine", label: "Gastronomie" }}>
       <section className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-xl font-extrabold">Basi della gastronomia</h2>
+          <h2 className="text-xl">Basi della gastronomia</h2>
           <span className="text-sm text-muted-foreground">{rows.length}</span>
         </div>
         {unverified > 0 && (
@@ -98,7 +98,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl font-extrabold">Aggiungi una base</h2>
+        <h2 className="text-xl">Aggiungi una base</h2>
         {addable.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Tutte le basi del catalogo sono già qui.{" "}
@@ -134,7 +134,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-extrabold">Chi lavora qui</h2>
+          <h2 className="text-xl">Chi lavora qui</h2>
           <p className="text-xs text-muted-foreground">
             Vedono gli ordini di questa gastronomia e stampano le etichette. Prima dai loro il ruolo
             “Cucina” nella pagina Utenti.
@@ -190,7 +190,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl font-extrabold">Dati della gastronomia</h2>
+        <h2 className="text-xl">Dati della gastronomia</h2>
         <ActionForm action={updateKitchen} submitLabel="Salva">
           <input type="hidden" name="id" value={kitchen.id} />
           <div className="flex flex-col gap-2">

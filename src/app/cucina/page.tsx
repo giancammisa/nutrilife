@@ -1,5 +1,7 @@
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
+import { MealBlob } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { allergenName, BASE_CATEGORIES, categoryLabel } from "@/lib/allergens";
 import { addDays, formatDay } from "@/lib/dates";
@@ -89,7 +91,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
         </p>
         <nav className="flex items-center gap-2" aria-label="Giorno">
           <Button asChild size="sm" variant="ghost" className="rounded-full">
-            <Link href={q(addDays(day, -1))} aria-label="Giorno precedente">←</Link>
+            <Link href={q(addDays(day, -1))} aria-label="Giorno precedente"><ArrowLeft className="size-4" aria-hidden /></Link>
           </Button>
           <Button asChild size="sm" variant={day === today ? "default" : "outline"} className="rounded-full">
             <Link href={q(today)}>Oggi</Link>
@@ -98,7 +100,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
             <Link href={q(tomorrow)}>Domani</Link>
           </Button>
           <Button asChild size="sm" variant="ghost" className="rounded-full">
-            <Link href={q(addDays(day, 1))} aria-label="Giorno successivo">→</Link>
+            <Link href={q(addDays(day, 1))} aria-label="Giorno successivo"><ArrowRight className="size-4" aria-hidden /></Link>
           </Button>
         </nav>
       </div>
@@ -107,35 +109,35 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
         <p className="rounded-lg bg-muted p-4 text-sm">Nessun ordine per {label}.</p>
       ) : (
         <>
-          <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
+          <section className="flex flex-col gap-4 rounded-[14px] bg-lemon p-5 text-ink">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-xl font-extrabold">Da preparare</h2>
-              <span className="text-sm text-muted-foreground">
+              <h2 className="text-xl">Da preparare</h2>
+              <span className="text-sm font-medium">
                 {orders.length} {orders.length === 1 ? "pasto" : "pasti"} · {formatEuro(total)}
               </span>
             </div>
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                <tr className="text-left text-xs font-semibold uppercase text-ink/70">
                   <th className="pb-2 font-normal">Base</th>
                   <th className="pb-2 text-right font-normal">Porzioni</th>
                   <th className="pb-2 text-right font-normal">Totale</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-ink/15">
                 {productionRows.map((r) => (
                   <tr key={r.name}>
                     <td className="py-2">
                       <span className="font-medium">{r.name}</span>
-                      <span className="block text-xs text-muted-foreground">{categoryLabel(r.category)}</span>
+                      <span className="block text-xs text-ink/70">{categoryLabel(r.category)}</span>
                     </td>
-                    <td className="py-2 text-right tabular-nums">{r.portions}</td>
-                    <td className="py-2 text-right font-medium tabular-nums">{kgFmt.format(r.grams / 1000)} kg</td>
+                    <td className="py-2 text-right num">{r.portions}</td>
+                    <td className="py-2 text-right"><span className="display text-2xl">{kgFmt.format(r.grams / 1000)}</span> <span className="text-xs font-semibold">kg</span></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <Button asChild variant="outline" className="h-11 rounded-full">
+            <Button asChild className="h-11">
               <Link href={`/cucina/etichette?cucina=${kitchen.id}&giorno=${day}`} target="_blank">
                 Stampa le etichette ({orders.length})
               </Link>
@@ -144,14 +146,14 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
 
           <section className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-xl font-extrabold">Ordini</h2>
+              <h2 className="text-xl">Ordini</h2>
               {toPrepare > 0 && <span className="text-sm text-muted-foreground">{toPrepare} da preparare</span>}
             </div>
             {orders.map((o) => (
               <article key={o.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col">
-                    <span className="font-heading text-lg font-extrabold">{o.client_name ?? "Cliente"}</span>
+                    <span className="display text-lg">{o.client_name ?? "Cliente"}</span>
                     <span className="text-sm text-muted-foreground">
                       {SLOT_LABEL[o.meal_slot]} · {o.template_name}
                     </span>
@@ -160,13 +162,14 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
                     {STATUS[o.status].label}
                   </span>
                 </div>
+                <MealBlob items={o.order_items.map((i) => ({ category: i.category, grams: i.grams }))} size={36} />
                 <ul className="flex flex-col gap-0.5 text-sm">
                   {[...o.order_items]
                     .sort((a, b) => catOrder(a.category) - catOrder(b.category))
                     .map((i) => (
                       <li key={i.id} className="flex justify-between gap-3">
                         <span>{i.base_name}</span>
-                        <span className="font-medium tabular-nums">{i.grams} g</span>
+                        <span className="num">{i.grams} g</span>
                       </li>
                     ))}
                 </ul>

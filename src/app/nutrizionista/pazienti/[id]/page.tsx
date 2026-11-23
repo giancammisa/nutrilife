@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { RoleArea } from "@/components/role-area";
+import { MealBlob, MealLegend } from "@/components/brand";
 import { ActionForm } from "@/components/action-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +83,7 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
       ))}
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl font-extrabold">Nuovo pasto tipo</h2>
+        <h2 className="text-xl">Nuovo pasto tipo</h2>
         <ActionForm action={createTemplate} submitLabel="Crea pasto tipo" resetOnSuccess>
           <input type="hidden" name="patient_id" value={patientId} />
           <div className="flex flex-col gap-2">
@@ -111,7 +112,7 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
 
       {inactive.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Pasti tipo archiviati</h2>
+          <h2 className="text-sm text-muted-foreground">Pasti tipo archiviati</h2>
           {inactive.map((t) => (
             <div key={t.id} className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3 text-sm">
               <span>
@@ -154,10 +155,16 @@ function TemplateCard({
     <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col">
-          <h2 className="text-xl font-extrabold">{t.name}</h2>
+          <h2 className="text-xl">{t.name}</h2>
           <span className="text-sm text-muted-foreground">
-            {SLOT_LABEL[t.meal_slot]} · {total} g in tutto
+            {SLOT_LABEL[t.meal_slot]} · <span className="num text-foreground">{total} g</span> in tutto
           </span>
+          {items.length > 0 && (
+            <div className="mt-3 flex flex-col gap-2">
+              <MealBlob items={items.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))} size={52} />
+              <MealLegend />
+            </div>
+          )}
           {t.notes && <span className="text-sm">Note: {t.notes}</span>}
         </div>
         <form action={setTemplateActive}>

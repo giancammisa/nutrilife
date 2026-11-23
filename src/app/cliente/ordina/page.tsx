@@ -118,7 +118,7 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
             taken: takenSlots.has(t.meal_slot),
             items: [...t.meal_template_items]
               .sort((a, b) => catOrder(a.bases?.category ?? "") - catOrder(b.bases?.category ?? ""))
-              .map((i) => ({ name: i.bases?.name ?? "", grams: i.grams })),
+              .map((i) => ({ name: i.bases?.name ?? "", grams: i.grams, category: i.bases?.category ?? "altro" })),
           }))}
           kitchens={(kitchens ?? []).map((k) => ({ id: k.id, name: k.name, address: k.address }))}
           options={options}

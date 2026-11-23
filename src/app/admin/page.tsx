@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { ComingSoon, RoleArea } from "@/components/role-area";
 import { requireProfile } from "@/lib/auth";
@@ -32,10 +33,10 @@ export default async function AdminPage() {
             className="flex items-center justify-between rounded-lg border bg-card p-5 transition-colors hover:border-primary"
           >
             <span className="flex flex-col">
-              <span className="font-heading text-lg font-extrabold">{s.title}</span>
+              <span className="display text-base">{s.title}</span>
               <span className="text-sm text-muted-foreground">{s.detail}</span>
             </span>
-            <span aria-hidden className="text-primary">→</span>
+            <ArrowRight aria-hidden className="size-5 shrink-0" />
           </Link>
         ))}
       </nav>

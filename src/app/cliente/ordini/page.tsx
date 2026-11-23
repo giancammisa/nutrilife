@@ -2,6 +2,7 @@ import { RoleArea } from "@/components/role-area";
 import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
+import { MealBlob } from "@/components/brand";
 import { formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
@@ -65,13 +66,14 @@ export default async function OrdiniPage() {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col">
-            <span className="font-heading font-extrabold first-letter:uppercase">{formatDay(o.pickup_date)}</span>
+            <span className="display text-base">{formatDay(o.pickup_date)}</span>
             <span className="text-sm text-muted-foreground">
               {SLOT_LABEL[o.meal_slot]} · {o.template_name} · {o.kitchens?.name ?? "Gastronomia"}
             </span>
           </div>
-          <span className="tabular-nums font-medium">{formatEuro(o.price_cents)}</span>
+          <span className="display text-lg">{formatEuro(o.price_cents)}</span>
         </div>
+        <MealBlob items={o.order_items.map((i) => ({ category: i.category, grams: i.grams }))} size={36} />
         <span className={cn("w-fit rounded-full px-2.5 py-0.5 text-xs font-medium", STATUS[o.status].cls)}>
           {STATUS[o.status].label}
         </span>
@@ -81,7 +83,7 @@ export default async function OrdiniPage() {
             .map((i) => (
               <li key={i.id} className="flex justify-between gap-3">
                 <span>{i.base_name}</span>
-                <span className="tabular-nums text-muted-foreground">{i.grams} g</span>
+                <span className="num">{i.grams} g</span>
               </li>
             ))}
         </ul>
@@ -102,7 +104,7 @@ export default async function OrdiniPage() {
 
       {upcoming.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Prossimi</h2>
+          <h2 className="text-sm text-muted-foreground">Prossimi</h2>
           {upcoming.map(card)}
         </section>
       )}
@@ -110,7 +112,7 @@ export default async function OrdiniPage() {
       {past.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Passati</h2>
+            <h2 className="text-sm text-muted-foreground">Passati</h2>
             {spent > 0 && <span className="text-xs text-muted-foreground">Ritirati: {formatEuro(spent)}</span>}
           </div>
           {past.map(card)}

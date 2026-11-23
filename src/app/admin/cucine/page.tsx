@@ -46,7 +46,7 @@ export default async function CucinePage() {
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl font-extrabold">Nuova gastronomia</h2>
+        <h2 className="text-xl">Nuova gastronomia</h2>
         <ActionForm action={createKitchen} submitLabel="Aggiungi gastronomia" resetOnSuccess>
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Nome</Label>

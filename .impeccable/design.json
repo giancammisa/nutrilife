@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-24T00:00:00Z",
+  "title": "Design System: NutriLife",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Carta" },
+      "ink": { "role": "primary", "displayName": "Inchiostro" },
+      "lemon": { "role": "primary", "displayName": "Giallo burro" },
+      "sage": { "role": "secondary", "displayName": "Salvia" },
+      "destructive": { "role": "state", "displayName": "Allergene bloccato" },
+      "warning": { "role": "state", "displayName": "Da verificare" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Espanso", "purpose": "Titoli, giorni, kg, prezzi: Archivo 125% peso 800 maiuscolo." },
+      "number": { "displayName": "Numeri", "purpose": "Grammi e quantità: cifre tabellari, Archivo 112% peso 700." },
+      "body": { "displayName": "Testo", "purpose": "Testi e moduli: Archivo 100%." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-standard", "value": "150ms ease-out", "purpose": "Cambi di colore su pulsanti e scelte." }
+    ],
+    "breakpoints": [{ "name": "sm", "value": "640px" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Azione principale della pagina, a tutta larghezza su telefono.",
+      "html": "<button class=\"ds-btn-primary\">Conferma ordine</button>",
+      "css": ".ds-btn-primary{background:#121210;color:#F3F2EE;height:48px;padding:0 20px;border:0;border-radius:9999px;font:600 1rem Archivo,system-ui,sans-serif;transition:background .15s ease-out}.ds-btn-primary:hover{background:#2b2b28}.ds-btn-primary:focus-visible{outline:2px solid #121210;outline-offset:3px}"
+    },
+    {
+      "name": "Lemon Button",
+      "kind": "button",
+      "refersTo": "button-lemon",
+      "description": "Azione secondaria in evidenza.",
+      "html": "<button class=\"ds-btn-lemon\">Stampa le etichette</button>",
+      "css": ".ds-btn-lemon{background:#F4E96B;color:#121210;height:48px;padding:0 20px;border:0;border-radius:9999px;font:600 1rem Archivo,system-ui,sans-serif}.ds-btn-lemon:hover{background:#e6db5f}.ds-btn-lemon:focus-visible{outline:2px solid #121210;outline-offset:3px}"
+    },
+    {
+      "name": "Header band",
+      "kind": "nav",
+      "refersTo": "header-band",
+      "description": "Banda gialla con marchio, ruolo e uscita.",
+      "html": "<header class=\"ds-band\"><span class=\"ds-word\">NUTRILIFE</span><span class=\"ds-role\">Cliente</span></header>",
+      "css": ".ds-band{display:flex;justify-content:space-between;align-items:center;background:#F4E96B;color:#121210;padding:16px 24px}.ds-word{font:800 1.25rem Archivo,sans-serif;font-stretch:125%}.ds-role{background:#121210;color:#F4E96B;border-radius:9999px;padding:4px 12px;font:600 .75rem Archivo,sans-serif}"
+    },
+    {
+      "name": "Allergen chips",
+      "kind": "chip",
+      "refersTo": "chip-role",
+      "description": "Stato allergeni: contiene / nessuno / da verificare.",
+      "html": "<span class=\"ds-chip ds-red\">Uova</span> <span class=\"ds-chip ds-sage\">Nessun allergene</span> <span class=\"ds-chip ds-amber\">Allergeni non verificati</span>",
+      "css": ".ds-chip{display:inline-flex;border-radius:9999px;padding:2px 10px;font:600 .75rem Archivo,sans-serif}.ds-red{background:rgba(184,50,26,.1);color:#B8321A}.ds-sage{background:rgba(62,122,85,.12);color:#3E7A55}.ds-amber{background:rgba(217,115,26,.12);border:1px solid rgba(217,115,26,.6);color:#121210}"
+    },
+    {
+      "name": "Number card",
+      "kind": "card",
+      "refersTo": "number-card",
+      "description": "Riepilogo che conta: kg da preparare, totale.",
+      "html": "<div class=\"ds-num\"><span>Petto di pollo</span><strong>0,15 kg</strong></div>",
+      "css": ".ds-num{display:flex;justify-content:space-between;align-items:baseline;background:#F4E96B;color:#121210;border-radius:14px;padding:20px;font:400 1rem Archivo,sans-serif}.ds-num strong{font:800 1.5rem Archivo,sans-serif;font-stretch:125%}"
+    },
+    {
+      "name": "Meal blob",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Il pasto in cerchi fusi: area proporzionale ai grammi.",
+      "html": "<svg viewBox=\"0 0 200 100\" width=\"120\"><defs><filter id=\"g\"><feGaussianBlur stdDeviation=\"5\" result=\"b\"/><feColorMatrix in=\"b\" values=\"1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 22 -10\"/></filter></defs><g filter=\"url(#g)\" fill=\"#121210\"><circle cx=\"40\" cy=\"50\" r=\"37\"/><circle cx=\"103\" cy=\"50\" r=\"25\"/><circle cx=\"160\" cy=\"50\" r=\"33\"/></g><circle cx=\"40\" cy=\"50\" r=\"34\" fill=\"#121210\"/><circle cx=\"103\" cy=\"50\" r=\"22\" fill=\"#F4E96B\"/><circle cx=\"160\" cy=\"50\" r=\"30\" fill=\"#3E7A55\"/></svg>",
+      "css": ""
+    }
+  ],
+  "narrative": {
+    "northStar": "Cucina 3.0",
+    "overview": "Inchiostro su carta con campi di giallo burro; voce espansa e pesantissima per tutto ciò che si misura. Il pasto si disegna in cerchi fusi proporzionali ai grammi.",
+    "keyCharacteristics": ["Giallo come campo, non come accento", "Archivo espanso in maiuscolo per numeri e titoli", "Cerchi fusi come unico motivo grafico", "Pillole per azioni e stati"],
+    "rules": [
+      { "name": "Colore con un lavoro", "body": "Rosso e arancio solo per allergeni; salvia per verdure e 'nessun allergene'.", "section": "colors" },
+      { "name": "Mai solo colore", "body": "Ogni stato e ogni allergene è anche scritto.", "section": "colors" }
+    ],
+    "dos": ["Usa la voce espansa per giorni, kg e prezzi", "Disegna i pasti con MealBlob e i grammi veri"],
+    "donts": ["Non copiare logo o grafiche di Omnui", "Niente etichette sopra i titoli, gradienti o ombre decorative", "Niente caratteri freccia al posto delle icone"]
+  }
+}
