@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
-import { getProfile } from "@/lib/auth";
+import { getProfile, getUserId } from "@/lib/auth";
 import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Accedi · NutriLife" };
 
 export default async function AccediPage({ searchParams }: PageProps<"/accedi">) {
   if (await getProfile()) redirect("/home");
+  if (await getUserId()) redirect("/profilo-mancante");
 
   const { errore } = await searchParams;
   const initialError =

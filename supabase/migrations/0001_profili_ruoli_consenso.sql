@@ -129,3 +129,8 @@ grant execute on function public.is_admin() to authenticated;
 revoke all on function public.give_privacy_consent(text, text) from public, anon;
 grant execute on function public.give_privacy_consent(text, text) to authenticated;
 revoke all on function public.handle_new_user() from public, anon, authenticated;
+
+-- 9. Crea il profilo anche per chi si era già registrato prima di questi comandi
+insert into public.profiles (id)
+select id from auth.users
+on conflict (id) do nothing;

@@ -30,13 +30,20 @@ export const ROLE_LABEL: Record<Role, string> = {
   admin: "Admin",
 };
 
-// Legge il profilo di chi è collegato (una sola volta per richiesta). null se non collegato.
-export const getProfile = cache(async (): Promise<Profile | null> => {
+// Id di chi è collegato (una sola volta per richiesta). null se non collegato.
+export const getUserId = cache(async (): Promise<string | null> => {
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
-  const userId = claims?.claims?.sub;
+  return claims?.claims?.sub ?? null;
+});
+
+// Legge il profilo di chi è collegato (una sola volta per richiesta).
+// null se non collegato oppure se il profilo non esiste (database non preparato).
+export const getProfile = cache(async (): Promise<Profile | null> => {
+  const userId = await getUserId();
   if (!userId) return null;
 
+  const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
     .select("id, role, full_name, active, privacy_consent_at")
@@ -49,7 +56,7 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
 // Da usare in cima a ogni pagina protetta: controlla accesso, consenso, account attivo e ruolo.
 export async function requireProfile(allowed?: Role[]): Promise<Profile> {
   const profile = await getProfile();
-  if (!profile) redirect("/accedi");
+  if (!profile) redirect((await getUserId()) ? "/profilo-mancante" : "/accedi");
   if (!profile.privacy_consent_at) redirect("/consenso");
   if (!profile.active) redirect("/sospeso");
   if (allowed && !allowed.includes(profile.role)) redirect(ROLE_HOME[profile.role]);
