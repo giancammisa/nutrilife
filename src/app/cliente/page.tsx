@@ -1,4 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Ticket } from "lucide-react";
+import { pickupCode } from "@/lib/pickup";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
 import { Button } from "@/components/ui/button";
@@ -127,12 +128,22 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               </span>
               <span className="num">{formatEuro(o.price_cents)}</span>
             </div>
-            {open && o.status === "confermato" && (
-              <CancelOrderButton
-                orderId={o.id}
-                label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === tomorrow ? "domani" : formatDay(day)}`}
-              />
-            )}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Link
+                href={`/cliente/ritiro/${o.id}`}
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-ink pr-4 pl-3 text-sm font-semibold text-paper transition-colors hover:bg-ink/85"
+              >
+                <Ticket className="size-4" aria-hidden />
+                Mostra al ritiro
+                <span className="num text-lemon">#{pickupCode(o.id)}</span>
+              </Link>
+              {open && o.status === "confermato" && (
+                <CancelOrderButton
+                  orderId={o.id}
+                  label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === tomorrow ? "domani" : formatDay(day)}`}
+                />
+              )}
+            </div>
           </div>
         ))}
         {open && canOrder && !full && (

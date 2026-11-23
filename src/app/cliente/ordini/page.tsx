@@ -1,4 +1,7 @@
+import Link from "next/link";
+import { Ticket } from "lucide-react";
 import { RoleArea } from "@/components/role-area";
+import { pickupCode } from "@/lib/pickup";
 import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
@@ -92,6 +95,16 @@ export default async function OrdiniPage() {
         )}
         {o.allergens_unverified && (
           <p className="text-xs text-muted-foreground">Allergeni non verificati da confermare in gastronomia</p>
+        )}
+        {o.status !== "annullato" && o.pickup_date >= today && (
+          <Link
+            href={`/cliente/ritiro/${o.id}`}
+            className="inline-flex h-10 w-fit items-center gap-2 rounded-full bg-ink pr-4 pl-3 text-sm font-semibold text-paper transition-colors hover:bg-ink/85"
+          >
+            <Ticket className="size-4" aria-hidden />
+            Mostra al ritiro
+            <span className="num text-lemon">#{pickupCode(o.id)}</span>
+          </Link>
         )}
         {open && <CancelOrderButton orderId={o.id} label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${formatDay(o.pickup_date)}`} />}
       </article>

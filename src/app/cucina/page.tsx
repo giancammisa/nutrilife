@@ -1,3 +1,4 @@
+import { pickupCode } from "@/lib/pickup";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
@@ -153,7 +154,12 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
               <article key={o.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col">
-                    <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
+                    <span className="flex items-baseline gap-2">
+                      <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
+                      <span className="num rounded-full bg-ink px-2 py-0.5 text-xs text-lemon" title="Codice di ritiro">
+                        #{pickupCode(o.id)}
+                      </span>
+                    </span>
                     <span className="text-sm text-muted-foreground">
                       {SLOT_LABEL[o.meal_slot]} · {o.template_name}
                     </span>

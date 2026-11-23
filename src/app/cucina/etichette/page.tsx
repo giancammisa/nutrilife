@@ -1,3 +1,4 @@
+import { pickupCode } from "@/lib/pickup";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
@@ -46,7 +47,10 @@ export default async function EtichettePage({ searchParams }: PageProps<"/cucina
           >
             <div className="flex items-baseline justify-between gap-2 border-b border-black/20 pb-1">
               <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
-              <span className="text-xs font-medium uppercase">{SLOT_LABEL[o.meal_slot]}</span>
+              <span className="flex items-baseline gap-2">
+                <span className="text-xs font-medium uppercase">{SLOT_LABEL[o.meal_slot]}</span>
+                <span className="text-base font-bold tabular-nums">#{pickupCode(o.id)}</span>
+              </span>
             </div>
             <p className="text-xs">
               {formatDay(o.pickup_date)} · {o.template_name}

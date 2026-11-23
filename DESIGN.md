@@ -6,6 +6,7 @@ colors:
   salvia: "#DFE6DA"
   salvia-grey: "#E6E7E3"
   salvia-deep: "#D3DCCC"
+  water-green: "rgb(190 235 170 / 0.45)"
   card: "rgb(255 255 255 / 0.55)"
   popover: "#FFFFFF"
   secondary: "#D3DBCD"
@@ -55,6 +56,12 @@ typography:
     fontWeight: 300
     lineHeight: 1.02
     letterSpacing: "-0.03em"
+  pickup-code:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "5.5rem"
+    fontWeight: 600
+    lineHeight: 1
+    letterSpacing: "0.04em"
   day-number:
     fontFamily: "Urbanist, system-ui, sans-serif"
     fontSize: "1.85rem"
@@ -209,6 +216,8 @@ Intestazione di vetro bianco: segno + NutriLife a sinistra; "Prova", ruolo e Esc
 `DayArc` in `src/app/cliente/day-arc.tsx`: su fondo piatto, un **banner ad arco di vetro** (una grande ciambella: anello esterno di vetro sfumato dal rosa `#F4B3AC` al bianco, così si stacca dai bollini bianchi, a taglio vivo (nessun bordo); interno salvia scuro `#D3DCCC`) a tutta larghezza. Fascia spessa 66px, quanto i bollini laterali: quello al centro sborda. I 7 giorni sono bollini bianchi da 76px che scorrono a metà della fascia: al centro più grandi (×1.14) con contorno nero e trattino nero sotto, ai lati più piccoli (×0.84) e più in basso. Giorno già ordinato: bollino lime con spunta nera; ordini chiusi senza ordine: sbiadito. Dentro l'arco, sotto: data, orario limite, ordini del giorno (schede lime) o pulsante nero Ordina. Tastiera: frecce sinistra/destra.
 ### Sfondo "acqua" (prima pagina e Accedi)
 `LivingBackground` in `src/components/living-background.tsx`: sul salvia, sei macchie morbide solo nei verdi chiari (menta, verde leggero, verde un po. più vivo qua e là) e bianco, leggerissime, che si muovono vivaci (9–15 s, con un punto intermedio, avanti e indietro) più un velo di riflessi bianchi che ondeggia, come luce sott'acqua. Solo `transform`, nessun video da scaricare; con "riduci movimento" resta fermo. Solo all'ingresso: le aree riservate restano a fondo piatto.
+### Biglietto di ritiro (cliente)
+`/cliente/ritiro/[id]`: scheda lime a tutta larghezza con "Mostra al banco", **codice di ritiro** enorme (`#0BAE`, 5.5rem), nome, giorno e pasto; riga tratteggiata come un biglietto strappato; sotto gastronomia e prezzo da pagare. Poi i tre stati (Confermato, Pronto, Ritirato) con quello raggiunto in nero, e cosa c'è nel piatto. Dalla settimana e da "I miei ordini" ci si arriva con la pillola nera "Mostra al ritiro #codice". In cucina e sulle etichette il codice compare accanto al nome.
 ### Immagini in controluce
 Foto di cibo tagliato sottile e traslucido (cetriolo, uva, fico, pompelmo, piselli, pera) in `public/immagini/*.webp`, componente `FoodPhoto` in `src/components/food-art.tsx`. Sempre su schede chiare con `mix-blend-multiply`, così il bianco sparisce. Usate **qua e là**, non ovunque: prima pagina (riquadro esempio a tutta foto, passi 02 e 03 a striscia sfumata a destra), pagina Accedi (striscia in alto), pasti tipo del cliente (striscia sfumata al 45%). Mai dietro numeri o allergeni senza contrasto pieno; sempre decorative (`aria-hidden`).
 ### Meal blob (firma)
