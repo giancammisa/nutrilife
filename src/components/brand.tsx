@@ -28,6 +28,33 @@ export function LogoMark({ className, title = "NutriLife" }: { className?: strin
   );
 }
 
+// Il segno grande e animato (prima pagina): i tre cerchi nei colori del pasto — proteina rosa,
+// carboidrato lime, verdura verde — con la silhouette nera fusa sotto. I cerchi si allontanano
+// e si riavvicinano piano, e la silhouette li tiene uniti. Fermo con "riduci movimento".
+const MARK = [
+  { cx: 35, cy: 62, r: 26, fill: "var(--sage)", anim: "mark-a" },
+  { cx: 69, cy: 31, r: 17, fill: "var(--lemon)", anim: "mark-b" },
+  { cx: 78, cy: 71, r: 13, fill: "var(--rose)", anim: "mark-c" },
+];
+
+export function AnimatedMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="-6 -6 112 112" className={cn("shrink-0 overflow-visible", className)} aria-hidden>
+      <defs>
+        <GooFilter id="nl-mark-live" blur={6} />
+      </defs>
+      <g filter="url(#nl-mark-live)" fill="var(--ink)">
+        {MARK.map((c) => (
+          <circle key={c.anim} className={`mark-dot ${c.anim}`} cx={c.cx} cy={c.cy} r={c.r + 3.5} />
+        ))}
+      </g>
+      {MARK.map((c) => (
+        <circle key={c.anim} className={`mark-dot ${c.anim}`} cx={c.cx} cy={c.cy} r={c.r} fill={c.fill} />
+      ))}
+    </svg>
+  );
+}
+
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2 font-semibold leading-none tracking-[-0.02em]", className)}>

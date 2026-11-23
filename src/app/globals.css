@@ -237,6 +237,21 @@
   .water-blob, .water-caustics { animation: none; }
 }
 
+/* Segno animato della prima pagina: i tre cerchi si allontanano e si riavvicinano. */
+.mark-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mark-a 7s ease-in-out infinite;
+}
+.mark-b { animation-name: mark-b; animation-duration: 6s; }
+.mark-c { animation-name: mark-c; animation-duration: 8s; }
+@keyframes mark-a { 50% { transform: translate(-3px, 3px) scale(1.05); } }
+@keyframes mark-b { 50% { transform: translate(9px, -7px) scale(0.92); } }
+@keyframes mark-c { 50% { transform: translate(7px, 9px) scale(1.12); } }
+@media (prefers-reduced-motion: reduce) {
+  .mark-dot { animation: none; }
+}
+
 /* Le etichette si stampano sempre chiare. */
 @media print {
   html, body { background: #fff !important; color: #000 !important; }

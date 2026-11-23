@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Wordmark } from "@/components/brand";
+import { AnimatedMark, Wordmark } from "@/components/brand";
 import { FoodPhoto, type FotoName } from "@/components/food-art";
 import { LivingBackground } from "@/components/living-background";
 import { Button } from "@/components/ui/button";
@@ -33,9 +33,14 @@ export default function Home() {
 
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-5 pt-8 pb-12">
         <section className="flex flex-col gap-4">
-          <h1 className="text-[3.4rem] leading-[0.95] sm:text-6xl">
-            <span className="font-semibold">Cucina</span> 3.0
-          </h1>
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-[3.4rem] leading-[0.95] sm:text-6xl">
+              <span className="font-semibold">Cucina</span>
+              <br />
+              3.0
+            </h1>
+            <AnimatedMark className="mr-1 w-32 sm:w-36" />
+          </div>
           <p className="max-w-[34ch] text-lg leading-snug text-muted-foreground">
             Il piano del tuo nutrizionista, <span className="text-foreground">cucinato e pesato al grammo</span>{" "}
             da una gastronomia di Altamura.
