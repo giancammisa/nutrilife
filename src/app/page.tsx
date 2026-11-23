@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Wordmark } from "@/components/brand";
-import { CitrusSegment, CucumberSlices, Grapes, PeaPod } from "@/components/food-art";
+import { FoodPhoto, type FotoName } from "@/components/food-art";
 import { Button } from "@/components/ui/button";
 
 // Pasto d'esempio per mostrare come NutriLife legge un piatto: non sono dati di un cliente.
@@ -11,10 +11,10 @@ const ESEMPIO = [
   { name: "Zucchine grigliate", grams: 200, color: "var(--sage)" },
 ];
 
-const PASSI = [
-  { n: "01", title: "Il nutrizionista", text: "prepara i tuoi pasti tipo, con basi e grammi.", bg: "bg-grad-lime", Art: Grapes },
-  { n: "02", title: "Tu scegli", text: "i giorni e la gastronomia, entro le 18:00 del giorno prima.", bg: "bg-grad-leaf", Art: PeaPod },
-  { n: "03", title: "Ritiri", text: "il pasto già pesato, con l'etichetta degli allergeni.", bg: "bg-grad-fog", Art: CitrusSegment },
+const PASSI: { n: string; title: string; text: string; bg: string; foto: FotoName | null }[] = [
+  { n: "01", title: "Il nutrizionista", text: "prepara i tuoi pasti tipo, con basi e grammi.", bg: "bg-grad-lime", foto: null },
+  { n: "02", title: "Tu scegli", text: "i giorni e la gastronomia, entro le 18:00 del giorno prima.", bg: "bg-grad-leaf", foto: "piselli" },
+  { n: "03", title: "Ritiri", text: "il pasto già pesato, con l'etichetta degli allergeni.", bg: "bg-grad-fog", foto: "pompelmo" },
 ];
 
 export default function Home() {
@@ -42,11 +42,7 @@ export default function Home() {
 
         {/* Il pasto in controluce su verde leggero, con la scheda di vetro sopra */}
         <section aria-labelledby="esempio" className="bg-grad-leaf relative h-[21rem] overflow-hidden rounded-[32px]">
-          <div aria-hidden className="absolute inset-0 mix-blend-multiply">
-            <CucumberSlices className="absolute -top-6 -left-8 w-56" />
-            <Grapes className="absolute top-2 -right-6 w-44 rotate-12" />
-            <CitrusSegment className="absolute top-28 left-24 w-40 -rotate-12" />
-          </div>
+          <FoodPhoto name="cetriolo" priority className="absolute inset-0 h-full w-full object-cover object-top" />
           <div className="glass absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] !bg-ink/55 p-4 !backdrop-blur-2xl">
             <div className="flex items-baseline justify-between">
               <h2 id="esempio" className="text-base">
@@ -71,12 +67,18 @@ export default function Home() {
         <ol className="grid gap-3">
           {PASSI.map((p) => (
             <li key={p.n} className={`${p.bg} relative flex items-end justify-between gap-4 overflow-hidden rounded-[28px] p-5 text-ink`}>
-              <p.Art className="pointer-events-none absolute -top-8 -right-3 w-24 rotate-12 opacity-60 mix-blend-multiply" />
+              {p.foto && (
+                <FoodPhoto
+                  name={p.foto}
+                  sizes="160px"
+                  className="absolute inset-y-0 right-0 h-full w-40 object-cover opacity-75 [mask-image:linear-gradient(to_left,black_45%,transparent)]"
+                />
+              )}
               <span className="relative flex flex-col gap-1">
                 <span className="text-lg font-semibold">{p.title}</span>
                 <span className="max-w-[22ch] text-sm leading-snug text-ink/75">{p.text}</span>
               </span>
-              <span className="display relative text-5xl text-ink/80" aria-hidden>
+              <span className="display relative text-5xl text-ink" aria-hidden>
                 {p.n}
               </span>
             </li>

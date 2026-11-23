@@ -1,3 +1,4 @@
+import { FoodPhoto } from "@/components/food-art";
 import { PlainShell } from "@/components/plain-shell";
 import { redirect } from "next/navigation";
 import { getProfile, getUserId } from "@/lib/auth";
@@ -17,6 +18,9 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
 
   return (
     <PlainShell>
+      <div className="bg-grad-fog relative -mb-2 h-36 overflow-hidden rounded-[28px]">
+        <FoodPhoto name="pera-fichi" priority className="absolute inset-0 h-full w-full object-cover object-[50%_30%]" />
+      </div>
       <div className="flex flex-col gap-2">
         <h1 className="text-[2.4rem]">Accedi</h1>
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>

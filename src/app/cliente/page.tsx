@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
-import { CitrusSegment, CucumberSlices } from "@/components/food-art";
+import { FoodPhoto } from "@/components/food-art";
 import { MealBlob } from "@/components/brand";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 import { formatEuro } from "@/lib/pricing";
@@ -187,13 +187,13 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
           {templates.map((t, idx) => (
             <article
               key={t.id}
-              className={`${idx % 2 ? "bg-grad-fog" : "bg-grad-leaf"} relative flex flex-col gap-3 overflow-hidden rounded-[28px] p-5 text-ink [&_.text-muted-foreground]:text-ink/65 [&>:not(svg)]:relative`}
+              className={`${idx % 2 ? "bg-grad-fog" : "bg-grad-leaf"} relative flex flex-col gap-3 overflow-hidden rounded-[28px] p-5 text-ink [&_.text-muted-foreground]:text-ink/65 [&>:not(img)]:relative`}
             >
-              {idx % 2 ? (
-                <CitrusSegment className="pointer-events-none absolute -top-10 left-1/3 w-36 opacity-30 mix-blend-multiply" />
-              ) : (
-                <CucumberSlices className="pointer-events-none absolute -top-12 left-1/4 w-40 opacity-30 mix-blend-multiply" />
-              )}
+              <FoodPhoto
+                name={idx % 2 ? "fico" : "uva-verde"}
+                sizes="200px"
+                className="absolute inset-y-0 right-0 h-full w-48 object-cover opacity-45 [mask-image:linear-gradient(to_left,black_30%,transparent)]"
+              />
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
                   <h3 className="text-lg">{t.name}</h3>

@@ -189,7 +189,7 @@ Schede scure con bordo `#2A2A2A`; schede piene (lime, menta, azzurro) con testo 
 ### Navigation
 Intestazione di vetro: segno + NutriLife a sinistra; "Prova", ruolo e Esci (cerchio di vetro) a destra. Ritorno: pillola di vetro con freccia in un cerchio bianco.
 ### Immagini in controluce
-Cibo tagliato sottile e traslucido (cetriolo, agrume, piselli, uva) sulle schede chiare, in `mix-blend-multiply` così il bianco sparisce. Ora sono disegni originali in `src/components/food-art.tsx`; verranno sostituiti dalle foto fornite da Gianvito. Sempre decorative (`aria-hidden`), mai sopra numeri o allergeni a piena opacità.
+Foto di cibo tagliato sottile e traslucido (cetriolo, uva, fico, pompelmo, piselli, pera) in `public/immagini/*.webp`, componente `FoodPhoto` in `src/components/food-art.tsx`. Sempre su schede chiare con `mix-blend-multiply`, così il bianco sparisce. Usate **qua e là**, non ovunque: prima pagina (riquadro esempio a tutta foto, passi 02 e 03 a striscia sfumata a destra), pagina Accedi (striscia in alto), pasti tipo del cliente (striscia sfumata al 45%). Mai dietro numeri o allergeni senza contrasto pieno; sempre decorative (`aria-hidden`).
 ### Meal blob (firma)
 `MealBlob` in `src/components/brand.tsx`: silhouette chiara (bianco 34%) su fondo scuro, nera (`outline="var(--ink)"`) su schede chiare.
 
