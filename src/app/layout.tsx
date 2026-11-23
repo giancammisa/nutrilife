@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   title: "NutriLife",
   description:
     "Il piano del tuo nutrizionista, cucinato dalla gastronomia di Altamura. Dimmelo prima.",
+  applicationName: "NutriLife",
+  // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
+  appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {

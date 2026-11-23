@@ -3,9 +3,10 @@ import { signOut } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ROLE_LABEL, type Profile } from "@/lib/auth";
+import { getSettings } from "@/lib/settings";
 
 // Cornice comune delle aree riservate: intestazione con nome, ruolo e "Esci".
-export function RoleArea({
+export async function RoleArea({
   profile,
   title,
   back,
@@ -17,9 +18,15 @@ export function RoleArea({
   children: React.ReactNode;
 }) {
   const firstName = profile.full_name?.split(" ")[0] ?? "";
+  const { betaMode } = await getSettings();
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6">
+      {betaMode && (
+        <p className="-mx-6 bg-accent/40 px-6 py-1.5 text-center text-xs font-medium">
+          Versione di prova · segnalaci qualunque problema
+        </p>
+      )}
       <header className="flex items-center justify-between gap-4 border-b py-4">
         <span className="font-heading text-lg font-extrabold">NutriLife</span>
         <div className="flex items-center gap-2">

@@ -270,3 +270,22 @@ export async function removeKitchenMember(formData: FormData): Promise<void> {
   await supabase.from("kitchen_members").delete().eq("kitchen_id", kitchenId).eq("profile_id", profileId);
   revalidatePath(`/admin/cucine/${kitchenId}`);
 }
+
+// ── Impostazioni ────────────────────────────────────────
+
+export async function updateSettings(_prev: FormState, formData: FormData): Promise<FormState> {
+  const hour = Number(text(formData, "cutoff_hour"));
+  if (!Number.isInteger(hour) || hour < 6 || hour > 23) {
+    return { error: "Orario limite non valido.", ok: null };
+  }
+
+  const supabase = await adminClient();
+  const { error } = await supabase
+    .from("app_settings")
+    .update({ cutoff_hour: hour, beta_mode: formData.get("beta_mode") === "on" })
+    .eq("id", true);
+  if (error) return { error: dbError(error.code), ok: null };
+
+  revalidatePath("/", "layout");
+  return { error: null, ok: "Impostazioni salvate." };
+}

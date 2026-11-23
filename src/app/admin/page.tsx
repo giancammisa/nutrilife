@@ -19,6 +19,7 @@ export default async function AdminPage() {
     { href: "/admin/cucine", title: "Gastronomie", detail: `${kitchens ?? 0} in elenco` },
     { href: "/admin/basi", title: "Catalogo basi", detail: `${bases ?? 0} basi` },
     { href: "/admin/utenti", title: "Utenti", detail: `${users ?? 0} registrati` },
+    { href: "/admin/impostazioni", title: "Impostazioni", detail: "Orario limite, modalità prova" },
   ];
 
   return (
@@ -38,7 +39,7 @@ export default async function AdminPage() {
           </Link>
         ))}
       </nav>
-      <ComingSoon items={["Pacchetti prepagati"]} />
+      <ComingSoon items={["Credito prepagato in euro (più avanti)"]} />
     </RoleArea>
   );
 }
