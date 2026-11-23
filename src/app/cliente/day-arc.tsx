@@ -17,9 +17,9 @@ export type ArcDay = {
 
 const ITEM = 76; // diametro del bollino del giorno
 const GAP = 16;
-const BAND = 98; // spessore del banner: poco più del bollino al centro (76 × 1.14 ≈ 87)
+const BAND = 66; // spessore del banner: quanto i bollini laterali (76 × 0.84 ≈ 64); quello al centro sborda
 const DEPTH = BAND / 2; // i bollini stanno a metà della fascia
-const TOP = 12; // spazio sopra il banner
+const TOP = 22; // spazio sopra il banner (il bollino al centro sborda)
 
 // Banner di vetro ad arco (una grande ciambella vista dall'alto) su fondo piatto:
 // i bollini dei giorni scorrono lungo l'arco, quello al centro è più grande ed è il giorno scelto.
@@ -152,7 +152,7 @@ export function DayArc({
           gap: GAP,
           paddingInline: `calc(50% - ${ITEM / 2}px)`,
           paddingTop: TOP + DEPTH - ITEM / 2,
-          height: TOP + BAND + 44,
+          height: TOP + BAND + 60,
         }}
       >
         {days.map((d, i) => {
@@ -203,7 +203,7 @@ export function DayArc({
       <span
         aria-hidden
         className="absolute left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-ink"
-        style={{ top: TOP + BAND + 36 }}
+        style={{ top: TOP + BAND + 50 }}
       />
 
       <div
