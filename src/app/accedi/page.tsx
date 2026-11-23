@@ -1,4 +1,5 @@
 import { FoodPhoto } from "@/components/food-art";
+import { LivingBackground } from "@/components/living-background";
 import { PlainShell } from "@/components/plain-shell";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -19,6 +20,7 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
 
   return (
     <PlainShell>
+      <LivingBackground />
       <div className="bg-grad-fog relative -mb-2 h-36 overflow-hidden rounded-[28px]">
         <FoodPhoto name="pera-fichi" priority className="absolute inset-0 h-full w-full object-cover object-[50%_30%]" />
       </div>
