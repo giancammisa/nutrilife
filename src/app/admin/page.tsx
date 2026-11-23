@@ -33,7 +33,7 @@ export default async function AdminPage() {
             className="flex items-center justify-between rounded-lg border bg-card p-5 transition-colors hover:border-primary"
           >
             <span className="flex flex-col">
-              <span className="display text-base">{s.title}</span>
+              <span className="text-base font-semibold">{s.title}</span>
               <span className="text-sm text-muted-foreground">{s.detail}</span>
             </span>
             <ArrowRight aria-hidden className="size-5 shrink-0" />

@@ -45,7 +45,7 @@ export default async function EtichettePage({ searchParams }: PageProps<"/cucina
             className="flex break-inside-avoid flex-col gap-2 rounded-lg border-2 border-dashed border-foreground/30 bg-white p-4 text-black print:rounded-none print:border-black"
           >
             <div className="flex items-baseline justify-between gap-2 border-b border-black/20 pb-1">
-              <span className="display text-lg">{o.client_name ?? "Cliente"}</span>
+              <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
               <span className="text-xs font-medium uppercase">{SLOT_LABEL[o.meal_slot]}</span>
             </div>
             <p className="text-xs">

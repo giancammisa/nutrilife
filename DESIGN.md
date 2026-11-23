@@ -2,47 +2,100 @@
 name: NutriLife
 description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da una gastronomia di Altamura.
 colors:
-  paper: "#F3F2EE"
-  ink: "#121210"
-  lemon: "#F4E96B"
-  sage: "#3E7A55"
-  card: "#FCFBF8"
-  muted: "#E6E4DC"
-  muted-text: "#56554E"
-  border: "#D9D6CC"
-  destructive: "#B8321A"
-  warning: "#D9731A"
+  ink: "#0B0B0B"
+  surface: "#141414"
+  card: "#1A1A1A"
+  muted: "#242424"
+  border: "#2A2A2A"
+  input: "#333333"
+  paper: "#F5F5F4"
+  muted-text: "#A6A6A3"
+  lemon: "#EDFF8C"
+  mint: "#CFE1CA"
+  sky: "#D8DFE9"
+  cloud: "#EFEFEF"
+  rose: "#F4B3AC"
+  sage: "#9EE6A0"
+  destructive: "#FF7B6B"
+  warning: "#FFB86B"
+  glass-fill: "rgb(255 255 255 / 0.07)"
+  glass-edge: "rgb(255 255 255 / 0.1)"
+  print-white: "#fff"
+  print-black: "#000"
 typography:
-  display:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "1.85rem"
-    fontWeight: 800
-    lineHeight: 0.98
-    letterSpacing: "-0.01em"
+  hero:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "3.4rem"
+    fontWeight: 300
+    lineHeight: 0.95
+    letterSpacing: "-0.03em"
+  page-title:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "2.5rem"
+    fontWeight: 300
+    lineHeight: 1.02
+    letterSpacing: "-0.03em"
+  page-title-plain:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "2.4rem"
+    fontWeight: 300
+    lineHeight: 1.02
+    letterSpacing: "-0.03em"
   number:
-    fontFamily: "Archivo, system-ui, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 700
-    lineHeight: 1.2
-    letterSpacing: "0em"
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "2.25rem"
+    fontWeight: 300
+    lineHeight: 1
+    letterSpacing: "-0.03em"
+  heading:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 600
+    lineHeight: 1.15
+    letterSpacing: "-0.01em"
   body:
-    fontFamily: "Archivo, system-ui, sans-serif"
+    fontFamily: "Urbanist, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "0em"
+  label:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 500
+    lineHeight: 1.3
+    letterSpacing: "0em"
+  micro:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "11px"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "0em"
+  button-sm:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "0.8rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "0em"
+  print-micro:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "10px"
+    fontWeight: 400
+    lineHeight: 1.2
+    letterSpacing: "0em"
 rounded:
-  card: "14px"
-  inner: "10px"
+  card: "28px"
+  hero: "32px"
+  inner: "24px"
   pill: "9999px"
 spacing:
-  gutter: "24px"
-  stack: "24px"
+  gutter: "20px"
+  stack: "20px"
   card: "20px"
 components:
   button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
+    backgroundColor: "{colors.paper}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
     height: "48px"
     padding: "0 20px"
@@ -51,81 +104,81 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
     height: "48px"
-  header-band:
-    backgroundColor: "{colors.lemon}"
-    textColor: "{colors.ink}"
-  number-card:
+  card:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.paper}"
+    rounded: "{rounded.card}"
+    padding: "20px"
+  fill-card-lemon:
     backgroundColor: "{colors.lemon}"
     textColor: "{colors.ink}"
     rounded: "{rounded.card}"
     padding: "20px"
-  card:
-    backgroundColor: "{colors.card}"
+  fill-card-sky:
+    backgroundColor: "{colors.sky}"
     textColor: "{colors.ink}"
     rounded: "{rounded.card}"
-    padding: "16px"
-  chip-role:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.lemon}"
+    padding: "20px"
+  chip-beta:
+    backgroundColor: "{colors.lemon}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.pill}"
-    padding: "4px 12px"
+    padding: "4px 10px"
 ---
 
 # Design System: NutriLife
 
 ## Overview
-"Cucina 3.0": una cucina di quartiere che lavora con precisione da laboratorio. Il mondo visivo è inchiostro su carta con campi di **giallo burro**; la voce è un bastoni **espanso e pesantissimo in maiuscolo** per tutto ciò che si misura (giorni, grammi, chili, prezzi). La direzione è ispirata al progetto Behance "Omnui" di Velvele Studio (palette e tono), ma segno, forme e grafiche sono originali di NutriLife. App da telefono, schermate operative: la grafica non deve mai rallentare il compito.
+"Cucina 3.0" di notte: un pannello di precisione per il cibo. **Fondo nero**, schede scure e, accanto, **schede piene a colori chiari con testo nero** che fanno il contrasto. Il **vetro** (traslucido e sfocato) tiene insieme intestazione, pulsanti rotondi e la barra del totale. Titoli e numeri in **Urbanist sottile e grande**. Direzione ispirata al progetto Behance "Sisense AI Assistant" (palette, contrasti, vetro, forme); logo, cerchi del pasto e grafiche sono originali di NutriLife.
 
-Mossa firma: **il pasto in cerchi fusi**. Ogni pasto si disegna come cerchi (proteina, carboidrato, verdura) con area proporzionale ai grammi veri, fusi da un contorno inchiostro. Lo stesso linguaggio genera il segno del logo (tre cerchi fusi).
+Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdura verde, con area proporzionale ai grammi veri. Nella prima pagina i cerchi diventano grandi e una scheda di vetro li sfoca per mostrare i grammi.
 
 ## Colors
 ### Primary
-- **Inchiostro** `#121210`: testo, pulsanti principali, silhouette dei cerchi.
-- **Giallo burro** `#F4E96B`: banda d'intestazione, schede-numero (produzione, totale), scelta selezionata, carboidrati nei cerchi.
-### Secondary
-- **Salvia** `#3E7A55`: verdure nei cerchi e stato "nessun allergene".
-### Neutral
-- **Carta** `#F3F2EE` (fondo), **card** `#FCFBF8`, **muted** `#E6E4DC`, testo secondario `#56554E`, bordi `#D9D6CC`.
+- **Nero** `#0B0B0B` (fondo), **schede** `#1A1A1A`, **superfici** `#141414`/`#242424`.
+- **Testo** `#F5F5F4`, secondario `#A6A6A3`.
+### Secondary — colori pieni (testo sempre nero sopra)
+- **Lime** `#EDFF8C`: ciò che conta di più (totale, riepilogo produzione, scelta selezionata, "Prova").
+- **Menta** `#CFE1CA` e **azzurro** `#D8DFE9`: passi e pasti tipo. **Nuvola** `#EFEFEF` di riserva.
+- Cerchi del pasto: **rosa** `#F4B3AC` proteine, **lime** carboidrati, **verde** `#9EE6A0` verdure.
 ### Named Rules
-- **Colore con un lavoro.** Rosso `#B8321A` solo per allergene bloccato/annullato; arancio `#D9731A` solo per "allergeni non verificati". Nessun altro accento.
-- **Mai solo colore.** Allergeni e stati sono sempre anche scritti; i cerchi hanno la legenda dove serve.
+- **Colore con un lavoro.** Rosso `#FF7B6B` solo per allergeni bloccati/annullato; arancio `#FFB86B` solo per "non verificati".
+- **Mai solo colore.** Allergeni e stati sono sempre scritti.
 
 ## Typography
-Una sola famiglia: **Archivo** (variabile, asse larghezza).
+Una sola famiglia: **Urbanist** (variabile).
 ### Hierarchy
-- `h1`/`h2` e utility `display`: larghezza 125%, peso 800, maiuscolo, interlinea 0.98, tracking −0.01em. h1 1.85rem (telefono), h2 1.125–1.25rem.
-- `h3`: larghezza 112%, peso 700, maiuscole/minuscole.
-- Utility `num`: cifre tabellari, larghezza 112%, peso 700 — grammi e quantità.
-- Testo: Archivo 100%, 400/500, 1rem.
+- Hero 3.4rem/300 (prima pagina, con la prima parola in 600); titolo pagina 2.5rem/300 (2.4rem nelle pagine fuori dalle aree riservate); numeri grandi (`display`) 2.25rem/300 in lime o nero.
+- Titoli di sezione e nomi 1–1.125rem/600. Testo 1rem/400. Etichette 0.75rem/500. Micro 11px/600 (chip). Solo in stampa: 10px.
+- `num`: cifre tabellari 600 per grammi e quantità.
 
 ## Layout
-Colonna unica `max-w-md` (448px) con margini 24px; pila verticale con 24px tra blocchi. Intestazione a tutta larghezza (banda gialla) con contenuto allineato alla colonna. Su desktop la colonna resta centrata.
+Colonna unica `max-w-md` con margini 20px e 20px tra i blocchi. Intestazione di vetro fissa in alto a tutta larghezza.
 
 ## Elevation & Depth
-Piatto. Nessuna ombra: la profondità si fa con il colore (campi gialli, schede inchiostro) e con bordi da 1px.
+Nessuna ombra. La profondità viene dal vetro (bianco 7% + sfocatura 18px + bordo bianco 10%) sopra il nero o sopra i colori, e dal contrasto tra schede scure e schede piene.
 
 ## Shapes
-Card 14px; riquadri interni 10px; pillole per pulsanti, chip, stati. Cerchi pieni come unico motivo grafico (cerchi fusi e puntini elenco).
+Schede 28px (hero 32px, interni 24px); pillole per pulsanti, chip e ritorno; pulsanti-icona circolari in vetro. Cerchi pieni come unico motivo grafico.
 
 ## Components
 ### Buttons
-Pillole. Primario inchiostro/carta (h 44–56px), variante `lemon` giallo/inchiostro, outline con bordo inchiostro 30%, ghost per azioni secondarie.
+Primario: pillola bianca con testo nero. Variante lime. Su schede lime il pulsante diventa nero. Contorno: bordo bianco 20%.
 ### Chips
-Pillole piccole: ruolo (inchiostro con testo giallo), allergeni (rosso 10%), nessun allergene (salvia 12%), non verificato (arancio con bordo).
+Ruolo in vetro; "Prova" in lime; allergeni rosso 10%, nessun allergene verde 12%, non verificati arancio con bordo.
 ### Cards / Containers
-Card carta chiara con bordo 1px e raggio 14px; **number-card** gialla per riepiloghi che contano (Da preparare in cucina, totale ordine).
+Schede scure con bordo `#2A2A2A`; schede piene (lime, menta, azzurro) con testo nero e secondario al 65–75% di nero.
 ### Navigation
-Banda gialla: segno + NUTRILIFE a sinistra, chip ruolo + icona Esci a destra. Ritorno con freccia Lucide sopra il titolo.
+Intestazione di vetro: segno + NutriLife a sinistra; "Prova", ruolo e Esci (cerchio di vetro) a destra. Ritorno: pillola di vetro con freccia in un cerchio bianco.
 ### Meal blob (firma)
-`MealBlob` in `src/components/brand.tsx`: cerchi per famiglia, raggio ∝ √grammi, fusi con filtro SVG (sfocatura + soglia alfa). Sempre accompagnato da grammi in testo; `MealLegend` per la legenda.
+`MealBlob` in `src/components/brand.tsx`: silhouette chiara (bianco 34%) su fondo scuro, nera (`outline="var(--ink)"`) su schede chiare.
 
 ## Do's and Don'ts
 ### Do:
-- Usa la voce espansa per tutto ciò che si conta o si legge da lontano (giorni, kg, prezzi).
-- Usa il giallo come campo intero, non come puntino decorativo.
-- Disegna i pasti con `MealBlob` e i grammi veri.
+- Usa i colori pieni come schede intere con testo nero.
+- Usa il vetro per ciò che galleggia (intestazione, barra del totale, pulsanti rotondi).
+- Titoli e numeri grandi e sottili; nomi in 600.
 ### Don't:
-- Non copiare logo, forme o grafiche di Omnui: solo la direzione.
-- Niente etichette piccole sopra i titoli, niente gradienti, niente ombre decorative.
-- Niente emoji o caratteri freccia al posto delle icone: usa Lucide.
-- Niente colori per stati senza testo.
+- Non copiare logo o grafiche di Sisense: solo la direzione.
+- Niente testo bianco su colori chiari; niente ombre; niente caratteri freccia al posto delle icone.
+- Le etichette di stampa restano bianche.

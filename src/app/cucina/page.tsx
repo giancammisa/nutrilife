@@ -109,7 +109,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
         <p className="rounded-lg bg-muted p-4 text-sm">Nessun ordine per {label}.</p>
       ) : (
         <>
-          <section className="flex flex-col gap-4 rounded-[14px] bg-lemon p-5 text-ink">
+          <section className="flex flex-col gap-4 rounded-[28px] bg-lemon p-5 text-ink">
             <div className="flex items-baseline justify-between gap-3">
               <h2 className="text-xl">Da preparare</h2>
               <span className="text-sm font-medium">
@@ -137,7 +137,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
                 ))}
               </tbody>
             </table>
-            <Button asChild className="h-11">
+            <Button asChild className="h-11 bg-ink text-paper hover:bg-ink/85">
               <Link href={`/cucina/etichette?cucina=${kitchen.id}&giorno=${day}`} target="_blank">
                 Stampa le etichette ({orders.length})
               </Link>
@@ -153,7 +153,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
               <article key={o.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col">
-                    <span className="display text-lg">{o.client_name ?? "Cliente"}</span>
+                    <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
                     <span className="text-sm text-muted-foreground">
                       {SLOT_LABEL[o.meal_slot]} · {o.template_name}
                     </span>

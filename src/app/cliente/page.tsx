@@ -132,7 +132,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
           return (
             <article key={day} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-lg">
+                <h2 className="text-lg first-letter:uppercase">
                   {day === today ? "Oggi" : day === addDays(today, 1) ? "Domani" : formatDay(day)}
                 </h2>
                 <span className="text-xs text-muted-foreground">
@@ -184,7 +184,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
             <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
           </div>
           {templates.map((t) => (
-            <article key={t.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
+            <article key={t.id} className="flex flex-col gap-3 rounded-[28px] bg-sky p-5 text-ink [&_.text-muted-foreground]:text-ink/65">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
                   <h3 className="text-lg">{t.name}</h3>
@@ -195,6 +195,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
                 <MealBlob
                   items={t.meal_template_items.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))}
                   size={44}
+                  outline="var(--ink)"
                 />
               </div>
               <ul className="flex flex-col gap-1">

@@ -30,8 +30,8 @@ export function LogoMark({ className, title = "NutriLife" }: { className?: strin
 
 export function Wordmark({ className }: { className?: string }) {
   return (
-    <span className={cn("display inline-flex items-center gap-2 leading-none", className)}>
-      <LogoMark className="size-[1.35em]" title="" />
+    <span className={cn("inline-flex items-center gap-2 font-semibold leading-none tracking-[-0.02em]", className)}>
+      <LogoMark className="size-[1.4em]" title="" />
       <span>NutriLife</span>
     </span>
   );
@@ -41,10 +41,10 @@ export function Wordmark({ className }: { className?: string }) {
 // Un cerchio per famiglia di basi, area proporzionale ai grammi veri, fusi in un'unica forma.
 
 const CATEGORY_FILL: Record<string, string> = {
-  proteina: "var(--ink)",
+  proteina: "var(--rose)",
   carboidrato: "var(--lemon)",
   verdura: "var(--sage)",
-  altro: "#9A988F",
+  altro: "var(--sky)",
 };
 
 const CATEGORY_ORDER = ["proteina", "carboidrato", "verdura", "altro"];
@@ -58,10 +58,13 @@ const CATEGORY_NAME: Record<string, string> = {
 export function MealBlob({
   items,
   size = 56,
+  outline = "rgb(255 255 255 / 0.34)",
   className,
 }: {
   items: { category: string; grams: number }[];
   size?: number;
+  /** colore della silhouette fusa: chiaro su fondo scuro, "var(--ink)" su schede chiare */
+  outline?: string;
   className?: string;
 }) {
   const totals = CATEGORY_ORDER.map((c) => ({
@@ -98,8 +101,8 @@ export function MealBlob({
       <defs>
         <GooFilter id={id} blur={5} />
       </defs>
-      {/* silhouette inchiostro: i cerchi un po' più grandi, fusi */}
-      <g filter={`url(#${id})`} fill="var(--ink)">
+      {/* silhouette: i cerchi un po' più grandi, fusi */}
+      <g filter={`url(#${id})`} fill={outline}>
         {placed.map((c) => (
           <circle key={c.category} cx={c.cx} cy={c.cy} r={c.r + 3.2} />
         ))}
@@ -120,7 +123,7 @@ export function MealLegend({ className }: { className?: string }) {
         <span key={c} className="inline-flex items-center gap-1.5">
           <span
             aria-hidden
-            className="size-2.5 rounded-full ring-[1.5px] ring-ink"
+            className="size-2.5 rounded-full"
             style={{ background: CATEGORY_FILL[c] }}
           />
           {CATEGORY_NAME[c]}

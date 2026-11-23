@@ -51,8 +51,10 @@ function Choice({
       disabled={disabled}
       onClick={onSelect}
       className={cn(
-        "flex w-full flex-col gap-1 rounded-lg border p-4 text-left transition-colors disabled:opacity-50",
-        selected ? "border-ink bg-lemon ring-1 ring-ink" : "bg-card hover:border-ink/40",
+        "flex w-full flex-col gap-1 rounded-[24px] border p-4 text-left transition-colors disabled:opacity-50",
+        selected
+          ? "border-transparent bg-lemon text-ink [&_.text-muted-foreground]:text-ink/70"
+          : "bg-card hover:border-white/25",
       )}
     >
       {children}
@@ -105,10 +107,10 @@ export function OrderForm({
           >
             <span className="flex items-center justify-between gap-3">
               <span className="flex flex-col">
-                <span className="display text-base">{t.name}</span>
+                <span className="text-base font-semibold">{t.name}</span>
                 <span className="text-xs font-semibold uppercase text-muted-foreground">{SLOT_LABEL[t.slot]}</span>
               </span>
-              <MealBlob items={t.items} size={40} />
+              <MealBlob items={t.items} size={40} outline={templateId === t.id ? "var(--ink)" : undefined} />
             </span>
             <span className="text-sm text-muted-foreground">
               {t.taken
@@ -135,7 +137,7 @@ export function OrderForm({
             >
               <span className="flex items-baseline justify-between gap-3">
                 <span className="font-medium">{k.name}</span>
-                <span className="display text-base">
+                <span className="text-base font-semibold">
                   {o?.available && o.priceCents != null ? formatEuro(o.priceCents) : "non disponibile"}
                 </span>
               </span>
@@ -201,11 +203,11 @@ export function OrderForm({
         </p>
       )}
 
-      <div className="sticky bottom-0 -mx-6 flex flex-col gap-3 bg-lemon px-6 pt-4 pb-5 text-ink">
+      <div className="glass sticky bottom-3 flex flex-col gap-3 rounded-[28px] !bg-ink/70 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         {option?.available && option.priceCents != null && (
           <p className="flex items-baseline justify-between">
-            <span className="text-sm font-medium">Totale, paghi al ritiro</span>
-            <span className="display text-3xl">{formatEuro(option.priceCents)}</span>
+            <span className="text-sm text-muted-foreground">Totale, paghi al ritiro</span>
+            <span className="display text-4xl text-lemon">{formatEuro(option.priceCents)}</span>
           </p>
         )}
         <Button type="submit" size="lg" className="h-12 rounded-full text-base" disabled={!canSubmit || pending}>

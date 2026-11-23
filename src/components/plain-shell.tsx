@@ -1,22 +1,19 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/brand";
 
-// Cornice delle pagine fuori dalle aree riservate (accesso, benvenuto, invito…):
-// banda gialla con il marchio, poi il contenuto su carta.
+// Cornice delle pagine fuori dalle aree riservate (accesso, benvenuto, invito…).
 export function PlainShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="bg-lemon text-ink">
-        <div className="mx-auto flex w-full max-w-md items-center justify-between px-6 py-4">
-          <Link href="/" aria-label="NutriLife, pagina iniziale" className="text-xl">
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between px-5 py-3">
+          <Link href="/" aria-label="NutriLife, pagina iniziale" className="text-lg">
             <Wordmark />
           </Link>
-          <span className="display text-xs">Cucina 3.0</span>
+          <span className="glass rounded-full px-3 py-1 text-xs font-medium">Cucina 3.0</span>
         </div>
       </header>
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-6 pt-10 pb-16">
-        {children}
-      </main>
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-5 pt-10 pb-16">{children}</main>
     </div>
   );
 }

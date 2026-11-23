@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import "./globals.css";
 
-// Un'unica famiglia: Archivo. Espansa e pesantissima per titoli, numeri, grammi e prezzi;
-// larghezza normale per i testi. L'asse "wdth" permette entrambe le voci dallo stesso file.
-const archivo = Archivo({
-  variable: "--font-archivo",
-  subsets: ["latin"],
+// Urbanist: geometrico; sottile e grande per titoli e numeri, medio per etichette e testi.
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
+  subsets: ["latin", "latin-ext"],
   weight: "variable",
-  axes: ["wdth"],
 });
 
 export const metadata: Metadata = {
@@ -17,19 +15,21 @@ export const metadata: Metadata = {
     "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato dalla gastronomia di Altamura.",
   applicationName: "NutriLife",
   // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
-  appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F4E96B",
+  themeColor: "#0B0B0B",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="it" className={`${archivo.variable} h-full antialiased`}>
+    <html lang="it" className={`${urbanist.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

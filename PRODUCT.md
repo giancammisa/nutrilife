@@ -34,7 +34,7 @@ Una cucina di quartiere che lavora con un menu componibile di basi (proteine, ca
 ## Brand Commitments
 - Nome: **NutriLife**.
 - Motto: **"Cucina 3.0"** (sostituisce "Dimmelo prima", 24/11/2026).
-- Riferimento visivo vincolante scelto dal titolare: progetto Behance "Omnui – Longevity and Wellness Branding" (Velvele Studio) come **direzione** (palette giallo burro / nero / carta, bastoni largo e pesantissimo in maiuscolo, forme a cerchi fusi, pillole, schede gialle con numeri grandi). Logo e grafiche di NutriLife devono essere **originali**, non copiati.
+- Riferimento visivo vincolante scelto dal titolare (24/11/2026, sostituisce Omnui): progetto Behance "Sisense AI Assistant – SaaS & UX UI Dashboard Design" come **direzione**: sfondo nero, colori pieni chiari (lime, menta, azzurro, grigio chiaro), contrasti forti, effetto vetro, Urbanist sottile e grande, angoli molto arrotondati e pillole. Logo e grafiche di NutriLife restano **originali**.
 
 ## Evidence on Hand
 - Nessuna fotografia, testimonianza o dato reale di clienti ancora disponibile: non inventarne.

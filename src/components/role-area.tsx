@@ -5,8 +5,8 @@ import { Wordmark } from "@/components/brand";
 import { ROLE_LABEL, type Profile } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 
-// Cornice comune delle aree riservate: banda gialla con il marchio, ruolo e "Esci",
-// poi il titolo della pagina in voce espansa.
+// Cornice comune delle aree riservate: intestazione in vetro che resta in alto
+// (marchio, ruolo, esci), poi il titolo grande e sottile.
 export async function RoleArea({
   profile,
   title,
@@ -23,24 +23,22 @@ export async function RoleArea({
 
   return (
     <div className="flex flex-1 flex-col">
-      {betaMode && (
-        <p className="bg-ink px-6 py-1.5 text-center text-xs font-medium text-lemon">
-          Versione di prova · segnalaci qualunque problema
-        </p>
-      )}
-      <header className="bg-lemon text-ink">
-        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-6 py-4">
-          <Link href="/home" aria-label="NutriLife, vai alla tua area" className="text-xl">
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-5 py-3">
+          <Link href="/home" aria-label="NutriLife, vai alla tua area" className="text-lg">
             <Wordmark />
           </Link>
-          <div className="flex items-center gap-1.5">
-            <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-lemon">
-              {ROLE_LABEL[profile.role]}
-            </span>
+          <div className="flex items-center gap-2">
+            {betaMode && (
+              <span className="rounded-full bg-lemon px-2.5 py-1 text-[11px] font-semibold text-ink" title="Versione di prova: segnalaci qualunque problema">
+                Prova
+              </span>
+            )}
+            <span className="glass rounded-full px-3 py-1 text-xs font-medium">{ROLE_LABEL[profile.role]}</span>
             <form action={signOut}>
               <button
                 type="submit"
-                className="inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-ink/10 focus-visible:outline-2 focus-visible:outline-ink"
+                className="glass inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-lemon"
                 aria-label={`Esci${firstName ? `, ${firstName}` : ""}`}
                 title="Esci"
               >
@@ -50,18 +48,20 @@ export async function RoleArea({
           </div>
         </div>
       </header>
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-6 pt-7 pb-12">
-        <div className="flex flex-col gap-3">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-5 px-5 pt-7 pb-14">
+        <div className="flex flex-col gap-4">
           {back && (
             <Link
               href={back.href}
-              className="inline-flex w-fit items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
+              className="glass inline-flex w-fit items-center gap-2 rounded-full py-1.5 pr-4 pl-2 text-sm transition-colors hover:bg-white/15"
             >
-              <ArrowLeft className="size-4" aria-hidden />
+              <span className="inline-flex size-6 items-center justify-center rounded-full bg-paper text-ink">
+                <ArrowLeft className="size-3.5" aria-hidden />
+              </span>
               {back.label}
             </Link>
           )}
-          <h1 className="text-[1.85rem] sm:text-4xl">{title}</h1>
+          <h1 className="text-[2.5rem] sm:text-5xl">{title}</h1>
         </div>
         {children}
       </main>
@@ -71,12 +71,12 @@ export async function RoleArea({
 
 export function ComingSoon({ items }: { items: string[] }) {
   return (
-    <div className="rounded-[14px] border border-dashed border-ink/25 p-5">
-      <h2 className="text-sm">In arrivo</h2>
+    <div className="rounded-[28px] border border-dashed border-white/15 p-5">
+      <h2 className="text-sm text-muted-foreground">In arrivo</h2>
       <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-ink" />
+            <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-lemon" />
             {item}
           </li>
         ))}
