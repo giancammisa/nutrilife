@@ -7,7 +7,16 @@ import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
 import { FoodPhoto } from "@/components/food-art";
 import { MealBlob } from "@/components/brand";
+import { DayArc, type ArcDay } from "./day-arc";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
+
+const weekdayLongFmt = new Intl.DateTimeFormat("it-IT", { weekday: "long", timeZone: "UTC" });
+const weekdayShortFmt = new Intl.DateTimeFormat("it-IT", { weekday: "short", timeZone: "UTC" });
+const weekdayLong = (d: string) => {
+  const w = weekdayLongFmt.format(new Date(`${d}T12:00:00Z`));
+  return w.charAt(0).toUpperCase() + w.slice(1);
+};
+const weekdayShort = (d: string) => weekdayShortFmt.format(new Date(`${d}T12:00:00Z`)).replace(".", "");
 import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 
@@ -83,6 +92,65 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
   const canOrder = Boolean(link) && templates.length > 0;
   const justOrdered = typeof ordinato === "string" && DATE_RE.test(ordinato) ? ordinato : null;
 
+  // Momenti (pranzo/cena) per cui c'è un pasto tipo: il giorno è "pieno" se li ha già ordinati tutti.
+  const slotsWithTemplates = [...new Set(templates.map((t) => t.meal_slot))];
+  const tomorrow = addDays(today, 1);
+  const arcDays: ArcDay[] = days.map((day) => {
+    const open = isOrderOpen(day, cutoffHour);
+    return {
+      date: day,
+      label: day === today ? "Oggi" : day === tomorrow ? "Domani" : weekdayLong(day),
+      weekday: weekdayShort(day),
+      dayNum: String(Number(day.slice(8, 10))),
+      title: day === today ? `Oggi, ${formatDay(day)}` : day === tomorrow ? `Domani, ${formatDay(day)}` : formatDay(day),
+      note: open ? `Ordini ${formatCutoff(day, cutoffHour)}` : "Ordini chiusi",
+      ordered: orders.some((o) => o.pickup_date === day),
+      open,
+    };
+  });
+  const panels = days.map((day) => {
+    const dayOrders = orders.filter((o) => o.pickup_date === day);
+    const open = isOrderOpen(day, cutoffHour);
+    const full = slotsWithTemplates.every((s) => dayOrders.some((o) => o.meal_slot === s));
+    return (
+      <div key={day} className="flex flex-col gap-3">
+        {dayOrders.map((o) => (
+          <div key={o.id} className="flex flex-col gap-2 rounded-[22px] bg-grad-lime p-4 text-sm text-ink">
+            <div className="flex items-start justify-between gap-3">
+              <span className="flex flex-col">
+                <span className="font-semibold">
+                  {SLOT_LABEL[o.meal_slot]} · {o.template_name}
+                </span>
+                <span className="text-ink/70">
+                  {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
+                </span>
+              </span>
+              <span className="num">{formatEuro(o.price_cents)}</span>
+            </div>
+            {open && o.status === "confermato" && (
+              <CancelOrderButton
+                orderId={o.id}
+                label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === tomorrow ? "domani" : formatDay(day)}`}
+              />
+            )}
+          </div>
+        ))}
+        {open && canOrder && !full && (
+          <Button asChild variant={dayOrders.length ? "outline" : "default"} className="h-12 rounded-full text-base">
+            <Link href={`/cliente/ordina?giorno=${day}`}>
+              {dayOrders.length ? "Ordina un altro pasto" : "Ordina"}
+            </Link>
+          </Button>
+        )}
+        {!open && dayOrders.length === 0 && <p className="text-sm text-muted-foreground">Nessun ordine.</p>}
+        {open && !canOrder && dayOrders.length === 0 && (
+          <p className="text-sm text-muted-foreground">Potrai ordinare quando i tuoi pasti tipo saranno pronti.</p>
+        )}
+      </div>
+    );
+  });
+  const initialDay = Math.max(0, justOrdered ? days.indexOf(justOrdered) : 0);
+
   return (
     <RoleArea profile={profile} title="La mia settimana">
       {justOrdered && (
@@ -102,6 +170,8 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
           saranno pronti potrai ordinare.
         </p>
       )}
+
+      <DayArc days={arcDays} panels={panels} initial={initialDay} />
 
       <Link
         href="/cliente/allergie"
@@ -123,60 +193,6 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         <ArrowRight aria-hidden className="size-5 shrink-0" />
       </Link>
 
-      <section className="flex flex-col gap-3">
-        {days.map((day) => {
-          const dayOrders = orders.filter((o) => o.pickup_date === day);
-          const open = isOrderOpen(day, cutoffHour);
-          // Pieno se per ogni momento (pranzo/cena) con un pasto tipo c'è già un ordine.
-          const slotsWithTemplates = [...new Set(templates.map((t) => t.meal_slot))];
-          const full = slotsWithTemplates.every((s) => dayOrders.some((o) => o.meal_slot === s));
-          return (
-            <article key={day} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-lg first-letter:uppercase">
-                  {day === today ? "Oggi" : day === addDays(today, 1) ? "Domani" : formatDay(day)}
-                </h2>
-                <span className="text-xs text-muted-foreground">
-                  {open ? formatCutoff(day, cutoffHour) : "ordini chiusi"}
-                </span>
-              </div>
-
-              {dayOrders.map((o) => (
-                <div key={o.id} className="flex flex-col gap-2 rounded-lg bg-muted/50 p-3 text-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="flex flex-col">
-                      <span className="font-medium">
-                        {SLOT_LABEL[o.meal_slot]} · {o.template_name}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
-                      </span>
-                    </span>
-                    <span className="tabular-nums font-medium">{formatEuro(o.price_cents)}</span>
-                  </div>
-                  {open && o.status === "confermato" && (
-                    <CancelOrderButton
-                      orderId={o.id}
-                      label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === addDays(today, 1) ? "domani" : formatDay(day)}`}
-                    />
-                  )}
-                </div>
-              ))}
-
-              {open && canOrder && !full && (
-                <Button asChild variant={dayOrders.length ? "outline" : "default"} className="h-11 rounded-full">
-                  <Link href={`/cliente/ordina?giorno=${day}`}>
-                    {dayOrders.length ? "Ordina un altro pasto" : "Ordina"}
-                  </Link>
-                </Button>
-              )}
-              {!open && dayOrders.length === 0 && (
-                <p className="text-sm text-muted-foreground">Nessun ordine.</p>
-              )}
-            </article>
-          );
-        })}
-      </section>
 
       {templates.length > 0 && (
         <section className="flex flex-col gap-3">

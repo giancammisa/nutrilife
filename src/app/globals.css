@@ -185,6 +185,11 @@
   backdrop-filter: blur(22px) saturate(150%);
 }
 
+/* Nastro dei giorni: scheda di vetro con il bordo alto ad arco. */
+.day-arc {
+  border-radius: 50% 50% 32px 32px / 64px 64px 32px 32px;
+}
+
 /* Colori pieni in gradiente (testo sempre nero sopra). */
 @utility bg-grad-lime {
   background: linear-gradient(135deg, #F3FFB0 0%, #EDFF8C 45%, #B9EFA0 100%);
