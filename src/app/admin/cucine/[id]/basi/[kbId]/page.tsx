@@ -72,7 +72,7 @@ export default async function BaseCucinaPage({
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
         <div className="flex flex-col gap-1">
-          <h2 className="text-xl">Prezzo</h2>
+          <h2 className="section-title">Prezzo</h2>
           <p className="text-xs text-muted-foreground">
             Costo, calo e ricarico sono riservati: il cliente vede solo il prezzo del pasto.
           </p>
@@ -93,7 +93,7 @@ export default async function BaseCucinaPage({
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl">Allergeni e disponibilità</h2>
+        <h2 className="section-title">Allergeni e disponibilità</h2>
         <ActionForm action={updateKitchenBase} submitLabel="Salva allergeni">
           <input type="hidden" name="id" value={row.id} />
           <input type="hidden" name="kitchen_id" value={row.kitchen_id} />

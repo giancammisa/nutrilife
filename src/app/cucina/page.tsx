@@ -111,7 +111,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
         <>
           <section className="flex flex-col gap-4 rounded-[28px] bg-grad-lime p-5 text-ink">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-xl">Da preparare</h2>
+              <h2 className="section-title">Da preparare</h2>
               <span className="text-sm font-medium">
                 {orders.length} {orders.length === 1 ? "pasto" : "pasti"} · {formatEuro(total)}
               </span>
@@ -146,7 +146,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
 
           <section className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-xl">Ordini</h2>
+              <h2 className="section-title">Ordini</h2>
               {toPrepare > 0 && <span className="text-sm text-muted-foreground">{toPrepare} da preparare</span>}
             </div>
             {orders.map((o) => (

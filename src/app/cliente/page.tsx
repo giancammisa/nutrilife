@@ -197,7 +197,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
       {templates.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col">
-            <h2 className="text-xl">I tuoi pasti tipo</h2>
+            <h2 className="section-title">I tuoi pasti tipo</h2>
             <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
           </div>
           {templates.map((t, idx) => (

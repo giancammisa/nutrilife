@@ -75,7 +75,7 @@ export default async function NutrizionistaPage() {
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl">Invita un paziente</h2>
+        <h2 className="section-title">Invita un paziente</h2>
         <InviteForm />
       </section>
 

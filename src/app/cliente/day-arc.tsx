@@ -222,7 +222,7 @@ export function DayArc({
         className="relative flex flex-col gap-3 px-6 pt-6 pb-7"
       >
         <div className="flex flex-col">
-          <h2 className="text-xl first-letter:uppercase">{day.title}</h2>
+          <h2 className="section-title first-letter:uppercase">{day.title}</h2>
           <span className="text-xs text-muted-foreground">{day.note}</span>
         </div>
         {panels[selected]}

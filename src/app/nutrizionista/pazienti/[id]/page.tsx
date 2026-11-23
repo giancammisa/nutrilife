@@ -83,7 +83,7 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
       ))}
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl">Nuovo pasto tipo</h2>
+        <h2 className="section-title">Nuovo pasto tipo</h2>
         <ActionForm action={createTemplate} submitLabel="Crea pasto tipo" resetOnSuccess>
           <input type="hidden" name="patient_id" value={patientId} />
           <div className="flex flex-col gap-2">
@@ -155,7 +155,7 @@ function TemplateCard({
     <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col">
-          <h2 className="text-xl">{t.name}</h2>
+          <h2 className="section-title">{t.name}</h2>
           <span className="text-sm text-muted-foreground">
             {SLOT_LABEL[t.meal_slot]} · <span className="num text-foreground">{total} g</span> in tutto
           </span>

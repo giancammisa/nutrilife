@@ -160,6 +160,14 @@
   line-height: 1;
 }
 
+/* Titoli di sezione: più grandi dei nomi, sotto il titolo di pagina. */
+@utility section-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
 /* Grammi e quantità: cifre allineate. */
 @utility num {
   font-variant-numeric: tabular-nums;

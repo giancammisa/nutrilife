@@ -53,7 +53,7 @@ export default async function BasiPage() {
       })}
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="text-xl">Nuova base</h2>
+        <h2 className="section-title">Nuova base</h2>
         <ActionForm action={createBase} submitLabel="Aggiungi al catalogo" resetOnSuccess>
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Nome</Label>
