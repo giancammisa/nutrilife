@@ -9,6 +9,29 @@ import { Label } from "@/components/ui/label";
 
 type Step = "email" | "code";
 
+// Traduce gli errori di Supabase in messaggi chiari. Il codice tecnico resta visibile tra parentesi.
+function sendErrorMessage(code: string | undefined, message: string): string {
+  switch (code) {
+    case "over_email_send_rate_limit":
+      return "Il servizio email ha raggiunto il limite di invii. Riprova più tardi.";
+    case "over_request_rate_limit":
+      return "Troppe richieste in poco tempo. Aspetta qualche minuto e riprova.";
+    case "email_address_not_authorized":
+      return "Per ora le email possono arrivare solo agli indirizzi del team NutriLife.";
+    case "email_address_invalid":
+      return "Questo indirizzo email non è valido.";
+    case "otp_disabled":
+    case "signup_disabled":
+      return "Le nuove registrazioni sono disattivate.";
+    default: {
+      // "For security purposes, you can only request this after 42 seconds."
+      const seconds = message.match(/after (\d+) seconds?/)?.[1];
+      if (seconds) return `Per sicurezza puoi chiedere un nuovo codice tra ${seconds} secondi.`;
+      return "Non siamo riusciti a inviare il codice. Controlla l'email e riprova.";
+    }
+  }
+}
+
 export function LoginForm({ initialError }: { initialError?: string | null }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>("email");
@@ -32,11 +55,7 @@ export function LoginForm({ initialError }: { initialError?: string | null }) {
     });
     setLoading(false);
     if (error) {
-      setError(
-        error.status === 429
-          ? "Troppi tentativi. Aspetta qualche minuto e riprova."
-          : "Non siamo riusciti a inviare il codice. Controlla l'email e riprova.",
-      );
+      setError(`${sendErrorMessage(error.code, error.message)} (codice: ${error.code ?? error.status})`);
       return;
     }
     setStep("code");
