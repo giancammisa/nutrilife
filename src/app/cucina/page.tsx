@@ -109,7 +109,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
         <p className="rounded-lg bg-muted p-4 text-sm">Nessun ordine per {label}.</p>
       ) : (
         <>
-          <section className="flex flex-col gap-4 rounded-[28px] bg-lemon p-5 text-ink">
+          <section className="flex flex-col gap-4 rounded-[28px] bg-grad-lime p-5 text-ink">
             <div className="flex items-baseline justify-between gap-3">
               <h2 className="text-xl">Da preparare</h2>
               <span className="text-sm font-medium">

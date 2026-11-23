@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Wordmark } from "@/components/brand";
+import { CitrusSegment, CucumberSlices, Grapes, PeaPod } from "@/components/food-art";
 import { Button } from "@/components/ui/button";
 
 // Pasto d'esempio per mostrare come NutriLife legge un piatto: non sono dati di un cliente.
@@ -11,14 +12,12 @@ const ESEMPIO = [
 ];
 
 const PASSI = [
-  { n: "01", title: "Il nutrizionista", text: "prepara i tuoi pasti tipo, con basi e grammi.", bg: "bg-lemon" },
-  { n: "02", title: "Tu scegli", text: "i giorni e la gastronomia, entro le 18:00 del giorno prima.", bg: "bg-mint" },
-  { n: "03", title: "Ritiri", text: "il pasto già pesato, con l'etichetta degli allergeni.", bg: "bg-sky" },
+  { n: "01", title: "Il nutrizionista", text: "prepara i tuoi pasti tipo, con basi e grammi.", bg: "bg-grad-lime", Art: Grapes },
+  { n: "02", title: "Tu scegli", text: "i giorni e la gastronomia, entro le 18:00 del giorno prima.", bg: "bg-grad-leaf", Art: PeaPod },
+  { n: "03", title: "Ritiri", text: "il pasto già pesato, con l'etichetta degli allergeni.", bg: "bg-grad-fog", Art: CitrusSegment },
 ];
 
 export default function Home() {
-  const max = Math.max(...ESEMPIO.map((i) => i.grams));
-
   return (
     <div className="flex flex-1 flex-col">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
@@ -41,26 +40,14 @@ export default function Home() {
           </p>
         </section>
 
-        {/* Il pasto in cerchi grandi, con la scheda di vetro sopra */}
-        <section aria-labelledby="esempio" className="relative h-[19rem] overflow-hidden rounded-[32px] bg-[#141414]">
-          <div aria-hidden className="absolute inset-0">
-            {ESEMPIO.map((i, idx) => {
-              const d = 90 + 120 * Math.sqrt(i.grams / max);
-              const pos = [
-                { left: "-8%", top: "-10%" },
-                { left: "42%", top: "4%" },
-                { left: "30%", top: "38%" },
-              ][idx];
-              return (
-                <span
-                  key={i.name}
-                  className="absolute rounded-full"
-                  style={{ width: d, height: d, background: i.color, ...pos }}
-                />
-              );
-            })}
+        {/* Il pasto in controluce su verde leggero, con la scheda di vetro sopra */}
+        <section aria-labelledby="esempio" className="bg-grad-leaf relative h-[21rem] overflow-hidden rounded-[32px]">
+          <div aria-hidden className="absolute inset-0 mix-blend-multiply">
+            <CucumberSlices className="absolute -top-6 -left-8 w-56" />
+            <Grapes className="absolute top-2 -right-6 w-44 rotate-12" />
+            <CitrusSegment className="absolute top-28 left-24 w-40 -rotate-12" />
           </div>
-          <div className="glass absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] !bg-ink/45 p-4">
+          <div className="glass absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] !bg-ink/55 p-4 !backdrop-blur-2xl">
             <div className="flex items-baseline justify-between">
               <h2 id="esempio" className="text-base">
                 Pranzo tipo
@@ -83,12 +70,13 @@ export default function Home() {
 
         <ol className="grid gap-3">
           {PASSI.map((p) => (
-            <li key={p.n} className={`${p.bg} flex items-end justify-between gap-4 rounded-[28px] p-5 text-ink`}>
-              <span className="flex flex-col gap-1">
+            <li key={p.n} className={`${p.bg} relative flex items-end justify-between gap-4 overflow-hidden rounded-[28px] p-5 text-ink`}>
+              <p.Art className="pointer-events-none absolute -top-8 -right-3 w-24 rotate-12 opacity-60 mix-blend-multiply" />
+              <span className="relative flex flex-col gap-1">
                 <span className="text-lg font-semibold">{p.title}</span>
-                <span className="max-w-[26ch] text-sm leading-snug text-ink/75">{p.text}</span>
+                <span className="max-w-[22ch] text-sm leading-snug text-ink/75">{p.text}</span>
               </span>
-              <span className="display text-5xl text-ink/80" aria-hidden>
+              <span className="display relative text-5xl text-ink/80" aria-hidden>
                 {p.n}
               </span>
             </li>

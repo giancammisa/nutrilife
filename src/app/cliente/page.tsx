@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CancelOrderButton } from "@/components/cancel-order-button";
 import { requireProfile } from "@/lib/auth";
 import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
+import { CitrusSegment, CucumberSlices } from "@/components/food-art";
 import { MealBlob } from "@/components/brand";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 import { formatEuro } from "@/lib/pricing";
@@ -183,8 +184,16 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
             <h2 className="text-xl">I tuoi pasti tipo</h2>
             <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
           </div>
-          {templates.map((t) => (
-            <article key={t.id} className="flex flex-col gap-3 rounded-[28px] bg-sky p-5 text-ink [&_.text-muted-foreground]:text-ink/65">
+          {templates.map((t, idx) => (
+            <article
+              key={t.id}
+              className={`${idx % 2 ? "bg-grad-fog" : "bg-grad-leaf"} relative flex flex-col gap-3 overflow-hidden rounded-[28px] p-5 text-ink [&_.text-muted-foreground]:text-ink/65 [&>:not(svg)]:relative`}
+            >
+              {idx % 2 ? (
+                <CitrusSegment className="pointer-events-none absolute -top-10 left-1/3 w-36 opacity-30 mix-blend-multiply" />
+              ) : (
+                <CucumberSlices className="pointer-events-none absolute -top-12 left-1/4 w-40 opacity-30 mix-blend-multiply" />
+              )}
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
                   <h3 className="text-lg">{t.name}</h3>
