@@ -6,6 +6,7 @@ const BLOBS = [
   { cls: "water-c", color: "rgb(158 230 160 / 0.6)", size: "75vmax", left: "-10%", top: "45%" },
   { cls: "water-d", color: "rgb(216 223 233 / 0.8)", size: "55vmax", left: "55%", top: "60%" },
   { cls: "water-e", color: "rgb(255 255 255 / 0.7)", size: "40vmax", left: "20%", top: "25%" },
+  { cls: "water-f", color: "rgb(244 179 172 / 0.5)", size: "45vmax", left: "60%", top: "85%" },
 ];
 
 export function LivingBackground() {
