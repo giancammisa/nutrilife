@@ -10,7 +10,7 @@ export function TestLoginForm() {
   const [state, action, pending] = useActionState<TestLoginState, FormData>(testLogin, { error: null });
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form suppressHydrationWarning action={action} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email dell&apos;utente di prova</Label>
         <Input id="email" name="email" type="email" required autoComplete="off" className="h-12 text-base" />

@@ -82,7 +82,7 @@ export function LoginForm({ initialError }: { initialError?: string | null }) {
 
   if (step === "email") {
     return (
-      <form onSubmit={sendCode} className="flex flex-col gap-4">
+      <form suppressHydrationWarning onSubmit={sendCode} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <Label htmlFor="email">La tua email</Label>
           <Input
@@ -109,7 +109,7 @@ export function LoginForm({ initialError }: { initialError?: string | null }) {
   }
 
   return (
-    <form onSubmit={verifyCode} className="flex flex-col gap-4">
+    <form suppressHydrationWarning onSubmit={verifyCode} className="flex flex-col gap-4">
       <p className="text-muted-foreground">
         Abbiamo inviato un codice a <span className="font-medium text-foreground">{email}</span>.
         Controlla anche lo spam.
