@@ -112,7 +112,7 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
 
       {inactive.length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm text-muted-foreground">Pasti tipo archiviati</h2>
+          <h2 className="section-title">Pasti tipo archiviati</h2>
           {inactive.map((t) => (
             <div key={t.id} className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3 text-sm">
               <span>

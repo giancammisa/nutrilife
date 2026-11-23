@@ -81,7 +81,7 @@ export default async function NutrizionistaPage() {
 
       {(invites ?? []).length > 0 && (
         <section className="flex flex-col gap-2">
-          <h2 className="text-sm text-muted-foreground">Inviti in attesa</h2>
+          <h2 className="section-title">Inviti in attesa</h2>
           {(invites ?? []).map((i) => (
             <div key={i.id} className="flex items-center justify-between rounded-lg border bg-card p-3 text-sm">
               <span>{i.label}</span>

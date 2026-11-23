@@ -73,7 +73,7 @@ export async function RoleArea({
 export function ComingSoon({ items }: { items: string[] }) {
   return (
     <div className="rounded-[28px] border border-dashed border-ink/20 p-5">
-      <h2 className="text-sm text-muted-foreground">In arrivo</h2>
+      <h2 className="section-title">In arrivo</h2>
       <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
         {items.map((item) => (
           <li key={item} className="flex gap-2">

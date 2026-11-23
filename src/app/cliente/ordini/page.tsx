@@ -117,7 +117,7 @@ export default async function OrdiniPage() {
 
       {upcoming.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm text-muted-foreground">Prossimi</h2>
+          <h2 className="section-title">Prossimi</h2>
           {upcoming.map(card)}
         </section>
       )}
@@ -125,7 +125,7 @@ export default async function OrdiniPage() {
       {past.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-sm text-muted-foreground">Passati</h2>
+            <h2 className="section-title">Passati</h2>
             {spent > 0 && <span className="text-xs text-muted-foreground">Ritirati: {formatEuro(spent)}</span>}
           </div>
           {past.map(card)}

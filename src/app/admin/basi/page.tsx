@@ -35,7 +35,7 @@ export default async function BasiPage() {
         if (items.length === 0) return null;
         return (
           <section key={cat.value} className="flex flex-col gap-2">
-            <h2 className="text-sm text-muted-foreground">{cat.label}</h2>
+            <h2 className="section-title">{cat.label}</h2>
             {items.map((b) => (
               <Link
                 key={b.id}

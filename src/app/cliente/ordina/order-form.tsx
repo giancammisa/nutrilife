@@ -94,7 +94,7 @@ export function OrderForm({
       <input type="hidden" name="kitchen_id" value={kitchenId ?? ""} />
 
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Pasto tipo">
-        <h2 className="text-lg">Quale pasto</h2>
+        <h2 className="section-title">Quale pasto</h2>
         {templates.map((t) => (
           <Choice
             key={t.id}
@@ -122,7 +122,7 @@ export function OrderForm({
       </section>
 
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Gastronomia">
-        <h2 className="text-lg">Dove lo ritiri</h2>
+        <h2 className="section-title">Dove lo ritiri</h2>
         {kitchens.map((k) => {
           const o = options.find((x) => x.templateId === templateId && x.kitchenId === k.id);
           return (
@@ -149,7 +149,7 @@ export function OrderForm({
 
       {option?.available && (
         <section className="flex flex-col gap-3 rounded-lg border bg-card p-4" aria-live="polite">
-          <h2 className="text-lg">Allergeni</h2>
+          <h2 className="section-title">Allergeni</h2>
 
           {option.allergens.length === 0 && !option.unverified && (
             <p className="text-sm text-primary">Nessun allergene dichiarato in questo pasto.</p>

@@ -10,7 +10,7 @@ export const metadata = { title: "Informativa privacy · NutriLife" };
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-2">
-      <h2 className="text-xl">{title}</h2>
+      <h2 className="section-title">{title}</h2>
       {children}
     </section>
   );
