@@ -35,7 +35,8 @@ export async function RoleArea({
               </span>
             )}
             <span className="glass rounded-full px-3 py-1 text-xs font-medium">{ROLE_LABEL[profile.role]}</span>
-            <form action={signOut}>
+            {/* Chrome su iPhone aggiunge un suo attributo ai moduli: non è un errore dell'app */}
+            <form action={signOut} suppressHydrationWarning>
               <button
                 type="submit"
                 className="inline-flex size-9 items-center justify-center rounded-full bg-ink text-paper transition-colors hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
