@@ -6,6 +6,11 @@
 - **Login:** senza password, con **codice di 6 cifre via email** (deciso al passo 2 al posto del link: il link apre il browser e non l'app installata sul telefono).
 - **`legacy/`** non va mai su GitHub (contiene PDF caricati e password di prova).
 
+## Stato (23/11/2026)
+- Passo 0 e 1: fatti in locale e su GitHub. **Manca Vercel** (bloccato dalla verifica del telefono).
+- Passo 2: fatto e provato (accesso con codice o link, Benvenuto con consenso, area Cliente). SQL `0001` eseguito su Supabase.
+- Email: SMTP Resend con mittente provvisorio `onboarding@resend.dev` (arriva solo all'email del titolare). Serve un dominio prima dei pazienti.
+
 ## Allergeni: modello a tre stati (dalla demo)
 1. Dichiarato con conflitto con un'allergia del cliente → ordine **bloccato**.
 2. Dichiarato e sicuro → ordine permesso.
