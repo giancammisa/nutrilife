@@ -3,7 +3,19 @@ import { PRIVACY_VERSION } from "@/lib/auth";
 
 export const metadata = { title: "Informativa privacy · NutriLife" };
 
-// BOZZA: testo provvisorio, da far rivedere a un consulente privacy prima della fase di prova.
+// BOZZA: testo scritto in base a cosa fa davvero l'app (v1), da far rivedere a un consulente
+// privacy prima di aprire NutriLife ai pazienti. Le parti [tra parentesi quadre] vanno completate.
+// Se il testo cambia, aumentare PRIVACY_VERSION in src/lib/auth.ts: tutti ridaranno il consenso.
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-2">
+      <h2 className="text-xl font-extrabold">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
 export default function PrivacyPage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-6 py-12">
@@ -11,49 +23,101 @@ export default function PrivacyPage() {
         Bozza in revisione · versione {PRIVACY_VERSION}
       </p>
       <h1 className="text-4xl font-extrabold">Informativa privacy</h1>
+      <p className="text-muted-foreground">
+        NutriLife fa preparare da una gastronomia di Altamura i pasti indicati dal tuo nutrizionista.
+        Qui spieghiamo quali dati usiamo, perché e chi li vede.
+      </p>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-extrabold">Chi tratta i dati</h2>
-        <p>NutriLife, Altamura (BA). I dati di contatto completi del titolare saranno indicati qui.</p>
-      </section>
+      <Section title="Chi è il titolare">
+        <p>
+          [Ragione sociale di NutriLife], [indirizzo], Altamura (BA). Contatto per la privacy:{" "}
+          [email dedicata].
+        </p>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-extrabold">Quali dati raccogliamo</h2>
+      <Section title="Quali dati raccogliamo">
         <ul className="list-disc pl-5">
-          <li>Email, nome e cognome, telefono (facoltativo).</li>
-          <li>I pasti tipo indicati dal tuo nutrizionista: basi e grammature.</li>
-          <li>Gli ordini, il pacchetto e la gastronomia scelta.</li>
-          <li>Allergie e intolleranze, solo se le indichi, per evitare ordini pericolosi.</li>
+          <li>
+            <strong>Dati di accesso e contatto:</strong> email, nome e cognome, telefono (facoltativo).
+          </li>
+          <li>
+            <strong>Pasti tipo:</strong> le basi e le grammature che il tuo nutrizionista inserisce
+            per te.
+          </li>
+          <li>
+            <strong>Ordini:</strong> giorno, pasto, gastronomia, prezzo e stato (confermato, pronto,
+            ritirato, annullato).
+          </li>
+          <li>
+            <strong>Allergie e intolleranze</strong> (dati relativi alla salute), solo se decidi di
+            indicarle e con un consenso a parte: servono a bloccare gli ordini che contengono un tuo
+            allergene.
+          </li>
+          <li>
+            <strong>Consensi:</strong> data e versione dell&apos;informativa che hai accettato.
+          </li>
         </ul>
         <p>
-          Non raccogliamo anamnesi, peso, esami né il piano alimentare completo.
+          Non raccogliamo anamnesi, peso, misure, esami né il piano alimentare completo, che resta
+          al tuo nutrizionista.
         </p>
-      </section>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-extrabold">Perché</h2>
-        <p>
-          Per permettere alla gastronomia di preparare e pesare i tuoi pasti, al nutrizionista di
-          impostare i pasti tipo e a te di ordinarli e ritirarli.
-        </p>
-      </section>
+      <Section title="Perché li usiamo e su quale base">
+        <ul className="list-disc pl-5">
+          <li>Per farti accedere e preparare i pasti che ordini (esecuzione del servizio).</li>
+          <li>
+            Per controllare gli allergeni dei tuoi ordini (tuo consenso esplicito, che puoi ritirare
+            in ogni momento dalla pagina “Le mie allergie”).
+          </li>
+          <li>Per gli obblighi di legge collegati alla vendita, quando previsti.</li>
+        </ul>
+        <p>Non usiamo i tuoi dati per pubblicità e non li vendiamo.</p>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-extrabold">Chi li vede</h2>
-        <p>
-          Tu vedi i tuoi dati. Il tuo nutrizionista vede solo i suoi pazienti. La gastronomia vede
-          solo gli ordini che deve preparare. I dati sono conservati su server nell&apos;Unione
-          Europea.
-        </p>
-      </section>
+      <Section title="Chi li vede">
+        <ul className="list-disc pl-5">
+          <li>
+            <strong>Tu:</strong> tutti i tuoi dati.
+          </li>
+          <li>
+            <strong>Il tuo nutrizionista:</strong> il tuo nome, la tua email, le allergie che hai
+            indicato e i pasti tipo che prepara per te. Non vede i tuoi ordini.
+          </li>
+          <li>
+            <strong>La gastronomia che scegli:</strong> solo il tuo nome e cosa preparare (basi,
+            grammi, allergeni del pasto) per gli ordini fatti da lei. Non vede email, telefono né
+            le tue allergie personali.
+          </li>
+          <li>
+            <strong>NutriLife (amministrazione):</strong> per gestire il servizio e l&apos;assistenza.
+          </li>
+        </ul>
+      </Section>
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-extrabold">I tuoi diritti</h2>
+      <Section title="Dove sono conservati">
         <p>
-          Puoi chiedere in ogni momento di vedere, correggere o cancellare i tuoi dati e ritirare
-          il consenso.
+          I dati sono conservati da fornitori che agiscono per nostro conto: Supabase (database e
+          accesso, server nell&apos;Unione Europea, Francoforte), Resend (invio delle email con il
+          codice di accesso) e Vercel (pubblicazione dell&apos;app). [Da verificare con il consulente:
+          accordi di trattamento e trasferimenti fuori UE dei fornitori.]
         </p>
-      </section>
+      </Section>
+
+      <Section title="Per quanto tempo">
+        <p>
+          Finché usi NutriLife. Se chiedi di chiudere l&apos;account cancelliamo i tuoi dati, salvo
+          quelli che la legge ci obbliga a tenere più a lungo. [Periodi precisi da definire.]
+        </p>
+      </Section>
+
+      <Section title="I tuoi diritti">
+        <p>
+          Puoi chiedere di vedere, correggere o cancellare i tuoi dati, limitarne l&apos;uso, riceverne
+          una copia e ritirare il consenso, scrivendo a [email dedicata]. Puoi anche rivolgerti al
+          Garante per la protezione dei dati personali (garanteprivacy.it).
+        </p>
+      </Section>
 
       <Link href="/" className="text-primary underline">
         Torna a NutriLife

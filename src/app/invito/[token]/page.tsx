@@ -1,4 +1,4 @@
-import { getProfile } from "@/lib/auth";
+import { getProfile, hasCurrentConsent } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { rememberInviteAndLogin } from "../actions";
 import { AcceptForm } from "./accept-form";
@@ -8,7 +8,7 @@ export const metadata = { title: "Invito · NutriLife" };
 export default async function InvitoPage({ params }: PageProps<"/invito/[token]">) {
   const { token } = await params;
   const profile = await getProfile();
-  const ready = Boolean(profile?.privacy_consent_at);
+  const ready = Boolean(profile && hasCurrentConsent(profile));
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-8 px-6 py-16">

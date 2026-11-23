@@ -11,10 +11,16 @@ export type Profile = {
   full_name: string | null;
   active: boolean;
   privacy_consent_at: string | null;
+  privacy_consent_version: string | null;
 };
 
-// Versione dell'informativa privacy: se cambia il testo, si aumenta e si richiede il consenso.
-export const PRIVACY_VERSION = "2026-11-22";
+// Versione dell'informativa privacy: se cambia il testo, si aumenta e tutti ridanno il consenso.
+export const PRIVACY_VERSION = "2026-11-23";
+
+// Consenso valido solo se dato sull'informativa attuale.
+export function hasCurrentConsent(profile: Profile): boolean {
+  return Boolean(profile.privacy_consent_at) && profile.privacy_consent_version === PRIVACY_VERSION;
+}
 
 export const ROLE_HOME: Record<Role, string> = {
   cliente: "/cliente",
@@ -46,7 +52,7 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id, role, full_name, active, privacy_consent_at")
+    .select("id, role, full_name, active, privacy_consent_at, privacy_consent_version")
     .eq("id", userId)
     .single();
 
@@ -57,7 +63,7 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
 export async function requireProfile(allowed?: Role[]): Promise<Profile> {
   const profile = await getProfile();
   if (!profile) redirect((await getUserId()) ? "/profilo-mancante" : "/accedi");
-  if (!profile.privacy_consent_at) redirect("/consenso");
+  if (!hasCurrentConsent(profile)) redirect("/consenso");
   if (!profile.active) redirect("/sospeso");
   if (allowed && !allowed.includes(profile.role)) redirect(ROLE_HOME[profile.role]);
   return profile;
