@@ -4,6 +4,8 @@
 - **Allergie del cliente:** si salvano (solo la lista dei 14 allergeni UE + intolleranze), con consenso specifico. Servono a bloccare gli ordini pericolosi.
 - **Basi:** catalogo unico (`bases`, usato dal nutrizionista) + versione di ogni cucina (`kitchen_bases`, con allergeni e disponibilità).
 - **Login:** senza password, con **codice di 6 cifre via email** (deciso al passo 2 al posto del link: il link apre il browser e non l'app installata sul telefono).
+- **Prezzi (23/11/2026):** ogni gastronomia dà un prezzo **al kg** a ogni sua base, in due modi: **diretto** (prezzo di vendita al kg) oppure **dal costo** (costo in fattura al kg + **calo peso in cottura %** + **ricarico % sul costo**). Formula: costo cotto = costo ÷ (1 − calo%); prezzo = costo cotto × (1 + ricarico%). Calcolo fatto dal database. Costo, calo e ricarico sono riservati (solo admin, poi cucina). Prezzo del pasto = Σ grammi × prezzo/kg + **costo fisso per pasto** della gastronomia. Prezzo fotografato nell'ordine. **Pagamento al ritiro in gastronomia**, nessun pagamento nell'app.
+- **Pacchetti:** rinviati. Quando serviranno, sarà un **credito in euro** (non "N pasti"), perché i pasti hanno prezzi diversi.
 - **`legacy/`** non va mai su GitHub (contiene PDF caricati e password di prova).
 
 ## Stato (23/11/2026)
@@ -29,9 +31,9 @@
 | 2 | Supabase (UE) + login + `profiles` con ruoli + consenso privacy | Registrazione, consenso, home diversa per ruolo |
 | 3 | Admin: cucine, basi, allergeni + RLS | Creo una gastronomia e 5 basi con allergeni |
 | 4 | Nutrizionista: pazienti, link invito, pasti tipo | Il paziente di prova vede i suoi pasti tipo, un altro no |
-| 5 | Pacchetti caricati da admin/cucina | Il saldo mostra 10 |
-| 6 | Cliente: la mia settimana + ordina (allergeni, orario limite 18:00 Europe/Rome, scala dal saldo) | Test 17:59 sì / 18:01 no, anche al cambio dell'ora; test allergeni |
-| 7 | Cliente: il mio pacchetto + storico | Annullare prima delle 18:00 restituisce il pasto |
+| 5 | Prezzi: prezzo/kg per base (diretto o dal costo con calo e ricarico), costo fisso per gastronomia, prezzo del pasto | Pollo 10 €/kg, calo 25%, ricarico 30% → 17,33 €/kg; il cliente vede il prezzo del pasto tipo |
+| 6 | Cliente: la mia settimana + ordina (allergeni, orario limite 18:00 Europe/Rome, prezzo mostrato e fotografato, pagamento al ritiro) | Test 17:59 sì / 18:01 no, anche al cambio dell'ora; test allergeni |
+| 7 | Cliente: storico ordini e annullamento | Annullare prima delle 18:00 funziona, dopo no |
 | 8 | Cucina: ordini di domani, riepilogo produzione, etichette, pronto/ritirato | Stampa di un'etichetta vera |
 | 9 | PWA + BETA_MODE | Installata sul telefono |
 | 10 | Controllo RLS con utenti di ruoli diversi, informativa privacy, pubblicazione definitiva (con conferma) | — |
@@ -42,17 +44,19 @@
 - `kitchens`: nome, indirizzo, attiva
 - `kitchen_members`: utenti di una cucina
 - `bases`: catalogo (nome, categoria: proteina/carboidrato/verdura/altro)
-- `kitchen_bases`: base in quella cucina (allergeni, allergeni dichiarati sì/no, disponibile)
+- `kitchen_bases`: base in quella cucina (allergeni, allergeni dichiarati sì/no, disponibile, **prezzo di vendita al kg**)
+- `kitchen_base_costs`: **riservata** — modo (diretto/dal costo), costo al kg, calo peso %, ricarico %
+- `kitchens.fixed_fee_cents`: costo fisso per pasto
 - `nutritionist_patients`: nutrizionista ↔ paziente
 - `invites`: codice casuale, scadenza, usato da/quando
 - `meal_templates`: pasto tipo del paziente (nome, momento: pranzo/cena, attivo)
 - `meal_template_items`: basi + grammi
-- `packages`: cliente, una cucina, pasti totali/rimasti, riferimento scontrino, caricato da
-- `orders`: cliente, cucina, pacchetto, pasto tipo, data di ritiro, stato (confermato/pronto/ritirato/annullato), conferma "non verificato"
+- `packages`: rinviato (credito in euro)
+- `orders`: cliente, cucina, pasto tipo, prezzo fotografato, data di ritiro, stato (confermato/pronto/ritirato/annullato), conferma "non verificato"
 - `order_items`: copia di basi, grammi e allergeni al momento dell'ordine (per l'etichetta)
 - `app_settings`: BETA_MODE, orario limite
 
-Regole nel database: l'ordine passa da un'unica funzione che controlla orario limite, saldo e allergeni e scala il pasto in modo atomico. Vincolo: un solo ordine per cliente, giorno e momento.
+Regole nel database: l'ordine passa da un'unica funzione che controlla orario limite e allergeni, calcola e fotografa il prezzo. Vincolo: un solo ordine per cliente, giorno e momento.
 
 ## Grafica (dalla demo)
 - Font: Manrope (titoli), IBM Plex Sans (testo)
