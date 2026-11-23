@@ -21,7 +21,7 @@ export default function AccessoProvaPage() {
           cucina).
         </p>
       </div>
-      <AuthStage photo="uva-rosa">
+      <AuthStage photo="pompelmo">
         <TestLoginForm />
       </AuthStage>
     </PlainShell>

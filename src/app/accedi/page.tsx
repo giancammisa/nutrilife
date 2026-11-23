@@ -25,7 +25,7 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
         <h1 className="text-[2.4rem]">Accedi</h1>
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>
       </div>
-      <AuthStage photo="pera-fichi">
+      <AuthStage photo="uva-rosa">
         <LoginForm initialError={initialError} />
       </AuthStage>
       {/* SOLO SVILUPPO: scorciatoia per gli utenti di prova con password */}
