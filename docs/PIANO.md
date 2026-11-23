@@ -9,6 +9,8 @@
 ## Stato (23/11/2026)
 - Passo 0 e 1: fatti in locale e su GitHub. **Manca Vercel** (bloccato dalla verifica del telefono).
 - Passo 2: fatto e provato (accesso con codice o link, Benvenuto con consenso, area Cliente). SQL `0001` eseguito su Supabase.
+- Passo 3: fatto e provato (gastronomie, catalogo basi, allergeni a tre stati nel pannello admin). SQL `0002` eseguito su Supabase. Utente titolare = admin.
+- Vercel: account bloccato dalla verifica in due passaggi; scritto al supporto Vercel.
 - Email: SMTP Resend con mittente provvisorio `onboarding@resend.dev` (arriva solo all'email del titolare). Serve un dominio prima dei pazienti.
 
 ## Allergeni: modello a tre stati (dalla demo)
