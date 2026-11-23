@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { signOut } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,10 +8,12 @@ import { ROLE_LABEL, type Profile } from "@/lib/auth";
 export function RoleArea({
   profile,
   title,
+  back,
   children,
 }: {
   profile: Profile;
   title: string;
+  back?: { href: string; label: string };
   children: React.ReactNode;
 }) {
   const firstName = profile.full_name?.split(" ")[0] ?? "";
@@ -30,7 +33,13 @@ export function RoleArea({
       </header>
       <main className="flex flex-1 flex-col gap-6 py-8">
         <div className="flex flex-col gap-1">
-          <p className="text-muted-foreground">Ciao {firstName}</p>
+          {back ? (
+            <Link href={back.href} className="w-fit text-sm text-primary underline-offset-4 hover:underline">
+              ← {back.label}
+            </Link>
+          ) : (
+            <p className="text-muted-foreground">Ciao {firstName}</p>
+          )}
           <h1 className="text-3xl font-extrabold">{title}</h1>
         </div>
         {children}
