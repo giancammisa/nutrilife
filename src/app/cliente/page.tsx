@@ -1,6 +1,9 @@
-import { ComingSoon, RoleArea } from "@/components/role-area";
+import Link from "next/link";
+import { RoleArea } from "@/components/role-area";
+import { Button } from "@/components/ui/button";
 import { requireProfile } from "@/lib/auth";
-import { BASE_CATEGORIES } from "@/lib/allergens";
+import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
+import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,64 +17,154 @@ type Template = {
   meal_template_items: { id: string; grams: number; bases: { name: string; category: string } | null }[];
 };
 
-const SLOT_LABEL = { pranzo: "Pranzo", cena: "Cena" } as const;
+type Order = {
+  id: string;
+  pickup_date: string;
+  meal_slot: "pranzo" | "cena";
+  template_name: string;
+  price_cents: number;
+  status: "confermato" | "pronto" | "ritirato" | "annullato";
+  kitchens: { name: string } | null;
+};
 
-export default async function ClientePage() {
+const SLOT_LABEL = { pranzo: "Pranzo", cena: "Cena" } as const;
+const STATUS_LABEL = {
+  confermato: "Confermato",
+  pronto: "Pronto da ritirare",
+  ritirato: "Ritirato",
+  annullato: "Annullato",
+} as const;
+
+export default async function ClientePage({ searchParams }: PageProps<"/cliente">) {
   const profile = await requireProfile(["cliente"]);
   const supabase = await createClient();
+  const { ordinato } = await searchParams;
 
-  const [{ data: link }, { data }] = await Promise.all([
-    supabase
-      .from("nutritionist_patients")
-      .select("nutritionist:profiles!nutritionist_patients_nutritionist_id_fkey(full_name)")
-      .eq("patient_id", profile.id)
-      .maybeSingle(),
-    supabase
-      .from("meal_templates")
-      .select("id, name, meal_slot, notes, meal_template_items(id, grams, bases(name, category))")
-      .eq("patient_id", profile.id)
-      .eq("active", true)
-      .order("meal_slot")
-      .order("name"),
-  ]);
+  const today = romeToday();
+  const days = Array.from({ length: 7 }, (_, i) => addDays(today, i));
 
+  const [{ data: link }, { data: tplData }, { data: settings }, { data: ordersData }, { data: me }] =
+    await Promise.all([
+      supabase
+        .from("nutritionist_patients")
+        .select("nutritionist:profiles!nutritionist_patients_nutritionist_id_fkey(full_name)")
+        .eq("patient_id", profile.id)
+        .maybeSingle(),
+      supabase
+        .from("meal_templates")
+        .select("id, name, meal_slot, notes, meal_template_items(id, grams, bases(name, category))")
+        .eq("patient_id", profile.id)
+        .eq("active", true)
+        .order("meal_slot")
+        .order("name"),
+      supabase.from("app_settings").select("cutoff_hour").maybeSingle(),
+      supabase
+        .from("orders")
+        .select("id, pickup_date, meal_slot, template_name, price_cents, status, kitchens(name)")
+        .eq("client_id", profile.id)
+        .neq("status", "annullato")
+        .gte("pickup_date", days[0])
+        .lte("pickup_date", days[days.length - 1])
+        .order("meal_slot"),
+      supabase.from("profiles").select("allergies, intolerances").eq("id", profile.id).single(),
+    ]);
+
+  const cutoffHour = settings?.cutoff_hour ?? 18;
   const nutritionist = (link as unknown as { nutritionist: { full_name: string | null } | null } | null)
     ?.nutritionist?.full_name;
-  const templates = (data ?? []) as unknown as Template[];
+  const templates = (tplData ?? []) as unknown as Template[];
+  const orders = (ordersData ?? []) as unknown as Order[];
   const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
-
-  // Prezzo di ogni pasto tipo in ogni gastronomia attiva: lo calcola il database (meal_price_cents).
-  const { data: kitchens } = await supabase.from("kitchens").select("id, name").eq("active", true).order("name");
-  const prices = new Map<string, { kitchen: string; cents: number | null }[]>();
-  await Promise.all(
-    templates.map(async (t) => {
-      const list = await Promise.all(
-        (kitchens ?? []).map(async (k) => {
-          const { data: cents } = await supabase.rpc("meal_price_cents", { p_template: t.id, p_kitchen: k.id });
-          return { kitchen: k.name, cents: typeof cents === "number" ? cents : null };
-        }),
-      );
-      prices.set(t.id, list);
-    }),
-  );
+  const myAllergies: string[] = [...(me?.allergies ?? []), ...(me?.intolerances ?? [])];
+  const canOrder = Boolean(link) && templates.length > 0;
+  const justOrdered = typeof ordinato === "string" && DATE_RE.test(ordinato) ? ordinato : null;
 
   return (
     <RoleArea profile={profile} title="La mia settimana">
-      {!link ? (
+      {justOrdered && (
+        <p role="status" className="rounded-lg bg-primary/10 p-4 text-primary">
+          Ordine confermato per <strong>{formatDay(justOrdered)}</strong>. Paghi al ritiro in gastronomia.
+        </p>
+      )}
+
+      {!link && (
         <p className="rounded-lg bg-muted p-4 text-sm">
           Non sei ancora collegato a un nutrizionista. Chiedigli il link d&apos;invito di NutriLife.
         </p>
-      ) : (
+      )}
+      {link && templates.length === 0 && (
+        <p className="rounded-lg bg-muted p-4 text-sm">
+          {nutritionist ?? "Il tuo nutrizionista"} non ha ancora preparato i tuoi pasti tipo: quando
+          saranno pronti potrai ordinare.
+        </p>
+      )}
+
+      <Link
+        href="/cliente/allergie"
+        className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
+      >
+        <span className="flex flex-col">
+          <span className="font-medium">Le mie allergie</span>
+          <span className="text-muted-foreground">
+            {myAllergies.length === 0 ? "Nessuna indicata" : myAllergies.map(allergenName).join(", ")}
+          </span>
+        </span>
+        <span aria-hidden className="text-primary">→</span>
+      </Link>
+
+      <section className="flex flex-col gap-3">
+        {days.map((day) => {
+          const dayOrders = orders.filter((o) => o.pickup_date === day);
+          const open = isOrderOpen(day, cutoffHour);
+          // Pieno se per ogni momento (pranzo/cena) con un pasto tipo c'è già un ordine.
+          const slotsWithTemplates = [...new Set(templates.map((t) => t.meal_slot))];
+          const full = slotsWithTemplates.every((s) => dayOrders.some((o) => o.meal_slot === s));
+          return (
+            <article key={day} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <h2 className="font-heading text-lg font-extrabold first-letter:uppercase">
+                  {day === today ? "Oggi" : day === addDays(today, 1) ? "Domani" : formatDay(day)}
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  {open ? formatCutoff(day, cutoffHour) : "ordini chiusi"}
+                </span>
+              </div>
+
+              {dayOrders.map((o) => (
+                <div key={o.id} className="flex items-start justify-between gap-3 rounded-lg bg-muted/50 p-3 text-sm">
+                  <span className="flex flex-col">
+                    <span className="font-medium">
+                      {SLOT_LABEL[o.meal_slot]} · {o.template_name}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
+                    </span>
+                  </span>
+                  <span className="tabular-nums font-medium">{formatEuro(o.price_cents)}</span>
+                </div>
+              ))}
+
+              {open && canOrder && !full && (
+                <Button asChild variant={dayOrders.length ? "outline" : "default"} className="h-11 rounded-full">
+                  <Link href={`/cliente/ordina?giorno=${day}`}>
+                    {dayOrders.length ? "Ordina un altro pasto" : "Ordina"}
+                  </Link>
+                </Button>
+              )}
+              {!open && dayOrders.length === 0 && (
+                <p className="text-sm text-muted-foreground">Nessun ordine.</p>
+              )}
+            </article>
+          );
+        })}
+      </section>
+
+      {templates.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col">
             <h2 className="text-xl font-extrabold">I tuoi pasti tipo</h2>
             <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
           </div>
-          {templates.length === 0 && (
-            <p className="rounded-lg bg-muted p-4 text-sm">
-              Il tuo nutrizionista non ha ancora preparato i pasti tipo.
-            </p>
-          )}
           {templates.map((t) => (
             <article key={t.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
               <div className="flex items-baseline justify-between gap-3">
@@ -91,25 +184,10 @@ export default async function ClientePage() {
                   ))}
               </ul>
               {t.notes && <p className="text-xs text-muted-foreground">Note: {t.notes}</p>}
-              {(prices.get(t.id) ?? []).length > 0 && (
-                <ul className="mt-1 flex flex-col gap-1 border-t pt-2">
-                  {(prices.get(t.id) ?? []).map((p) => (
-                    <li key={p.kitchen} className="flex justify-between gap-3 text-sm">
-                      <span>{p.kitchen}</span>
-                      {p.cents != null ? (
-                        <span className="font-medium tabular-nums text-primary">{formatEuro(p.cents)}</span>
-                      ) : (
-                        <span className="text-muted-foreground">non disponibile</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </article>
           ))}
         </section>
       )}
-      <ComingSoon items={["Calendario per scegliere i giorni", "Ordina entro le 18:00 del giorno prima, paghi al ritiro"]} />
     </RoleArea>
   );
 }

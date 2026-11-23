@@ -14,6 +14,7 @@
 - Passo 3: fatto e provato (gastronomie, catalogo basi, allergeni a tre stati nel pannello admin). SQL `0002` eseguito su Supabase. Utente titolare = admin.
 - Passo 4: fatto e provato (ruolo da admin, invito nutrizionista → paziente, pasti tipo visibili al paziente, paziente respinto da pagine nutrizionista/admin). SQL `0003` eseguito. Utenti di prova `nutrizionista.prova@nutrilife.test` e `paziente.prova@nutrilife.test` (accesso da `/accedi/prova`, solo in locale).
 - Passo 5 (prezzi): fatto e provato. SQL `0004` eseguito. Pollo 10 €/kg, calo 25%, ricarico 30% → 17,33 €/kg (anteprima e database coincidono); zucchine 8,00 €/kg diretto; costo fisso 1,50 € → Pranzo A (150 g + 200 g) = 5,70 € visto dal paziente. Il paziente non legge i costi e non può cambiare i prezzi.
+- Passo 6 (ordini): fatto e provato. SQL `0005` eseguito. Orario limite 17:59 aperto / 18:01 chiuso verificato in app e nel database (inverno, estate, cambio ora 29/03 e 25/10/2026). Ordine reale del paziente di prova per il 25/11 (5,70 €, copia di basi/prezzi/allergeni). Rifiutati dal database: doppio ordine, ordine oltre l'orario, oltre 14 giorni, modifica diretta del prezzo, ordine con allergene del cliente (Uova). Non provato con dati reali: il caso "allergeni non verificati" con spunta (nessuna base non verificata nei dati di prova).
 - Vercel: account bloccato dalla verifica in due passaggi; scritto al supporto Vercel.
 - Email: SMTP Resend con mittente provvisorio `onboarding@resend.dev` (arriva solo all'email del titolare). Serve un dominio prima dei pazienti.
 
