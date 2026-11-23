@@ -5,6 +5,7 @@ colors:
   ink: "#0B0B0B"
   salvia: "#DFE6DA"
   salvia-grey: "#E6E7E3"
+  salvia-deep: "#D3DCCC"
   card: "rgb(255 255 255 / 0.55)"
   popover: "#FFFFFF"
   secondary: "#D3DBCD"
@@ -56,7 +57,7 @@ typography:
     letterSpacing: "-0.03em"
   day-number:
     fontFamily: "Urbanist, system-ui, sans-serif"
-    fontSize: "1.6rem"
+    fontSize: "1.85rem"
     fontWeight: 300
     lineHeight: 1
     letterSpacing: "-0.03em"
@@ -160,7 +161,7 @@ Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdu
 
 ## Colors
 ### Primary
-- **Salvia** `#DFE6DA` (fondo) che scende nel grigio `#E6E7E3`, con veli di bianco, lime e azzurro.
+- **Salvia** `#DFE6DA`: fondo **piatto**. Il grigio `#E6E7E3` e il salvia scuro `#D3DCCC` solo dentro schede e banner.
 - **Nero** `#0B0B0B`: testo, pulsanti importanti, icone da premere. Sopra il nero testo `#F5F5F4`.
 - Testo secondario `#565C53`. Schede: vetro bianco 55%.
 ### Secondary — colori pieni (testo sempre nero sopra)
@@ -199,7 +200,7 @@ Schede di vetro bianco; schede piene (lime, menta, azzurro) con testo nero e sec
 ### Navigation
 Intestazione di vetro bianco: segno + NutriLife a sinistra; "Prova", ruolo e Esci (cerchio nero) a destra. Ritorno: pillola di vetro con freccia in un cerchio nero.
 ### Nastro dei giorni (cliente)
-`DayArc` in `src/app/cliente/day-arc.tsx`: scheda di vetro a tutta larghezza con il bordo alto ad arco (`.day-arc`). I 7 giorni sono cerchi da 64px (giorno della settimana + numero) che scorrono col dito e si posano sull'arco: quello al centro è scelto, con anello nero e trattino nero sotto. Giorno già ordinato: cerchio lime con spunta nera; ordini chiusi senza ordine: cerchio sbiadito. Sotto, nella stessa scheda, data per esteso, orario limite e ordini del giorno (schede lime) oppure il pulsante nero Ordina. Tastiera: frecce sinistra/destra.
+`DayArc` in `src/app/cliente/day-arc.tsx`: su fondo piatto, un **banner ad arco di vetro** (una grande ciambella: anello esterno vetro bianco, interno salvia scuro `#D3DCCC`) a tutta larghezza. I 7 giorni sono bollini bianchi da 76px che scorrono lungo l'arco: al centro più grandi (×1.14) con contorno nero e trattino nero sotto, ai lati più piccoli (×0.84) e più in basso. Giorno già ordinato: bollino lime con spunta nera; ordini chiusi senza ordine: sbiadito. Dentro l'arco, sotto: data, orario limite, ordini del giorno (schede lime) o pulsante nero Ordina. Tastiera: frecce sinistra/destra.
 ### Immagini in controluce
 Foto di cibo tagliato sottile e traslucido (cetriolo, uva, fico, pompelmo, piselli, pera) in `public/immagini/*.webp`, componente `FoodPhoto` in `src/components/food-art.tsx`. Sempre su schede chiare con `mix-blend-multiply`, così il bianco sparisce. Usate **qua e là**, non ovunque: prima pagina (riquadro esempio a tutta foto, passi 02 e 03 a striscia sfumata a destra), pagina Accedi (striscia in alto), pasti tipo del cliente (striscia sfumata al 45%). Mai dietro numeri o allergeni senza contrasto pieno; sempre decorative (`aria-hidden`).
 ### Meal blob (firma)

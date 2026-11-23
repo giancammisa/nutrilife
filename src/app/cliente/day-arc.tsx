@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,17 +10,20 @@ export type ArcDay = {
   weekday: string; // "mer"
   dayNum: string; // "25"
   title: string; // "Mercoledì 25 novembre"
-  note: string; // "entro martedì 24 novembre alle 18:00" o "ordini chiusi"
+  note: string; // "Ordini entro …" o "Ordini chiusi"
   ordered: boolean;
   open: boolean;
 };
 
-const ITEM = 64; // diametro del cerchio del giorno
-const GAP = 14;
-const LIFT = 22; // quanto scendono i giorni ai lati, lungo l'arco
+const ITEM = 76; // diametro del bollino del giorno
+const GAP = 16;
+const BAND = 172; // spessore del banner ad arco
+const DEPTH = 74; // distanza del centro dei bollini dal bordo alto del banner
+const TOP = 8; // spazio sopra il banner
 
-// Nastro dei giorni su un arco di vetro: si scorre col dito, il giorno al centro è quello scelto
-// e sotto compare il suo dettaglio (ordini o pulsante Ordina).
+// Banner di vetro ad arco (una grande ciambella vista dall'alto) su fondo piatto:
+// i bollini dei giorni scorrono lungo l'arco, quello al centro è più grande ed è il giorno scelto.
+// Sotto, dentro l'arco, compare il dettaglio del giorno (ordini o pulsante Ordina).
 export function DayArc({
   days,
   panels,
@@ -31,31 +34,48 @@ export function DayArc({
   initial?: number;
 }) {
   const [selected, setSelected] = useState(initial);
+  const [width, setWidth] = useState(375);
+  const wrap = useRef<HTMLElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLButtonElement | null)[]>([]);
   const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
   const frame = useRef<number | null>(null);
 
-  // Posa ogni giorno sull'arco in base alla distanza dal centro.
+  const R = Math.round(width * 1.4); // raggio esterno del banner
+  const track = R - DEPTH; // raggio su cui stanno i centri dei bollini
+
+  useLayoutEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
+    ro.observe(el);
+    setWidth(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  // Posa ogni bollino sull'arco e lo ingrandisce verso il centro.
   const layout = useCallback(() => {
     const el = scroller.current;
     if (!el) return;
     const mid = el.scrollLeft + el.clientWidth / 2;
-    const half = el.clientWidth / 2;
     let nearest = 0;
     let best = Infinity;
     items.current.forEach((b, i) => {
       if (!b) return;
-      const center = b.offsetLeft + b.offsetWidth / 2;
-      const d = Math.max(-1.4, Math.min(1.4, (center - mid) / half));
-      b.style.transform = `translateY(${(d * d * LIFT).toFixed(1)}px) scale(${(1 - Math.abs(d) * 0.1).toFixed(3)})`;
-      if (Math.abs(center - mid) < best) {
-        best = Math.abs(center - mid);
+      const x = b.offsetLeft + b.offsetWidth / 2 - mid;
+      const cx = Math.min(Math.abs(x), track * 0.95);
+      const drop = track - Math.sqrt(track * track - cx * cx);
+      const t = Math.min(1, Math.abs(x) / (el.clientWidth / 2));
+      const scale = 1.14 - t * 0.3; // 1.14 al centro, 0.84 ai lati
+      b.style.transform = `translateY(${drop.toFixed(1)}px) scale(${scale.toFixed(3)})`;
+      b.style.zIndex = String(100 - Math.round(t * 50));
+      if (Math.abs(x) < best) {
+        best = Math.abs(x);
         nearest = i;
       }
     });
     return nearest;
-  }, []);
+  }, [track]);
 
   const centerOn = useCallback((i: number, smooth = true) => {
     const el = scroller.current;
@@ -68,6 +88,10 @@ export function DayArc({
     centerOn(initial, false);
     layout();
   }, [initial, centerOn, layout]);
+
+  useEffect(() => {
+    layout();
+  }, [width, layout]);
 
   function onScroll() {
     if (frame.current == null) {
@@ -97,17 +121,39 @@ export function DayArc({
   }
 
   const day = days[selected];
+  const inner = R - BAND;
 
   return (
-    <section className="day-arc glass relative -mx-5 overflow-hidden pb-6 sm:mx-0" aria-label="Giorni della settimana">
+    <section
+      ref={wrap}
+      className="relative -mx-5 overflow-hidden rounded-b-[36px] sm:mx-0"
+      aria-label="Giorni della settimana"
+    >
+      {/* il banner: anello esterno di vetro chiaro, interno un po' più scuro */}
+      <div
+        aria-hidden
+        className="glass absolute left-1/2 -translate-x-1/2 rounded-full"
+        style={{ top: TOP, width: R * 2, height: R * 2 }}
+      />
+      <div
+        aria-hidden
+        className="absolute left-1/2 -translate-x-1/2 rounded-full border-t border-white/90 bg-salvia-deep"
+        style={{ top: TOP + BAND, width: inner * 2, height: inner * 2 }}
+      />
+
       <div
         ref={scroller}
         onScroll={onScroll}
         onKeyDown={onKeyDown}
         role="tablist"
         aria-label="Scegli il giorno"
-        className="flex snap-x snap-mandatory overflow-x-auto pt-7 pb-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ gap: GAP, paddingInline: `calc(50% - ${ITEM / 2}px)` }}
+        className="relative flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          gap: GAP,
+          paddingInline: `calc(50% - ${ITEM / 2}px)`,
+          paddingTop: TOP + DEPTH - ITEM / 2,
+          height: TOP + BAND + 6,
+        }}
       >
         {days.map((d, i) => {
           const active = i === selected;
@@ -124,29 +170,27 @@ export function DayArc({
               aria-controls="giorno-dettaglio"
               tabIndex={active ? 0 : -1}
               onClick={() => choose(i)}
-              className="flex shrink-0 snap-center flex-col items-center gap-2 transition-transform duration-150 ease-out outline-none"
+              className="relative flex shrink-0 snap-center origin-top flex-col items-center gap-1.5 self-start outline-none"
               style={{ width: ITEM }}
             >
               <span
                 className={cn(
                   "relative flex flex-col items-center justify-center rounded-full leading-none transition-colors duration-150",
-                  d.ordered
-                    ? "bg-grad-lime text-ink"
-                    : "border border-white/90 bg-white/70 text-ink",
-                  !d.open && !d.ordered && "opacity-55",
-                  active && "ring-2 ring-ink ring-offset-2 ring-offset-transparent",
+                  d.ordered ? "bg-grad-lime text-ink" : "border border-white bg-white text-ink",
+                  !d.open && !d.ordered && "opacity-60",
+                  active && "outline-2 outline-offset-3 outline-ink",
                 )}
                 style={{ width: ITEM, height: ITEM }}
               >
-                <span className="text-[11px] font-semibold uppercase text-ink/60">{d.weekday}</span>
-                <span className="display text-[1.6rem]">{d.dayNum}</span>
+                <span className="text-[11px] font-semibold uppercase text-ink/55">{d.weekday}</span>
+                <span className="display text-[1.85rem]">{d.dayNum}</span>
                 {d.ordered && (
-                  <span className="absolute -top-0.5 -right-0.5 inline-flex size-5 items-center justify-center rounded-full bg-ink text-paper">
-                    <Check className="size-3" aria-hidden />
+                  <span className="absolute top-0 right-0 inline-flex size-6 items-center justify-center rounded-full bg-ink text-paper">
+                    <Check className="size-3.5" aria-hidden />
                   </span>
                 )}
               </span>
-              <span className={cn("text-xs whitespace-nowrap", active ? "font-semibold" : "text-muted-foreground")}>
+              <span className={cn("text-xs whitespace-nowrap", active ? "text-sm font-semibold" : "text-muted-foreground")}>
                 {d.label}
               </span>
               <span className="sr-only">{d.ordered ? ", già ordinato" : d.open ? "" : ", ordini chiusi"}</span>
@@ -155,14 +199,18 @@ export function DayArc({
         })}
       </div>
 
-      {/* segno sotto il giorno scelto */}
-      <span aria-hidden className="absolute top-[8.1rem] left-1/2 h-1 w-8 -translate-x-1/2 rounded-full bg-ink" />
+      {/* segno sotto il giorno scelto, sul bordo interno dell'arco */}
+      <span
+        aria-hidden
+        className="absolute left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-ink"
+        style={{ top: TOP + BAND - 14 }}
+      />
 
       <div
         id="giorno-dettaglio"
         role="tabpanel"
         aria-labelledby={`giorno-${day.date}`}
-        className="flex flex-col gap-3 px-6"
+        className="relative flex flex-col gap-3 px-6 pt-5 pb-7"
       >
         <div className="flex flex-col">
           <h2 className="text-xl first-letter:uppercase">{day.title}</h2>
