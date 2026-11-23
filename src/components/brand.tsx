@@ -58,7 +58,7 @@ const CATEGORY_NAME: Record<string, string> = {
 export function MealBlob({
   items,
   size = 56,
-  outline = "rgb(255 255 255 / 0.34)",
+  outline = "var(--ink)",
   className,
 }: {
   items: { category: string; grams: number }[];

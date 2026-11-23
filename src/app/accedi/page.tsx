@@ -31,7 +31,7 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
       {process.env.NODE_ENV === "development" && (
         <Link
           href="/accedi/prova"
-          className="glass w-fit self-center rounded-full px-4 py-2 text-sm font-medium hover:bg-white/15"
+          className="glass w-fit self-center rounded-full px-4 py-2 text-sm font-medium hover:bg-white/90"
         >
           Account di prova (con password)
         </Link>

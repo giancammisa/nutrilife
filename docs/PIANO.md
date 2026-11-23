@@ -64,9 +64,10 @@
 
 Regole nel database: l'ordine passa da un'unica funzione che controlla orario limite e allergeni, calcola e fotografa il prezzo. Vincolo: un solo ordine per cliente, giorno e momento.
 
-## Grafica — "Cucina 3.0" di notte (24/11/2026)
+## Grafica — "Cucina 3.0" di giorno (24/11/2026)
 - Regole complete in `DESIGN.md` (direzione ispirata a Behance "Sisense AI Assistant"; logo e grafiche originali). Sostituisce la prova "Omnui" (giallo/inchiostro), scartata dal titolare.
-- Fondo nero #0B0B0B, schede #1A1A1A; colori pieni con testo nero: lime #EDFF8C, menta #CFE1CA, azzurro #D8DFE9; vetro per intestazione e barra del totale.
+- Fondo salvia chiaro #DFE6DA che sfuma nel grigio; schede di vetro bianco; colori pieni in sfumatura con testo nero: lime, verde leggero, grigio. Nero #0B0B0B per i pulsanti importanti (Accedi, Ordina, Conferma) e le icone da premere.
+- Foto di cibo in controluce qua e là (`public/immagini`). **Prima di pubblicare servono foto con licenza d'uso.**
 - Urbanist: sottile e grande per titoli e numeri, 600 per i nomi.
 - Segno: tre cerchi fusi. Mossa firma: pasto in cerchi fusi (proteina rosa, carboidrato lime, verdura verde).
 - Motto: **Cucina 3.0**.

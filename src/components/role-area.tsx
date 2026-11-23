@@ -23,7 +23,7 @@ export async function RoleArea({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-5 py-3">
           <Link href="/home" aria-label="NutriLife, vai alla tua area" className="text-lg">
             <Wordmark />
@@ -38,7 +38,7 @@ export async function RoleArea({
             <form action={signOut}>
               <button
                 type="submit"
-                className="glass inline-flex size-9 items-center justify-center rounded-full transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-lemon"
+                className="inline-flex size-9 items-center justify-center rounded-full bg-ink text-paper transition-colors hover:bg-ink/85 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                 aria-label={`Esci${firstName ? `, ${firstName}` : ""}`}
                 title="Esci"
               >
@@ -53,9 +53,9 @@ export async function RoleArea({
           {back && (
             <Link
               href={back.href}
-              className="glass inline-flex w-fit items-center gap-2 rounded-full py-1.5 pr-4 pl-2 text-sm transition-colors hover:bg-white/15"
+              className="glass inline-flex w-fit items-center gap-2 rounded-full py-1.5 pr-4 pl-2 text-sm transition-colors hover:bg-white/90"
             >
-              <span className="inline-flex size-6 items-center justify-center rounded-full bg-paper text-ink">
+              <span className="inline-flex size-6 items-center justify-center rounded-full bg-ink text-paper">
                 <ArrowLeft className="size-3.5" aria-hidden />
               </span>
               {back.label}
@@ -71,12 +71,12 @@ export async function RoleArea({
 
 export function ComingSoon({ items }: { items: string[] }) {
   return (
-    <div className="rounded-[28px] border border-dashed border-white/15 p-5">
+    <div className="rounded-[28px] border border-dashed border-ink/20 p-5">
       <h2 className="text-sm text-muted-foreground">In arrivo</h2>
       <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-lemon" />
+            <span aria-hidden className="mt-1.5 size-1.5 shrink-0 rounded-full bg-ink" />
             {item}
           </li>
         ))}

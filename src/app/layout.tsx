@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato dalla gastronomia di Altamura.",
   applicationName: "NutriLife",
   // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
-  appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },
   formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0B0B",
-  colorScheme: "dark",
+  themeColor: "#DFE6DA",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

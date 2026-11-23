@@ -19,6 +19,8 @@
   --color-sage: var(--sage);
   --color-leaf: var(--leaf);
   --color-fog: var(--fog);
+  --color-salvia: var(--salvia);
+  --color-ok: var(--ok);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,54 +60,57 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* NutriLife "Cucina 3.0" — notte: fondo nero, schede scure, colori pieni chiari con testo nero,
-   vetro per intestazione e pulsanti. Rosso/arancio solo per gli allergeni. */
+/* NutriLife "Cucina 3.0" — giorno: fondo salvia chiaro e grigio, vetro bianco,
+   colori pieni con testo nero, NERO per le azioni che contano (Accedi, Ordina, icone da premere).
+   Rosso/arancio solo per gli allergeni. */
 :root {
-  --ink: #0B0B0B;        /* nero di fondo e testo sulle schede chiare */
-  --paper: #F5F5F4;      /* testo chiaro */
+  --ink: #0B0B0B;        /* nero: testo, pulsanti importanti, icone da premere */
+  --paper: #F5F5F4;      /* testo chiaro sopra il nero */
   --lemon: #EDFF8C;      /* lime: ciò che conta di più */
-  --sage: #9EE6A0;       /* verde: verdure, "tutto a posto" */
+  --sage: #9EE6A0;       /* verde: verdure nei cerchi */
   --mint: #CFE1CA;
   --sky: #D8DFE9;
   --rose: #F4B3AC;       /* proteine nei cerchi */
   --cloud: #EFEFEF;
   --leaf: #DCE8D2;       /* verde leggero: schede chiare */
   --fog: #E3E3DF;        /* grigio chiaro: schede chiare */
+  --salvia: #DFE6DA;     /* fondo */
+  --ok: #2E6B35;         /* testo "nessun allergene" */
 
-  --background: var(--ink);
-  --foreground: var(--paper);
-  --card: rgb(255 255 255 / 0.06);   /* schede di vetro */
-  --card-foreground: var(--paper);
-  --popover: #1A1A1A;
-  --popover-foreground: var(--paper);
-  --primary: var(--paper);
-  --primary-foreground: var(--ink);
-  --secondary: #242424;
-  --secondary-foreground: var(--paper);
-  --muted: #242424;
-  --muted-foreground: #A6A6A3;
+  --background: var(--salvia);
+  --foreground: var(--ink);
+  --card: rgb(255 255 255 / 0.55);   /* schede di vetro bianco */
+  --card-foreground: var(--ink);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: #D3DBCD;
+  --secondary-foreground: var(--ink);
+  --muted: rgb(11 11 11 / 0.05);
+  --muted-foreground: #565C53;
   --accent: var(--lemon);
   --accent-foreground: var(--ink);
-  --destructive: #FF7B6B;
-  --warning: #FFB86B;
-  --border: rgb(255 255 255 / 0.1);
-  --input: #333333;
-  --ring: var(--lemon);
+  --destructive: #B8322A;
+  --warning: #9A5300;
+  --border: rgb(11 11 11 / 0.09);
+  --input: rgb(11 11 11 / 0.18);
+  --ring: var(--ink);
   --chart-1: var(--lemon);
   --chart-2: var(--sage);
   --chart-3: var(--sky);
   --chart-4: var(--rose);
   --chart-5: var(--cloud);
   --radius: 1.75rem;
-  --sidebar: #1A1A1A;
-  --sidebar-foreground: var(--paper);
-  --sidebar-primary: var(--paper);
-  --sidebar-primary-foreground: var(--ink);
-  --sidebar-accent: #242424;
-  --sidebar-accent-foreground: var(--paper);
-  --sidebar-border: #2A2A2A;
-  --sidebar-ring: var(--lemon);
-  color-scheme: dark;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--ink);
+  --sidebar-primary-foreground: var(--paper);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: rgb(11 11 11 / 0.09);
+  --sidebar-ring: var(--ink);
+  color-scheme: light;
 }
 
 @layer base {
@@ -114,14 +119,14 @@
   }
   body {
     @apply text-foreground;
-    /* nero con un velo verde: il vetro sopra prende colore */
+    /* salvia chiaro che sfuma nel grigio, con veli di luce: il vetro sopra prende colore */
     background:
-      radial-gradient(90% 55% at 100% 0%, rgb(158 230 160 / 0.16), transparent 70%),
-      radial-gradient(80% 45% at 0% 55%, rgb(237 255 140 / 0.07), transparent 70%),
-      radial-gradient(90% 50% at 100% 100%, rgb(216 223 233 / 0.08), transparent 70%),
-      linear-gradient(180deg, #0B0B0B 0%, #101411 100%);
+      radial-gradient(90% 55% at 100% 0%, rgb(255 255 255 / 0.7), transparent 70%),
+      radial-gradient(80% 45% at 0% 55%, rgb(237 255 140 / 0.22), transparent 70%),
+      radial-gradient(90% 50% at 100% 100%, rgb(216 223 233 / 0.6), transparent 70%),
+      linear-gradient(180deg, #DFE6DA 0%, #E6E7E3 100%);
     background-attachment: fixed;
-    background-color: var(--ink);
+    background-color: var(--salvia);
   }
   html {
     @apply font-sans;
@@ -144,10 +149,10 @@
     color: var(--ink);
   }
   input, textarea, select {
-    caret-color: var(--lemon);
+    caret-color: var(--ink);
   }
   html {
-    scrollbar-color: #3a3a3a transparent;
+    scrollbar-color: rgb(11 11 11 / 0.25) transparent;
   }
 }
 
@@ -165,17 +170,17 @@
   font-weight: 600;
 }
 
-/* Vetro: superficie traslucida e sfocata sopra il nero. */
+/* Vetro: superficie bianca traslucida e sfocata sopra il salvia. */
 @utility glass {
-  background: linear-gradient(160deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.04));
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.4));
   -webkit-backdrop-filter: blur(22px) saturate(160%);
   backdrop-filter: blur(22px) saturate(160%);
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid rgb(255 255 255 / 0.8);
 }
 
-/* Le schede scure diventano vetro: traslucide, sfocate, con un filo di luce in alto. */
+/* Le schede diventano vetro bianco: traslucide, sfocate, con un filo di luce in alto. */
 .bg-card {
-  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0));
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0));
   -webkit-backdrop-filter: blur(22px) saturate(150%);
   backdrop-filter: blur(22px) saturate(150%);
 }

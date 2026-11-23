@@ -54,7 +54,7 @@ function Choice({
         "flex w-full flex-col gap-1 rounded-[24px] border p-4 text-left transition-colors disabled:opacity-50",
         selected
           ? "border-transparent bg-lemon text-ink [&_.text-muted-foreground]:text-ink/70"
-          : "bg-card hover:border-white/25",
+          : "bg-card hover:border-ink/25",
       )}
     >
       {children}
@@ -203,14 +203,14 @@ export function OrderForm({
         </p>
       )}
 
-      <div className="glass sticky bottom-3 flex flex-col gap-3 rounded-[28px] !bg-ink/70 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <div className="sticky bottom-3 flex flex-col gap-3 rounded-[28px] border border-white/10 bg-ink/90 p-4 text-paper backdrop-blur-xl text-paper pb-[max(1rem,env(safe-area-inset-bottom))]">
         {option?.available && option.priceCents != null && (
           <p className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Totale, paghi al ritiro</span>
+            <span className="text-sm text-paper/70">Totale, paghi al ritiro</span>
             <span className="display text-4xl text-lemon">{formatEuro(option.priceCents)}</span>
           </p>
         )}
-        <Button type="submit" size="lg" className="h-12 rounded-full text-base" disabled={!canSubmit || pending}>
+        <Button type="submit" size="lg" variant="lemon" className="h-12 rounded-full text-base" disabled={!canSubmit || pending}>
           {pending ? "Invio…" : "Conferma ordine"}
         </Button>
       </div>

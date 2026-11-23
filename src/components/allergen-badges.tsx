@@ -17,7 +17,7 @@ export function AllergenBadges({
     return (
       <span
         className={cn(
-          "inline-flex w-fit items-center rounded-full border border-warning/60 bg-warning/12 px-2.5 py-0.5 text-xs font-semibold text-foreground",
+          "inline-flex w-fit items-center rounded-full border border-warning/60 bg-warning/10 px-2.5 py-0.5 text-xs font-semibold text-foreground",
           className,
         )}
       >
@@ -30,7 +30,7 @@ export function AllergenBadges({
     return (
       <span
         className={cn(
-          "inline-flex w-fit items-center rounded-full bg-sage/12 px-2.5 py-0.5 text-xs font-semibold text-sage",
+          "inline-flex w-fit items-center rounded-full bg-sage/35 px-2.5 py-0.5 text-xs font-semibold text-ok",
           className,
         )}
       >

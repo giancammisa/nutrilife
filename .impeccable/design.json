@@ -83,9 +83,9 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Azione principale: pillola bianca.",
+      "description": "Azione principale: pillola nera.",
       "html": "<button class=\"ds-btn\">Conferma ordine</button>",
-      "css": ".ds-btn{background:#F5F5F4;color:#0B0B0B;height:48px;padding:0 20px;border:0;border-radius:9999px;font:600 1rem Urbanist,system-ui,sans-serif;transition:background .15s ease-out}.ds-btn:hover{background:#e3e3e1}.ds-btn:focus-visible{outline:2px solid #EDFF8C;outline-offset:3px}"
+      "css": ".ds-btn{background:#0B0B0B;color:#F5F5F4;height:48px;padding:0 20px;border:0;border-radius:9999px;font:600 1rem Urbanist,system-ui,sans-serif;transition:background .15s ease-out}.ds-btn:hover{background:#2a2a2a}.ds-btn:focus-visible{outline:2px solid #0B0B0B;outline-offset:3px}"
     },
     {
       "name": "Glass header",
@@ -93,7 +93,7 @@
       "refersTo": "card",
       "description": "Intestazione di vetro fissa in alto.",
       "html": "<header class=\"ds-head\"><b>NutriLife</b><span class=\"ds-glass\">Cliente</span></header>",
-      "css": ".ds-head{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(11,11,11,.6);backdrop-filter:blur(24px);color:#F5F5F4;font:600 1.1rem Urbanist,sans-serif}.ds-glass{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);border-radius:9999px;padding:4px 12px;font:500 .75rem Urbanist,sans-serif}"
+      "css": ".ds-head{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:rgba(255,255,255,.45);backdrop-filter:blur(24px);color:#0B0B0B;font:600 1.1rem Urbanist,sans-serif}.ds-glass{background:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.8);backdrop-filter:blur(18px);border-radius:9999px;padding:4px 12px;font:500 .75rem Urbanist,sans-serif}"
     },
     {
       "name": "Lime card",
@@ -107,16 +107,16 @@
       "name": "Allergen chips",
       "kind": "chip",
       "refersTo": "chip-beta",
-      "description": "Stati allergeni su fondo scuro.",
+      "description": "Stati allergeni su fondo chiaro.",
       "html": "<span class=\"ds-c ds-r\">Uova</span> <span class=\"ds-c ds-g\">Nessun allergene</span>",
-      "css": ".ds-c{display:inline-flex;border-radius:9999px;padding:2px 10px;font:600 .75rem Urbanist,sans-serif}.ds-r{background:rgba(255,123,107,.12);color:#FF7B6B}.ds-g{background:rgba(158,230,160,.12);color:#9EE6A0}"
+      "css": ".ds-c{display:inline-flex;border-radius:9999px;padding:2px 10px;font:600 .75rem Urbanist,sans-serif}.ds-r{background:rgba(184,50,42,.1);color:#B8322A}.ds-g{background:rgba(158,230,160,.35);color:#2E6B35}"
     }
   ],
   "narrative": {
-    "northStar": "Cucina 3.0 di notte",
-    "overview": "Fondo nero, schede scure e schede piene chiare con testo nero; vetro per ciò che galleggia; Urbanist sottile e grande per titoli e numeri; il pasto in cerchi fusi colorati.",
+    "northStar": "Cucina 3.0 di giorno",
+    "overview": "Fondo salvia chiaro e grigio, schede di vetro bianco e schede piene chiare con testo nero; nero per i pulsanti importanti; Urbanist sottile e grande; il pasto in cerchi fusi colorati; foto di cibo in controluce.",
     "keyCharacteristics": [
-      "Fondo nero e contrasti forti",
+      "Fondo salvia chiaro, nero per ciò che si preme",
       "Colori pieni con testo nero",
       "Vetro per intestazione e barra del totale",
       "Urbanist sottile e grande"

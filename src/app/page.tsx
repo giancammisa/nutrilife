@@ -20,10 +20,10 @@ const PASSI: { n: string; title: string; text: string; bg: string; foto: FotoNam
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-5 py-3">
           <Wordmark className="text-lg" />
-          <Link href="/privacy" className="glass rounded-full px-3 py-1 text-xs font-medium hover:bg-white/15">
+          <Link href="/privacy" className="glass rounded-full px-3 py-1 text-xs font-medium hover:bg-white/90">
             Privacy
           </Link>
         </div>
@@ -43,7 +43,7 @@ export default function Home() {
         {/* Il pasto in controluce su verde leggero, con la scheda di vetro sopra */}
         <section aria-labelledby="esempio" className="bg-grad-leaf relative h-[21rem] overflow-hidden rounded-[32px]">
           <FoodPhoto name="cetriolo" priority className="absolute inset-0 h-full w-full object-cover object-top" />
-          <div className="glass absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] !bg-ink/55 p-4 !backdrop-blur-2xl">
+          <div className="absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] border border-white/15 bg-ink/75 p-4 text-paper backdrop-blur-2xl">
             <div className="flex items-baseline justify-between">
               <h2 id="esempio" className="text-base">
                 Pranzo tipo
@@ -88,7 +88,7 @@ export default function Home() {
         <Button asChild size="lg" className="mt-2 h-14 text-base">
           <Link href="/home">
             Accedi
-            <span className="ml-1 inline-flex size-8 items-center justify-center rounded-full bg-ink text-paper">
+            <span className="ml-1 inline-flex size-8 items-center justify-center rounded-full bg-lemon text-ink">
               <ArrowRight className="size-4" aria-hidden />
             </span>
           </Link>

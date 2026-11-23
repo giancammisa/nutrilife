@@ -5,7 +5,7 @@ import { Wordmark } from "@/components/brand";
 export function PlainShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink/60 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-5 py-3">
           <Link href="/" aria-label="NutriLife, pagina iniziale" className="text-lg">
             <Wordmark />

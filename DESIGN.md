@@ -3,14 +3,16 @@ name: NutriLife
 description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da una gastronomia di Altamura.
 colors:
   ink: "#0B0B0B"
-  surface: "#141414"
-  card: "rgb(255 255 255 / 0.06)"
-  popover: "#1A1A1A"
-  muted: "#242424"
-  border: "rgb(255 255 255 / 0.1)"
-  input: "#333333"
+  salvia: "#DFE6DA"
+  salvia-grey: "#E6E7E3"
+  card: "rgb(255 255 255 / 0.55)"
+  popover: "#FFFFFF"
+  secondary: "#D3DBCD"
+  border: "rgb(11 11 11 / 0.09)"
+  input: "rgb(11 11 11 / 0.18)"
   paper: "#F5F5F4"
-  muted-text: "#A6A6A3"
+  muted-text: "#565C53"
+  ok: "#2E6B35"
   lemon: "#EDFF8C"
   mint: "#CFE1CA"
   sky: "#D8DFE9"
@@ -27,10 +29,10 @@ colors:
   grad-sky-light: "#E8EDF4"
   rose: "#F4B3AC"
   sage: "#9EE6A0"
-  destructive: "#FF7B6B"
-  warning: "#FFB86B"
-  glass-fill: "rgb(255 255 255 / 0.12)"
-  glass-edge: "rgb(255 255 255 / 0.12)"
+  destructive: "#B8322A"
+  warning: "#9A5300"
+  glass-fill: "rgb(255 255 255 / 0.75)"
+  glass-edge: "rgb(255 255 255 / 0.8)"
   print-white: "#fff"
   print-black: "#000"
 typography:
@@ -105,8 +107,8 @@ spacing:
   card: "20px"
 components:
   button-primary:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.paper}"
     rounded: "{rounded.pill}"
     height: "48px"
     padding: "0 20px"
@@ -117,7 +119,7 @@ components:
     height: "48px"
   card:
     backgroundColor: "{colors.card}"
-    textColor: "{colors.paper}"
+    textColor: "{colors.ink}"
     rounded: "{rounded.card}"
     padding: "20px"
   fill-card-lemon:
@@ -145,22 +147,23 @@ components:
 # Design System: NutriLife
 
 ## Overview
-"Cucina 3.0" di notte: un pannello di precisione per il cibo. **Fondo nero**, schede scure e, accanto, **schede piene a colori chiari con testo nero** che fanno il contrasto. Il **vetro** (traslucido e sfocato) tiene insieme intestazione, pulsanti rotondi e la barra del totale. Titoli e numeri in **Urbanist sottile e grande**. Direzione ispirata al progetto Behance "Sisense AI Assistant" (palette, contrasti, vetro, forme); logo, cerchi del pasto e grafiche sono originali di NutriLife.
+"Cucina 3.0" di giorno: un pannello di precisione per il cibo. **Fondo salvia chiaro** che sfuma nel **grigio chiaro**, schede di **vetro bianco** (traslucide e sfocate), e accanto **schede piene a colori chiari** (lime, verde leggero, grigio) con testo nero. Il **nero** è riservato a ciò che si preme e conta: Accedi, Ordina, Conferma, Esci, la freccia di ritorno, la barra del totale. Titoli e numeri in **Urbanist sottile e grande**. Foto di cibo in controluce qua e là.
 
-Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdura verde, con area proporzionale ai grammi veri. Nella prima pagina i cerchi diventano grandi e una scheda di vetro li sfoca per mostrare i grammi.
+Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdura verde, con area proporzionale ai grammi veri.
 
 ## Colors
 ### Primary
-- **Nero** `#0B0B0B` (fondo), **schede** `#1A1A1A`, **superfici** `#141414`/`#242424`.
-- **Testo** `#F5F5F4`, secondario `#A6A6A3`.
+- **Salvia** `#DFE6DA` (fondo) che scende nel grigio `#E6E7E3`, con veli di bianco, lime e azzurro.
+- **Nero** `#0B0B0B`: testo, pulsanti importanti, icone da premere. Sopra il nero testo `#F5F5F4`.
+- Testo secondario `#565C53`. Schede: vetro bianco 55%.
 ### Secondary — colori pieni (testo sempre nero sopra)
-- **Lime** `#EDFF8C`: ciò che conta di più (totale, riepilogo produzione, scelta selezionata, "Prova").
-- **Verde leggero** `#DCE8D2` e **grigio chiaro** `#E3E3DF`: schede piene che si alternano (pasti tipo, passi). **Menta** `#CFE1CA`, **azzurro** `#D8DFE9`, **nuvola** `#EFEFEF` per sfumare.
-- **Gradienti**: ogni colore pieno è una sfumatura (`bg-grad-lime`, `bg-grad-leaf`, `bg-grad-fog`, `bg-grad-sky`), mai un gradiente sul testo.
-- **Fondo**: nero che scende in verde notte `#101411`, con veli di verde, lime e azzurro: il vetro sopra prende colore.
-- Cerchi del pasto: **rosa** `#F4B3AC` proteine, **lime** carboidrati, **verde** `#9EE6A0` verdure.
+- **Lime** `#EDFF8C`: ciò che conta di più (totale, riepilogo produzione, scelta selezionata, "Prova", pulsante sulla barra nera).
+- **Verde leggero** `#DCE8D2` e **grigio chiaro** `#E3E3DF`: schede piene che si alternano. **Menta**, **azzurro**, **nuvola** per sfumare.
+- **Gradienti**: ogni colore pieno è una sfumatura (`bg-grad-lime`, `bg-grad-leaf`, `bg-grad-fog`, `bg-grad-sky`), mai sul testo.
+- Cerchi del pasto: **rosa** `#F4B3AC` proteine, **lime** carboidrati, **verde** `#9EE6A0` verdure; contorno nero.
 ### Named Rules
-- **Colore con un lavoro.** Rosso `#FF7B6B` solo per allergeni bloccati/annullato; arancio `#FFB86B` solo per "non verificati".
+- **Il nero si preme.** Un solo pulsante nero per schermata (l'azione principale) più le icone rotonde; il resto contorno o vetro.
+- **Colore con un lavoro.** Rosso `#B8322A` solo per allergeni bloccati/annullato; arancio `#9A5300` solo per "non verificati"; verde scuro `#2E6B35` per "nessun allergene".
 - **Mai solo colore.** Allergeni e stati sono sempre scritti.
 
 ## Typography
@@ -174,31 +177,32 @@ Una sola famiglia: **Urbanist** (variabile).
 Colonna unica `max-w-md` con margini 20px e 20px tra i blocchi. Intestazione di vetro fissa in alto a tutta larghezza.
 
 ## Elevation & Depth
-Nessuna ombra. La profondità viene dal vetro (bianco 12→4% in sfumatura + sfocatura 22px + bordo bianco 12%) sopra il fondo velato di verde, e dal contrasto tra schede di vetro e schede piene. Tutte le schede scure (`bg-card`) sono di vetro; i menu a comparsa restano pieni `#1A1A1A`.
+Nessuna ombra. La profondità viene dal vetro bianco (75→40% + sfocatura 22px + bordo bianco 80%) sopra il fondo salvia, e da poche superfici nere piene (barra del totale, scheda dei grammi sulla foto) che fanno il contrasto. I menu a comparsa sono bianchi pieni.
 
 ## Shapes
 Schede 28px (hero 32px, interni 24px); pillole per pulsanti, chip e ritorno; pulsanti-icona circolari in vetro. Cerchi pieni come unico motivo grafico.
 
 ## Components
 ### Buttons
-Primario: pillola bianca con testo nero. Variante lime. Su schede lime il pulsante diventa nero. Contorno: bordo bianco 20%.
+Primario: pillola **nera** con testo chiaro (Accedi, Ordina). Sulla barra nera del totale il pulsante è lime. Contorno: bordo nero 20%.
 ### Chips
 Ruolo in vetro; "Prova" in lime; allergeni rosso 10%, nessun allergene verde 12%, non verificati arancio con bordo.
 ### Cards / Containers
-Schede scure con bordo `#2A2A2A`; schede piene (lime, menta, azzurro) con testo nero e secondario al 65–75% di nero.
+Schede di vetro bianco; schede piene (lime, menta, azzurro) con testo nero e secondario al 65–75% di nero.
 ### Navigation
-Intestazione di vetro: segno + NutriLife a sinistra; "Prova", ruolo e Esci (cerchio di vetro) a destra. Ritorno: pillola di vetro con freccia in un cerchio bianco.
+Intestazione di vetro bianco: segno + NutriLife a sinistra; "Prova", ruolo e Esci (cerchio nero) a destra. Ritorno: pillola di vetro con freccia in un cerchio nero.
 ### Immagini in controluce
 Foto di cibo tagliato sottile e traslucido (cetriolo, uva, fico, pompelmo, piselli, pera) in `public/immagini/*.webp`, componente `FoodPhoto` in `src/components/food-art.tsx`. Sempre su schede chiare con `mix-blend-multiply`, così il bianco sparisce. Usate **qua e là**, non ovunque: prima pagina (riquadro esempio a tutta foto, passi 02 e 03 a striscia sfumata a destra), pagina Accedi (striscia in alto), pasti tipo del cliente (striscia sfumata al 45%). Mai dietro numeri o allergeni senza contrasto pieno; sempre decorative (`aria-hidden`).
 ### Meal blob (firma)
-`MealBlob` in `src/components/brand.tsx`: silhouette chiara (bianco 34%) su fondo scuro, nera (`outline="var(--ink)"`) su schede chiare.
+`MealBlob` in `src/components/brand.tsx`: cerchi colorati con contorno nero.
 
 ## Do's and Don'ts
 ### Do:
 - Usa i colori pieni come schede intere con testo nero.
-- Usa il vetro per ciò che galleggia (intestazione, barra del totale, pulsanti rotondi).
+- Usa il vetro bianco per schede e intestazione; il nero per l'azione principale.
 - Titoli e numeri grandi e sottili; nomi in 600.
 ### Don't:
 - Non copiare logo o grafiche di Sisense: solo la direzione.
 - Niente testo bianco su colori chiari; niente ombre; niente caratteri freccia al posto delle icone.
+- Non usare il vetro bianco sopra una superficie nera: si ingrigisce.
 - Le etichette di stampa restano bianche.
