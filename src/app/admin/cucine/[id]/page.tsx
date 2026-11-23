@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireProfile } from "@/lib/auth";
 import { categoryLabel } from "@/lib/allergens";
+import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 import { addBaseToKitchen, updateKitchen } from "../../actions";
 
@@ -16,6 +17,7 @@ type KitchenBaseRow = {
   allergens: string[];
   allergens_declared: boolean;
   available: boolean;
+  price_per_kg_cents: number | null;
   bases: { id: string; name: string; category: string } | null;
 };
 
@@ -25,10 +27,10 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
   const supabase = await createClient();
 
   const [{ data: kitchen }, { data: kitchenBases }, { data: catalog }] = await Promise.all([
-    supabase.from("kitchens").select("id, name, address, phone, active").eq("id", id).maybeSingle(),
+    supabase.from("kitchens").select("id, name, address, phone, active, fixed_fee_cents").eq("id", id).maybeSingle(),
     supabase
       .from("kitchen_bases")
-      .select("id, allergens, allergens_declared, available, bases(id, name, category)")
+      .select("id, allergens, allergens_declared, available, price_per_kg_cents, bases(id, name, category)")
       .eq("kitchen_id", id),
     supabase.from("bases").select("id, name, category").eq("active", true).order("name"),
   ]);
@@ -41,6 +43,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
   const usedBaseIds = new Set(rows.map((r) => r.bases?.id));
   const addable = (catalog ?? []).filter((b) => !usedBaseIds.has(b.id));
   const unverified = rows.filter((r) => !r.allergens_declared).length;
+  const unpriced = rows.filter((r) => !r.price_per_kg_cents).length;
 
   return (
     <RoleArea profile={profile} title={kitchen.name} back={{ href: "/admin/cucine", label: "Gastronomie" }}>
@@ -55,6 +58,12 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
             verificare con la cucina.
           </p>
         )}
+        {unpriced > 0 && (
+          <p className="rounded-lg bg-warning/15 p-3 text-sm">
+            {unpriced === 1 ? "1 base non ha" : `${unpriced} basi non hanno`} ancora il prezzo: i
+            pasti che la usano non si potranno ordinare qui.
+          </p>
+        )}
         {rows.length === 0 && (
           <p className="text-muted-foreground">Nessuna base. Aggiungine una dal catalogo qui sotto.</p>
         )}
@@ -67,6 +76,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
             <span className="flex items-center justify-between gap-3">
               <span className="font-medium">{r.bases?.name}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
+                {r.price_per_kg_cents ? `${formatEuro(r.price_per_kg_cents)}/kg` : "senza prezzo"} ·{" "}
                 {categoryLabel(r.bases?.category ?? "")}
                 {!r.available && " · non disponibile"}
               </span>
@@ -126,6 +136,19 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
           <div className="flex flex-col gap-2">
             <Label htmlFor="phone">Telefono</Label>
             <Input id="phone" name="phone" type="tel" maxLength={30} defaultValue={kitchen.phone ?? ""} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="fixed_fee">Costo fisso per pasto (€)</Label>
+            <Input
+              id="fixed_fee"
+              name="fixed_fee"
+              inputMode="decimal"
+              placeholder="0,00"
+              defaultValue={(kitchen.fixed_fee_cents / 100).toFixed(2).replace(".", ",")}
+            />
+            <p className="text-xs text-muted-foreground">
+              Preparazione, contenitore, etichetta: si aggiunge al prezzo di ogni pasto.
+            </p>
           </div>
           <CheckboxField
             id="active"

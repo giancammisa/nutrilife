@@ -13,6 +13,7 @@
 - Passo 2: fatto e provato (accesso con codice o link, Benvenuto con consenso, area Cliente). SQL `0001` eseguito su Supabase.
 - Passo 3: fatto e provato (gastronomie, catalogo basi, allergeni a tre stati nel pannello admin). SQL `0002` eseguito su Supabase. Utente titolare = admin.
 - Passo 4: fatto e provato (ruolo da admin, invito nutrizionista → paziente, pasti tipo visibili al paziente, paziente respinto da pagine nutrizionista/admin). SQL `0003` eseguito. Utenti di prova `nutrizionista.prova@nutrilife.test` e `paziente.prova@nutrilife.test` (accesso da `/accedi/prova`, solo in locale).
+- Passo 5 (prezzi): fatto e provato. SQL `0004` eseguito. Pollo 10 €/kg, calo 25%, ricarico 30% → 17,33 €/kg (anteprima e database coincidono); zucchine 8,00 €/kg diretto; costo fisso 1,50 € → Pranzo A (150 g + 200 g) = 5,70 € visto dal paziente. Il paziente non legge i costi e non può cambiare i prezzi.
 - Vercel: account bloccato dalla verifica in due passaggi; scritto al supporto Vercel.
 - Email: SMTP Resend con mittente provvisorio `onboarding@resend.dev` (arriva solo all'email del titolare). Serve un dominio prima dei pazienti.
 

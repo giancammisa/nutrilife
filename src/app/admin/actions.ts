@@ -5,6 +5,7 @@ import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { BASE_CATEGORIES, isAllergenCode } from "@/lib/allergens";
 import { dbError as baseDbError, text, uuid as id, type FormState } from "@/lib/form";
+import { formatEuro, parseEuroToCents, parsePercent } from "@/lib/pricing";
 
 // Ogni azione ricontrolla che sia l'admin: non ci si fida della pagina.
 // Il database (RLS) fa comunque lo stesso controllo.
@@ -41,6 +42,11 @@ export async function updateKitchen(_prev: FormState, formData: FormData): Promi
   const name = text(formData, "name");
   if (!kitchenId) return { error: "Gastronomia non valida.", ok: null };
   if (name.length < 2) return { error: "Inserisci il nome della gastronomia.", ok: null };
+  const feeText = text(formData, "fixed_fee");
+  const fee = feeText === "" ? 0 : parseEuroToCents(feeText);
+  if (fee === null || fee > 10000) {
+    return { error: "Costo fisso non valido (es. 1,50; massimo 100 €).", ok: null };
+  }
 
   const supabase = await adminClient();
   const { error } = await supabase
@@ -50,6 +56,7 @@ export async function updateKitchen(_prev: FormState, formData: FormData): Promi
       address: text(formData, "address") || null,
       phone: text(formData, "phone") || null,
       active: formData.get("active") === "on",
+      fixed_fee_cents: fee,
     })
     .eq("id", kitchenId);
   if (error) return { error: dbError(error.code), ok: null };
@@ -185,4 +192,48 @@ export async function updateKitchenBase(_prev: FormState, formData: FormData): P
   revalidatePath(`/admin/cucine/${kitchenId}`);
   revalidatePath(`/admin/cucine/${kitchenId}/basi/${kitchenBaseId}`);
   return { error: null, ok: "Allergeni salvati." };
+}
+
+// ── Prezzo di una base nella gastronomia ────────────────
+
+export async function setBasePrice(_prev: FormState, formData: FormData): Promise<FormState> {
+  const kitchenBaseId = id(formData, "id");
+  const kitchenId = id(formData, "kitchen_id");
+  if (!kitchenBaseId || !kitchenId) return { error: "Base non valida.", ok: null };
+
+  const mode = text(formData, "mode");
+  let args: {
+    p_price_cents: number | null;
+    p_cost_cents: number | null;
+    p_loss_pct: number | null;
+    p_markup_pct: number | null;
+  };
+
+  if (mode === "diretto") {
+    const price = parseEuroToCents(text(formData, "price"));
+    if (!price || price > 100000) return { error: "Scrivi il prezzo di vendita al kg (es. 22,00).", ok: null };
+    args = { p_price_cents: price, p_cost_cents: null, p_loss_pct: null, p_markup_pct: null };
+  } else if (mode === "da_costo") {
+    const cost = parseEuroToCents(text(formData, "cost"));
+    const loss = text(formData, "loss") === "" ? 0 : parsePercent(text(formData, "loss"));
+    const markup = parsePercent(text(formData, "markup"));
+    if (!cost || cost > 100000) return { error: "Scrivi il costo al kg dalla fattura (es. 10,00).", ok: null };
+    if (loss === null || loss >= 90) return { error: "Calo peso da 0 a 89%.", ok: null };
+    if (markup === null || markup > 1000) return { error: "Scrivi il ricarico in % (es. 30).", ok: null };
+    args = { p_price_cents: null, p_cost_cents: cost, p_loss_pct: loss, p_markup_pct: markup };
+  } else {
+    return { error: "Scegli come calcolare il prezzo.", ok: null };
+  }
+
+  const supabase = await adminClient();
+  const { data, error } = await supabase.rpc("admin_set_base_price", {
+    p_kitchen_base: kitchenBaseId,
+    p_mode: mode,
+    ...args,
+  });
+  if (error) return { error: "Prezzo non salvato: controlla i valori e riprova.", ok: null };
+
+  revalidatePath(`/admin/cucine/${kitchenId}`);
+  revalidatePath(`/admin/cucine/${kitchenId}/basi/${kitchenBaseId}`);
+  return { error: null, ok: `Prezzo salvato: ${formatEuro(Number(data))} al kg.` };
 }

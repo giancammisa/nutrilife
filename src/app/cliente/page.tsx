@@ -1,6 +1,7 @@
 import { ComingSoon, RoleArea } from "@/components/role-area";
 import { requireProfile } from "@/lib/auth";
 import { BASE_CATEGORIES } from "@/lib/allergens";
+import { formatEuro } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "La mia settimana · NutriLife" };
@@ -39,6 +40,21 @@ export default async function ClientePage() {
   const templates = (data ?? []) as unknown as Template[];
   const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
 
+  // Prezzo di ogni pasto tipo in ogni gastronomia attiva: lo calcola il database (meal_price_cents).
+  const { data: kitchens } = await supabase.from("kitchens").select("id, name").eq("active", true).order("name");
+  const prices = new Map<string, { kitchen: string; cents: number | null }[]>();
+  await Promise.all(
+    templates.map(async (t) => {
+      const list = await Promise.all(
+        (kitchens ?? []).map(async (k) => {
+          const { data: cents } = await supabase.rpc("meal_price_cents", { p_template: t.id, p_kitchen: k.id });
+          return { kitchen: k.name, cents: typeof cents === "number" ? cents : null };
+        }),
+      );
+      prices.set(t.id, list);
+    }),
+  );
+
   return (
     <RoleArea profile={profile} title="La mia settimana">
       {!link ? (
@@ -75,11 +91,25 @@ export default async function ClientePage() {
                   ))}
               </ul>
               {t.notes && <p className="text-xs text-muted-foreground">Note: {t.notes}</p>}
+              {(prices.get(t.id) ?? []).length > 0 && (
+                <ul className="mt-1 flex flex-col gap-1 border-t pt-2">
+                  {(prices.get(t.id) ?? []).map((p) => (
+                    <li key={p.kitchen} className="flex justify-between gap-3 text-sm">
+                      <span>{p.kitchen}</span>
+                      {p.cents != null ? (
+                        <span className="font-medium tabular-nums text-primary">{formatEuro(p.cents)}</span>
+                      ) : (
+                        <span className="text-muted-foreground">non disponibile</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </article>
           ))}
         </section>
       )}
-      <ComingSoon items={["Calendario per scegliere i giorni", "Ordina entro le 18:00 del giorno prima", "Il tuo pacchetto e i pasti rimasti"]} />
+      <ComingSoon items={["Calendario per scegliere i giorni", "Ordina entro le 18:00 del giorno prima, paghi al ritiro"]} />
     </RoleArea>
   );
 }
