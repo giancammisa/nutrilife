@@ -223,7 +223,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               />
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
-                  <h3 className="text-lg">{t.name}</h3>
+                  <h3 className="card-title">{t.name}</h3>
                   <span className="text-xs font-semibold uppercase text-muted-foreground">
                     {SLOT_LABEL[t.meal_slot]}
                   </span>

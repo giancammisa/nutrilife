@@ -168,6 +168,14 @@
   line-height: 1.1;
 }
 
+/* Titoli dentro le schede (passi, pasti tipo, nomi in cucina): sotto i titoli di sezione. */
+@utility card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+
 /* Grammi e quantità: cifre allineate. */
 @utility num {
   font-variant-numeric: tabular-nums;

@@ -52,7 +52,7 @@ export default function Home() {
           <FoodPhoto name="cetriolo" priority className="absolute inset-0 h-full w-full object-cover object-top" />
           <div className="absolute inset-x-4 bottom-4 flex flex-col gap-2 rounded-[24px] border border-white/15 bg-ink/75 p-4 text-paper backdrop-blur-2xl">
             <div className="flex items-baseline justify-between">
-              <h2 id="esempio" className="text-base">
+              <h2 id="esempio" className="card-title">
                 Pranzo tipo
               </h2>
               <span className="rounded-full bg-paper/90 px-2 py-0.5 text-[11px] font-semibold text-ink">esempio</span>
@@ -82,7 +82,7 @@ export default function Home() {
                 />
               )}
               <span className="relative flex flex-col gap-1">
-                <span className="text-lg font-semibold">{p.title}</span>
+                <span className="card-title">{p.title}</span>
                 <span className="max-w-[22ch] text-sm leading-snug text-ink/75">{p.text}</span>
               </span>
               <span className="display relative text-5xl text-ink" aria-hidden>

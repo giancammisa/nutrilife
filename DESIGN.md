@@ -80,6 +80,12 @@ typography:
     fontWeight: 600
     lineHeight: 1.1
     letterSpacing: "-0.02em"
+  card-title:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "1.4rem"
+    fontWeight: 600
+    lineHeight: 1.15
+    letterSpacing: "-0.015em"
   heading:
     fontFamily: "Urbanist, system-ui, sans-serif"
     fontSize: "1.125rem"
@@ -191,7 +197,7 @@ Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdu
 Una sola famiglia: **Urbanist** (variabile).
 ### Hierarchy
 - Hero 3.4rem/300 (prima pagina, con la prima parola in 600); titolo pagina 2.5rem/300 (2.4rem nelle pagine fuori dalle aree riservate); numeri grandi (`display`) 2.25rem/300 in lime o nero.
-- Titoli di sezione (`section-title`) 1.6rem/600, es. "Oggi, lunedì 23 novembre", "I tuoi pasti tipo". Nomi 1–1.125rem/600. Testo 1rem/400. Etichette 0.75rem/500. Micro 11px/600 (chip). Solo in stampa: 10px.
+- Titoli di sezione (`section-title`) 1.6rem/600, es. "Oggi, lunedì 23 novembre", "I tuoi pasti tipo". Titoli nelle schede (`card-title`) 1.4rem/600: passi della prima pagina, pasti tipo, nomi dei clienti in cucina, giorni in "I miei ordini". Etichette dei campi 1rem/600. Testo 1rem/400. Etichette 0.75rem/500. Micro 11px/600 (chip). Solo in stampa: 10px.
 - `num`: cifre tabellari 600 per grammi e quantità.
 
 ## Layout

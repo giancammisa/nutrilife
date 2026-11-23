@@ -155,7 +155,7 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col">
                     <span className="flex items-baseline gap-2">
-                      <span className="text-lg font-semibold">{o.client_name ?? "Cliente"}</span>
+                      <span className="card-title">{o.client_name ?? "Cliente"}</span>
                       <span className="num rounded-full bg-ink px-2 py-0.5 text-xs text-lemon" title="Codice di ritiro">
                         #{pickupCode(o.id)}
                       </span>

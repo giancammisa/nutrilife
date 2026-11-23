@@ -69,7 +69,7 @@ export default async function OrdiniPage() {
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col">
-            <span className="text-base font-semibold first-letter:uppercase">{formatDay(o.pickup_date)}</span>
+            <span className="card-title first-letter:uppercase">{formatDay(o.pickup_date)}</span>
             <span className="text-sm text-muted-foreground">
               {SLOT_LABEL[o.meal_slot]} · {o.template_name} · {o.kitchens?.name ?? "Gastronomia"}
             </span>
