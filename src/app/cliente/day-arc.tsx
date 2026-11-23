@@ -17,9 +17,9 @@ export type ArcDay = {
 
 const ITEM = 76; // diametro del bollino del giorno
 const GAP = 16;
-const BAND = 172; // spessore del banner ad arco
-const DEPTH = 74; // distanza del centro dei bollini dal bordo alto del banner
-const TOP = 8; // spazio sopra il banner
+const BAND = 98; // spessore del banner: poco più del bollino al centro (76 × 1.14 ≈ 87)
+const DEPTH = BAND / 2; // i bollini stanno a metà della fascia
+const TOP = 12; // spazio sopra il banner
 
 // Banner di vetro ad arco (una grande ciambella vista dall'alto) su fondo piatto:
 // i bollini dei giorni scorrono lungo l'arco, quello al centro è più grande ed è il giorno scelto.
@@ -152,7 +152,7 @@ export function DayArc({
           gap: GAP,
           paddingInline: `calc(50% - ${ITEM / 2}px)`,
           paddingTop: TOP + DEPTH - ITEM / 2,
-          height: TOP + BAND + 6,
+          height: TOP + BAND + 44,
         }}
       >
         {days.map((d, i) => {
@@ -170,8 +170,8 @@ export function DayArc({
               aria-controls="giorno-dettaglio"
               tabIndex={active ? 0 : -1}
               onClick={() => choose(i)}
-              className="relative flex shrink-0 snap-center origin-top flex-col items-center gap-1.5 self-start outline-none"
-              style={{ width: ITEM }}
+              className="relative flex shrink-0 snap-center flex-col items-center gap-1.5 self-start outline-none"
+              style={{ width: ITEM, transformOrigin: `50% ${ITEM / 2}px` }}
             >
               <span
                 className={cn(
@@ -203,14 +203,14 @@ export function DayArc({
       <span
         aria-hidden
         className="absolute left-1/2 h-1 w-9 -translate-x-1/2 rounded-full bg-ink"
-        style={{ top: TOP + BAND - 14 }}
+        style={{ top: TOP + BAND + 36 }}
       />
 
       <div
         id="giorno-dettaglio"
         role="tabpanel"
         aria-labelledby={`giorno-${day.date}`}
-        className="relative flex flex-col gap-3 px-6 pt-5 pb-7"
+        className="relative flex flex-col gap-3 px-6 pt-6 pb-7"
       >
         <div className="flex flex-col">
           <h2 className="text-xl first-letter:uppercase">{day.title}</h2>
