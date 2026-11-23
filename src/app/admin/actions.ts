@@ -4,19 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { BASE_CATEGORIES, isAllergenCode } from "@/lib/allergens";
-
-export type FormState = { error: string | null; ok: string | null };
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function text(formData: FormData, key: string): string {
-  return String(formData.get(key) ?? "").trim();
-}
-
-function id(formData: FormData, key: string): string | null {
-  const value = text(formData, key);
-  return UUID.test(value) ? value : null;
-}
+import { dbError as baseDbError, text, uuid as id, type FormState } from "@/lib/form";
 
 // Ogni azione ricontrolla che sia l'admin: non ci si fida della pagina.
 // Il database (RLS) fa comunque lo stesso controllo.
@@ -27,8 +15,7 @@ async function adminClient() {
 
 function dbError(code: string | undefined): string {
   if (code === "23505") return "Esiste già un elemento con questo nome.";
-  if (code === "42501") return "Non hai i permessi per questa operazione.";
-  return "Salvataggio non riuscito. Riprova.";
+  return baseDbError(code);
 }
 
 // ── Gastronomie ─────────────────────────────────────────
@@ -111,6 +98,35 @@ export async function updateBase(_prev: FormState, formData: FormData): Promise<
   revalidatePath("/admin/basi");
   revalidatePath(`/admin/basi/${baseId}`);
   return { error: null, ok: "Modifiche salvate." };
+}
+
+// ── Utenti ──────────────────────────────────────────────
+
+const ROLES = ["cliente", "nutrizionista", "cucina", "admin"] as const;
+
+export async function updateUser(_prev: FormState, formData: FormData): Promise<FormState> {
+  const userId = id(formData, "id");
+  const role = text(formData, "role");
+  if (!userId) return { error: "Utente non valido.", ok: null };
+  if (!ROLES.includes(role as (typeof ROLES)[number])) return { error: "Ruolo non valido.", ok: null };
+
+  const supabase = await adminClient();
+  const { error } = await supabase.rpc("admin_set_user", {
+    p_user: userId,
+    p_role: role,
+    p_active: formData.get("active") === "on",
+  });
+  if (error) {
+    return {
+      error: error.message.includes("te stesso")
+        ? "Non puoi togliere a te stesso il ruolo di admin."
+        : dbError(error.code),
+      ok: null,
+    };
+  }
+
+  revalidatePath("/admin/utenti");
+  return { error: null, ok: "Utente aggiornato." };
 }
 
 // ── Basi di una gastronomia ─────────────────────────────

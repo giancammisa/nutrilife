@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import type { FormState } from "@/app/admin/actions";
+import type { FormState } from "@/lib/form";
 import { Button } from "@/components/ui/button";
 
 type Action = (prev: FormState, formData: FormData) => Promise<FormState>;

@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Pagine aperte a tutti (senza accesso).
-const PUBLIC_PATHS = ["/", "/accedi", "/privacy", "/auth/callback"];
+const PUBLIC_PATHS = ["/", "/accedi", "/accedi/prova", "/privacy", "/auth/callback"];
 
 // Rinnova la sessione a ogni richiesta e manda chi non è collegato alla pagina di accesso.
 // È solo un primo filtro: i controlli veri li fanno il database (RLS) e le pagine.
@@ -48,7 +48,8 @@ export async function updateSession(request: NextRequest) {
   const isLoggedIn = Boolean(data?.claims?.sub);
 
   const path = request.nextUrl.pathname;
-  if (!isLoggedIn && !PUBLIC_PATHS.includes(path)) {
+  const isPublic = PUBLIC_PATHS.includes(path) || path.startsWith("/invito/");
+  if (!isLoggedIn && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/accedi";
     url.search = "";

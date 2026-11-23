@@ -9,14 +9,16 @@ export default async function AdminPage() {
   const profile = await requireProfile(["admin"]);
   const supabase = await createClient();
 
-  const [{ count: kitchens }, { count: bases }] = await Promise.all([
+  const [{ count: kitchens }, { count: bases }, { count: users }] = await Promise.all([
     supabase.from("kitchens").select("id", { count: "exact", head: true }),
     supabase.from("bases").select("id", { count: "exact", head: true }),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
   ]);
 
   const sections = [
     { href: "/admin/cucine", title: "Gastronomie", detail: `${kitchens ?? 0} in elenco` },
     { href: "/admin/basi", title: "Catalogo basi", detail: `${bases ?? 0} basi` },
+    { href: "/admin/utenti", title: "Utenti", detail: `${users ?? 0} registrati` },
   ];
 
   return (
@@ -36,7 +38,7 @@ export default async function AdminPage() {
           </Link>
         ))}
       </nav>
-      <ComingSoon items={["Pacchetti prepagati", "Ruoli e attivazione degli utenti"]} />
+      <ComingSoon items={["Pacchetti prepagati"]} />
     </RoleArea>
   );
 }
