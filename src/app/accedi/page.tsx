@@ -1,5 +1,6 @@
 import { FoodPhoto } from "@/components/food-art";
 import { PlainShell } from "@/components/plain-shell";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getProfile, getUserId } from "@/lib/auth";
 import { LoginForm } from "./login-form";
@@ -26,6 +27,15 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>
       </div>
       <LoginForm initialError={initialError} />
+      {/* SOLO SVILUPPO: scorciatoia per gli utenti di prova con password */}
+      {process.env.NODE_ENV === "development" && (
+        <Link
+          href="/accedi/prova"
+          className="glass w-fit self-center rounded-full px-4 py-2 text-sm font-medium hover:bg-white/15"
+        >
+          Account di prova (con password)
+        </Link>
+      )}
     </PlainShell>
   );
 }
