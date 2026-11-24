@@ -45,6 +45,12 @@ typography:
     fontWeight: 600
     lineHeight: 0.95
     letterSpacing: "-0.03em"
+  motto:
+    fontFamily: "Urbanist, system-ui, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 300
+    lineHeight: 1
+    letterSpacing: "-0.02em"
   page-title:
     fontFamily: "Urbanist, system-ui, sans-serif"
     fontSize: "2.5rem"
