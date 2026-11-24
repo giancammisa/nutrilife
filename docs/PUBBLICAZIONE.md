@@ -43,3 +43,8 @@ Lista dal controllo finale del passo 10 (23/11/2026). Le voci con ⚠️ bloccan
 - Ordini, collegamenti paziente e costi si scrivono solo tramite funzioni con controlli.
 - Prove per ruolo (lettura e scrittura) superate per anonimo, cliente, nutrizionista e cucina; admin provato dalle pagine nei passi 3–9.
 - Advisor Supabase: 0 errori; avvisi spiegati sopra; chiusa `rls_auto_enable` (SQL `0008`).
+
+
+## Prima dell'apertura al pubblico
+- Togliere `robots: { index: false, follow: false }` da `src/app/layout.tsx` (oggi il sito non va nei motori di ricerca, perché è in prova).
+- Controllare in Supabase → Advisors (Security e Performance) che non ci siano avvisi.

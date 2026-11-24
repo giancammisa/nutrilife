@@ -7,8 +7,21 @@ const nextConfig: NextConfig = {
   deploymentId: process.env.NODE_ENV === "development" ? `dev-${Date.now()}` : undefined,
   // Solo in sviluppo: il telefono non deve tenere copie vecchie di stile e codice.
   async headers() {
-    if (process.env.NODE_ENV !== "development") return [];
-    return [{ source: "/_next/:path*", headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }] }];
+    // Sicurezza di base su tutte le pagine
+    const security = {
+      source: "/:path*",
+      headers: [
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "X-Frame-Options", value: "DENY" },
+        { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+      ],
+    };
+    if (process.env.NODE_ENV !== "development") return [security];
+    return [
+      security,
+      { source: "/_next/:path*", headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }] },
+    ];
   },
   // Cache Components disattivato: le pagine dipendono da chi è collegato (Supabase).
   turbopack: {

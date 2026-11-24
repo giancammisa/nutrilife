@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
   appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },
   formatDetection: { telephone: false },
+  // Fase di prova: il sito non va nei motori di ricerca. Da togliere alla pubblicazione vera.
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

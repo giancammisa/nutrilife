@@ -81,7 +81,8 @@ export function DayArc({
     const el = scroller.current;
     const b = items.current[i];
     if (!el || !b) return;
-    el.scrollTo({ left: b.offsetLeft + b.offsetWidth / 2 - el.clientWidth / 2, behavior: smooth ? "smooth" : "auto" });
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({ left: b.offsetLeft + b.offsetWidth / 2 - el.clientWidth / 2, behavior: smooth && !calm ? "smooth" : "auto" });
   }, []);
 
   useEffect(() => {
@@ -179,7 +180,7 @@ export function DayArc({
               aria-controls="giorno-dettaglio"
               tabIndex={active ? 0 : -1}
               onClick={() => choose(i)}
-              className="relative flex shrink-0 snap-center flex-col items-center gap-1.5 self-start outline-none"
+              className="relative flex shrink-0 snap-center flex-col items-center gap-1.5 self-start rounded-[24px] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
               style={{ width: ITEM, transformOrigin: `50% ${ITEM / 2}px` }}
             >
               <span
@@ -191,7 +192,7 @@ export function DayArc({
                 )}
                 style={{ width: ITEM, height: ITEM }}
               >
-                <span className="text-[11px] font-semibold uppercase text-ink/55">{d.weekday}</span>
+                <span className="text-[11px] font-semibold uppercase text-ink/70">{d.weekday}</span>
                 <span className="display text-[1.85rem]">{d.dayNum}</span>
                 {d.ordered && (
                   <span className="absolute top-0 right-0 inline-flex size-6 items-center justify-center rounded-full bg-ink text-paper">

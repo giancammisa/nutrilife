@@ -23,7 +23,7 @@ export default function Home() {
       <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-5 py-3">
           <Wordmark className="text-lg" />
-          <Link href="/privacy" className="glass rounded-full px-3 py-1 text-xs font-medium hover:bg-white/90">
+          <Link href="/privacy" className="glass inline-flex h-10 items-center rounded-full px-4 text-sm font-medium hover:bg-white/90">
             Privacy
           </Link>
         </div>
