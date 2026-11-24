@@ -24,7 +24,7 @@ export default function PrivacyPage() {
       </p>
       <h1 className="text-[2.4rem]">Informativa privacy</h1>
       <p className="text-muted-foreground">
-        NutriLife fa preparare da una gastronomia di Altamura i pasti indicati dal tuo nutrizionista.
+        NutriLife fa preparare da gastronomie partner i pasti indicati dal tuo nutrizionista.
         Qui spieghiamo quali dati usiamo, perché e chi li vede.
       </p>
 

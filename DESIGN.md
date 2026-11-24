@@ -1,6 +1,6 @@
 ---
 name: NutriLife
-description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da una gastronomia di Altamura.
+description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da cucine vicino a te.
 colors:
   ink: "#0B0B0B"
   salvia: "#DFE6DA"

@@ -54,7 +54,7 @@ export default async function CucinePage() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="address">Indirizzo</Label>
-            <Input id="address" name="address" maxLength={200} placeholder="Via Roma 1, Altamura" />
+            <Input id="address" name="address" maxLength={200} placeholder="Via Roma 1, Città" />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="phone">Telefono</Label>

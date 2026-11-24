@@ -11,11 +11,11 @@ web
 ## Users
 - **Cliente/paziente** (pubblico principale — *ipotesi di lavoro, da confermare*): persona che segue il piano di un nutrizionista e vuole i pasti già preparati e pesati senza cucinare. Usa l'app dal telefono, di solito in pochi minuti: guarda la settimana, ordina entro le 18:00 del giorno prima, ritira in gastronomia.
 - **Nutrizionista**: inserisce per ogni paziente 3–4 pasti tipo (basi + grammature) e lo invita con un link. Il piano completo resta nel suo software.
-- **Cucina partner (gastronomia di Altamura)**: legge gli ordini di domani, il riepilogo di produzione in kg, stampa le etichette, segna pronto/ritirato. Spesso in piedi, mani occupate, schermo in cucina.
+- **Cucina partner (gastronomia partner, ovunque)**: legge gli ordini di domani, il riepilogo di produzione in kg, stampa le etichette, segna pronto/ritirato. Spesso in piedi, mani occupate, schermo in cucina.
 - **Admin (titolare NutriLife)**: gestisce gastronomie, catalogo basi, prezzi, allergeni, utenti e impostazioni.
 
 ## Product Purpose
-NutriLife fa cucinare il piano del nutrizionista da una gastronomia di Altamura: il cliente ordina il giorno prima e ritira il pasto già pesato. Successo = il cliente rispetta il piano senza fatica, la gastronomia produce senza sprechi, il nutrizionista vede i pazienti seguiti.
+NutriLife fa cucinare il piano del nutrizionista da una gastronomia partner, ovunque si trovi: il cliente ordina il giorno prima e ritira il pasto già pesato. Successo = il cliente rispetta il piano senza fatica, la gastronomia produce senza sprechi, il nutrizionista vede i pazienti seguiti.
 
 ## Positioning
 Una cucina di quartiere che lavora con un menu componibile di basi (proteine, carboidrati, verdure) cucinate in quantità e pesate al grammo per ogni persona, secondo il pasto tipo deciso dal nutrizionista. Precisione da laboratorio, cibo vero da gastronomia.
