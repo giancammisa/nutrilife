@@ -71,14 +71,16 @@ const CATEGORY_FILL: Record<string, string> = {
   proteina: "var(--rose)",
   carboidrato: "var(--lemon)",
   verdura: "var(--sage)",
+  frutta: "var(--peach)",
   altro: "var(--sky)",
 };
 
-const CATEGORY_ORDER = ["proteina", "carboidrato", "verdura", "altro"];
+const CATEGORY_ORDER = ["proteina", "carboidrato", "verdura", "frutta", "altro"];
 const CATEGORY_NAME: Record<string, string> = {
   proteina: "proteine",
   carboidrato: "carboidrati",
   verdura: "verdure",
+  frutta: "frutta",
   altro: "altro",
 };
 
@@ -146,7 +148,7 @@ export function MealBlob({
 export function MealLegend({ className }: { className?: string }) {
   return (
     <span className={cn("flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground", className)}>
-      {CATEGORY_ORDER.slice(0, 3).map((c) => (
+      {CATEGORY_ORDER.slice(0, 4).map((c) => (
         <span key={c} className="inline-flex items-center gap-1.5">
           <span
             aria-hidden

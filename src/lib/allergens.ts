@@ -40,6 +40,7 @@ export const BASE_CATEGORIES = [
   { value: "proteina", label: "Proteina" },
   { value: "carboidrato", label: "Carboidrato" },
   { value: "verdura", label: "Verdura" },
+  { value: "frutta", label: "Frutta" },
   { value: "altro", label: "Altro" },
 ] as const;
 

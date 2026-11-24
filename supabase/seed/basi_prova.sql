@@ -73,5 +73,55 @@ insert into public.bases (name, category) values
   ('Noci', 'altro')
 on conflict do nothing;
 
+-- ── Frutta e altre 30 basi (serve prima la migrazione 0010: categoria Frutta) ──
+insert into public.bases (name, category) values
+  ('Mela', 'frutta'),
+  ('Pera', 'frutta'),
+  ('Banana', 'frutta'),
+  ('Arancia', 'frutta'),
+  ('Mandarini', 'frutta'),
+  ('Kiwi', 'frutta'),
+  ('Fragole', 'frutta'),
+  ('Mirtilli', 'frutta'),
+  ('Frutti di bosco', 'frutta'),
+  ('Ananas', 'frutta'),
+  ('Pesca', 'frutta'),
+  ('Albicocche', 'frutta'),
+  ('Uva', 'frutta'),
+  ('Melone', 'frutta'),
+  ('Anguria', 'frutta'),
+  ('Coscia di pollo al forno', 'proteina'),
+  ('Hamburger di manzo', 'proteina'),
+  ('Branzino al forno', 'proteina'),
+  ('Pesce spada alla piastra', 'proteina'),
+  ('Seppie in umido', 'proteina'),
+  ('Fiocchi di latte', 'proteina'),
+  ('Prosciutto crudo magro', 'proteina'),
+  ('Tempeh', 'proteina'),
+  ('Edamame', 'proteina'),
+  ('Fagioli borlotti lessati', 'proteina'),
+  ('Riso parboiled', 'carboidrato'),
+  ('Miglio', 'carboidrato'),
+  ('Polenta', 'carboidrato'),
+  ('Gnocchi di patate', 'carboidrato'),
+  ('Pane di segale', 'carboidrato'),
+  ('Fette biscottate integrali', 'carboidrato'),
+  ('Piadina integrale', 'carboidrato'),
+  ('Cavolini di Bruxelles', 'verdura'),
+  ('Zucca al forno', 'verdura'),
+  ('Carciofi trifolati', 'verdura'),
+  ('Radicchio grigliato', 'verdura'),
+  ('Verza stufata', 'verdura'),
+  ('Barbabietola', 'verdura'),
+  ('Cetrioli', 'verdura'),
+  ('Lattuga', 'verdura'),
+  ('Piselli lessati', 'verdura'),
+  ('Olive', 'altro'),
+  ('Semi di chia', 'altro'),
+  ('Hummus di ceci', 'altro'),
+  ('Burro di arachidi', 'altro'),
+  ('Pesto alla genovese', 'altro')
+on conflict do nothing;
+
 -- Controllo: quante basi per categoria
 select category, count(*) from public.bases where active group by category order by category;

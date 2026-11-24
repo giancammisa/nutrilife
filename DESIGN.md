@@ -30,6 +30,7 @@ colors:
   grad-fog-blue: "#D3D9E2"
   grad-sky-light: "#E8EDF4"
   rose: "#F4B3AC"
+  peach: "#FFCFA3"
   sage: "#9EE6A0"
   destructive: "#B8322A"
   warning: "#9A5300"
@@ -187,7 +188,7 @@ Mossa firma: **il pasto in cerchi fusi**, proteina rosa, carboidrato lime, verdu
 - **Lime** `#EDFF8C`: ciò che conta di più (totale, riepilogo produzione, scelta selezionata, "Prova", pulsante sulla barra nera).
 - **Verde leggero** `#DCE8D2` e **grigio chiaro** `#E3E3DF`: schede piene che si alternano. **Menta**, **azzurro**, **nuvola** per sfumare.
 - **Gradienti**: ogni colore pieno è una sfumatura (`bg-grad-lime`, `bg-grad-leaf`, `bg-grad-fog`, `bg-grad-sky`), mai sul testo.
-- Cerchi del pasto: **rosa** `#F4B3AC` proteine, **lime** carboidrati, **verde** `#9EE6A0` verdure; contorno nero.
+- Cerchi del pasto: **rosa** `#F4B3AC` proteine, **lime** carboidrati, **verde** `#9EE6A0` verdure, **pesca** `#FFCFA3` frutta; contorno nero.
 ### Named Rules
 - **Il nero si preme.** Un solo pulsante nero per schermata (l'azione principale) più le icone rotonde; il resto contorno o vetro.
 - **Colore con un lavoro.** Rosso `#B8322A` solo per allergeni bloccati/annullato; arancio `#9A5300` solo per "non verificati"; verde scuro `#2E6B35` per "nessun allergene".

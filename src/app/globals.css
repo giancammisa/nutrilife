@@ -12,6 +12,7 @@
   --color-mint: var(--mint);
   --color-sky: var(--sky);
   --color-rose: var(--rose);
+  --color-peach: var(--peach);
   --color-cloud: var(--cloud);
   --color-lemon: var(--lemon);
   --color-ink: var(--ink);
@@ -72,6 +73,7 @@
   --mint: #CFE1CA;
   --sky: #D8DFE9;
   --rose: #F4B3AC;       /* proteine nei cerchi */
+  --peach: #FFCFA3;      /* frutta nei cerchi */
   --cloud: #EFEFEF;
   --leaf: #DCE8D2;       /* verde leggero: schede chiare */
   --fog: #E3E3DF;        /* grigio chiaro: schede chiare */

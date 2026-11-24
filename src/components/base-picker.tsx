@@ -11,6 +11,7 @@ const PLURAL: Record<string, string> = {
   proteina: "Proteine",
   carboidrato: "Carboidrati",
   verdura: "Verdure",
+  frutta: "Frutta",
   altro: "Altro",
 };
 
