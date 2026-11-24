@@ -38,6 +38,7 @@ type Order = {
   template_name: string;
   price_cents: number;
   status: "confermato" | "pronto" | "ritirato" | "annullato";
+  basket_id: string;
   kitchens: { name: string } | null;
 };
 
@@ -74,7 +75,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
       supabase.from("app_settings").select("cutoff_hour").maybeSingle(),
       supabase
         .from("orders")
-        .select("id, pickup_date, meal_slot, template_name, price_cents, status, kitchens(name)")
+        .select("id, pickup_date, meal_slot, template_name, price_cents, status, basket_id, kitchens(name)")
         .eq("client_id", profile.id)
         .neq("status", "annullato")
         .gte("pickup_date", days[0])
@@ -124,6 +125,8 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
                 </span>
                 <span className="text-ink/70">
                   {o.kitchens?.name ?? "Gastronomia"} · {STATUS_LABEL[o.status]}
+                  {orders.filter((x) => x.basket_id === o.basket_id).length > 1 &&
+                    ` · parte di un pasto in ${orders.filter((x) => x.basket_id === o.basket_id).length} punti`}
                 </span>
               </span>
               <span className="num">{formatEuro(o.price_cents)}</span>
@@ -140,6 +143,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               {open && o.status === "confermato" && (
                 <CancelOrderButton
                   orderId={o.id}
+                  parts={orders.filter((x) => x.basket_id === o.basket_id).length}
                   label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${day === tomorrow ? "domani" : formatDay(day)}`}
                 />
               )}

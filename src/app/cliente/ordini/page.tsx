@@ -20,6 +20,7 @@ type Order = {
   template_name: string;
   price_cents: number;
   status: "confermato" | "pronto" | "ritirato" | "annullato";
+  basket_id: string;
   allergens: string[];
   intolerance_warning: string[];
   allergens_unverified: boolean;
@@ -43,7 +44,7 @@ export default async function OrdiniPage() {
     supabase
       .from("orders")
       .select(
-        "id, pickup_date, meal_slot, template_name, price_cents, status, allergens, intolerance_warning, allergens_unverified, kitchens(name), order_items(id, base_name, category, grams)",
+        "id, pickup_date, meal_slot, template_name, price_cents, status, basket_id, allergens, intolerance_warning, allergens_unverified, kitchens(name), order_items(id, base_name, category, grams)",
       )
       .eq("client_id", profile.id)
       .order("pickup_date", { ascending: false })
@@ -106,7 +107,13 @@ export default async function OrdiniPage() {
             <span className="num text-lemon">#{pickupCode(o.id)}</span>
           </Link>
         )}
-        {open && <CancelOrderButton orderId={o.id} label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${formatDay(o.pickup_date)}`} />}
+        {open && (
+          <CancelOrderButton
+            orderId={o.id}
+            parts={orders.filter((x) => x.basket_id === o.basket_id && x.status !== "annullato").length}
+            label={`il ${SLOT_LABEL[o.meal_slot].toLowerCase()} di ${formatDay(o.pickup_date)}`}
+          />
+        )}
       </article>
     );
   };

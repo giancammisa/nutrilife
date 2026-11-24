@@ -6,7 +6,7 @@ import type { FormState } from "@/lib/form";
 import { Button } from "@/components/ui/button";
 
 // "Annulla" in due passaggi: prima chiede conferma, poi annulla.
-export function CancelOrderButton({ orderId, label }: { orderId: string; label: string }) {
+export function CancelOrderButton({ orderId, label, parts = 1 }: { orderId: string; label: string; parts?: number }) {
   const [confirming, setConfirming] = useState(false);
   const [state, action, pending] = useActionState<FormState, FormData>(cancelOrder, { error: null, ok: null });
 
@@ -27,7 +27,9 @@ export function CancelOrderButton({ orderId, label }: { orderId: string; label: 
       ) : (
         <form action={action} className="flex flex-col gap-2 rounded-lg border border-destructive/40 p-3">
           <input type="hidden" name="order_id" value={orderId} />
-          <p className="text-sm">Vuoi annullare {label}?</p>
+          <p className="text-sm">
+            Vuoi annullare {label}?{parts > 1 && ` Si annullano tutte le ${parts} parti, nei ${parts} punti vendita.`}
+          </p>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" variant="destructive" size="sm" className="rounded-full" disabled={pending}>
               {pending ? "Annullamento…" : "Sì, annulla"}

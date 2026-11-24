@@ -56,23 +56,38 @@ const ORDER_ERRORS: [string, string][] = [
   ["14 giorni", "Puoi ordinare al massimo 14 giorni prima."],
   ["Pasto tipo non valido", "Pasto tipo non valido."],
   ["alternative", "Scegli una base per ogni scelta del pasto."],
+  ["Parti del pasto", "Le parti del pasto non sono valide: ricontrolla dove ritirare ogni base."],
 ];
 
 export async function placeOrder(_prev: FormState, formData: FormData): Promise<FormState> {
   const templateId = uuid(formData, "template_id");
-  const kitchenId = uuid(formData, "kitchen_id");
   const day = text(formData, "day");
   if (!DATE_RE.test(day)) return { error: "Giorno non valido.", ok: null };
   if (!templateId) return { error: "Scegli un pasto tipo.", ok: null };
-  if (!kitchenId) return { error: "Scegli una gastronomia.", ok: null };
+
+  // Parti del pasto: [{ kitchen_id, items: [id riga, ...] }], una per punto vendita.
+  let list: { kitchen_id: string; items: string[] }[] = [];
+  try {
+    const raw: unknown = JSON.parse(text(formData, "parts"));
+    if (Array.isArray(raw)) {
+      list = raw
+        .map((p) => ({
+          kitchen_id: String((p as { kitchen_id?: unknown }).kitchen_id ?? ""),
+          items: Array.isArray((p as { items?: unknown }).items) ? (p as { items: unknown[] }).items.map(String) : [],
+        }))
+        .filter((p) => UUID.test(p.kitchen_id) && p.items.length > 0 && p.items.every((i) => UUID.test(i)));
+    }
+  } catch {
+    list = [];
+  }
+  if (list.length === 0) return { error: "Scegli dove ritirare il pasto.", ok: null };
 
   const { supabase } = await client();
-  const { error } = await supabase.rpc("place_order", {
+  const { error } = await supabase.rpc("place_meal", {
     p_template: templateId,
-    p_kitchen: kitchenId,
     p_pickup: day,
     p_ack_unverified: formData.get("ack_unverified") === "on",
-    p_items: formData.getAll("items").map(String).filter((v) => UUID.test(v)),
+    p_parts: list,
   });
   if (error) {
     const known = ORDER_ERRORS.find(([key]) => error.message.includes(key));
