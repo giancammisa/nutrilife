@@ -87,9 +87,14 @@ export default async function CucinaPage({ searchParams }: PageProps<"/cucina">)
             ))}
           </div>
         )}
-        <p className="text-sm text-muted-foreground">
-          {kitchen.name} · {formatDay(day)}
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            {kitchen.name} · {formatDay(day)}
+          </p>
+          <Button asChild size="sm" variant="outline" className="h-9 rounded-full px-4">
+            <Link href={`/cucina/listino?cucina=${kitchen.id}`}>Listino e prezzi</Link>
+          </Button>
+        </div>
         <nav className="flex items-center gap-2" aria-label="Giorno">
           <Button asChild size="sm" variant="ghost" className="rounded-full">
             <Link href={q(addDays(day, -1))} aria-label="Giorno precedente"><ArrowLeft className="size-4" aria-hidden /></Link>
