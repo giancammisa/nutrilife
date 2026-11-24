@@ -49,7 +49,28 @@ insert into public.bases (name, category) values
   ('Olio extravergine d''oliva', 'altro'),
   ('Avocado', 'altro'),
   ('Mandorle', 'altro'),
-  ('Parmigiano Reggiano', 'altro')
+  ('Parmigiano Reggiano', 'altro'),
+  -- Altre 20
+  ('Sgombro al forno', 'proteina'),
+  ('Gamberi al vapore', 'proteina'),
+  ('Polpo lesso', 'proteina'),
+  ('Vitello alla piastra', 'proteina'),
+  ('Mozzarella', 'proteina'),
+  ('Yogurt greco', 'proteina'),
+  ('Fagioli cannellini lessati', 'proteina'),
+  ('Piselli', 'proteina'),
+  ('Riso venere', 'carboidrato'),
+  ('Pasta di legumi', 'carboidrato'),
+  ('Grano saraceno', 'carboidrato'),
+  ('Avena', 'carboidrato'),
+  ('Gallette di riso', 'carboidrato'),
+  ('Asparagi al vapore', 'verdura'),
+  ('Cime di rapa saltate', 'verdura'),
+  ('Bietole saltate', 'verdura'),
+  ('Cavolo nero saltato', 'verdura'),
+  ('Funghi trifolati', 'verdura'),
+  ('Rucola', 'verdura'),
+  ('Noci', 'altro')
 on conflict do nothing;
 
 -- Controllo: quante basi per categoria
