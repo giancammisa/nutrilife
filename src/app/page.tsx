@@ -31,12 +31,14 @@ export default function Home() {
 
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-8 px-5 pt-8 pb-12">
         <section className="flex flex-col gap-4">
-          <h1 className="text-[5rem] leading-[0.9] font-semibold tracking-[-0.04em] sm:text-7xl">NutriLife</h1>
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-[2rem] leading-none tracking-[-0.02em]">
-              <span className="font-semibold">Cucina</span> 3.0
-            </p>
-            <AnimatedMark className="mr-1 w-28 shrink-0 sm:w-32" />
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-col gap-3">
+              <h1 className="text-[min(18vw,4.2rem)] leading-[0.9] font-semibold tracking-[-0.04em] sm:text-7xl">NutriLife</h1>
+              <p className="text-[2rem] leading-none tracking-[-0.02em]">
+                <span className="font-semibold">Cucina</span> 3.0
+              </p>
+            </div>
+            <AnimatedMark className="-mt-1 mr-1 w-[min(24vw,6rem)] shrink-0 sm:w-28" />
           </div>
           <p className="max-w-[34ch] text-lg leading-snug text-muted-foreground">
             Il piano del tuo nutrizionista, <span className="text-foreground">cucinato e pesato al grammo</span>{" "}
