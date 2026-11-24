@@ -1,5 +1,4 @@
 import { AuthStage } from "@/components/auth-stage";
-import { LivingBackground } from "@/components/living-background";
 import { PlainShell } from "@/components/plain-shell";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,7 +19,6 @@ export default async function AccediPage({ searchParams }: PageProps<"/accedi">)
 
   return (
     <PlainShell>
-      <LivingBackground />
       <div className="flex flex-col gap-2">
         <h1 className="text-[2.4rem]">Accedi</h1>
         <p className="text-muted-foreground">Bentornato su NutriLife.</p>

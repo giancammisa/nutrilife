@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AnimatedMark, Wordmark } from "@/components/brand";
 import { FoodPhoto, type FotoName } from "@/components/food-art";
-import { LivingBackground } from "@/components/living-background";
 import { Button } from "@/components/ui/button";
 
 // Pasto d'esempio per mostrare come NutriLife legge un piatto: non sono dati di un cliente.
@@ -21,7 +20,6 @@ const PASSI: { n: string; title: string; text: string; bg: string; foto: FotoNam
 export default function Home() {
   return (
     <div className="relative isolate flex flex-1 flex-col">
-      <LivingBackground />
       <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between px-5 py-3">
           <Wordmark className="text-lg" />
