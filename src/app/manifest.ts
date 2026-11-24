@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "NutriLife",
     short_name: "NutriLife",
-    description: "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato al grammo da cucine vicino a te.",
+    description: "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato al grammo da laboratori artigiani vicino a te.",
     lang: "it",
     start_url: "/home",
     scope: "/",

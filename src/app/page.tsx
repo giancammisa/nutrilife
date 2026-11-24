@@ -42,7 +42,7 @@ export default function Home() {
           </div>
           <p className="max-w-[34ch] text-lg leading-snug text-muted-foreground">
             Il piano del tuo nutrizionista, <span className="text-foreground">cucinato e pesato al grammo</span>{" "}
-            da cucine vicino a te.
+            da laboratori artigiani vicino a te.
           </p>
         </section>
 

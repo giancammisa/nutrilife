@@ -12,7 +12,7 @@ const urbanist = Urbanist({
 export const metadata: Metadata = {
   title: "NutriLife",
   description:
-    "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato al grammo da cucine vicino a te.",
+    "Cucina 3.0: il piano del tuo nutrizionista, cucinato e pesato al grammo da laboratori artigiani vicino a te.",
   applicationName: "NutriLife",
   // iPhone: apertura a schermo intero quando è aggiunta alla schermata Home
   appleWebApp: { capable: true, title: "NutriLife", statusBarStyle: "default" },

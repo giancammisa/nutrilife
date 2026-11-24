@@ -1,6 +1,6 @@
 ---
 name: NutriLife
-description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da cucine vicino a te.
+description: Cucina 3.0 — il piano del nutrizionista, cucinato e pesato al grammo da laboratori artigiani vicino a te.
 colors:
   ink: "#0B0B0B"
   salvia: "#DFE6DA"
