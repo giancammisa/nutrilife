@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowLeft, LogOut } from "lucide-react";
-import { signOut } from "@/app/actions";
+import { ArrowLeft, ChevronDown, LogOut } from "lucide-react";
+import { signOut, switchRole } from "@/app/actions";
 import { Wordmark } from "@/components/brand";
 import { ROLE_LABEL, type Profile } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
@@ -34,7 +34,33 @@ export async function RoleArea({
                 Prova
               </span>
             )}
-            <span className="glass rounded-full px-3 py-1 text-xs font-medium">{ROLE_LABEL[profile.role]}</span>
+            {profile.allowed_roles.length > 1 ? (
+              // Cambia vista: menu semplice, funziona anche senza JavaScript
+              <details className="group relative">
+                <summary className="glass inline-flex h-9 cursor-pointer list-none items-center gap-1 rounded-full px-3 text-xs font-medium [&::-webkit-details-marker]:hidden">
+                  {ROLE_LABEL[profile.role]}
+                  <ChevronDown className="size-3.5 transition-transform group-open:rotate-180" aria-hidden />
+                  <span className="sr-only">: cambia vista</span>
+                </summary>
+                <div className="absolute right-0 z-40 mt-2 flex w-48 flex-col gap-1 rounded-[20px] border bg-popover p-1.5 text-popover-foreground">
+                  <span className="px-3 pt-1.5 pb-1 text-xs text-muted-foreground">Vedi l&apos;app come</span>
+                  {profile.allowed_roles.map((r) => (
+                    <form key={r} action={switchRole} suppressHydrationWarning>
+                      <input type="hidden" name="role" value={r} />
+                      <button
+                        type="submit"
+                        aria-current={r === profile.role ? "true" : undefined}
+                        className="flex h-11 w-full items-center justify-between rounded-[14px] px-3 text-left text-sm font-semibold hover:bg-muted aria-[current=true]:bg-ink aria-[current=true]:text-paper"
+                      >
+                        {ROLE_LABEL[r]}
+                      </button>
+                    </form>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <span className="glass rounded-full px-3 py-1 text-xs font-medium">{ROLE_LABEL[profile.role]}</span>
+            )}
             {/* Chrome su iPhone aggiunge un suo attributo ai moduli: non è un errore dell'app */}
             <form action={signOut} suppressHydrationWarning>
               <button

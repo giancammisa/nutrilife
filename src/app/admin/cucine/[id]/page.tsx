@@ -37,7 +37,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
         .eq("kitchen_id", id),
       supabase.from("bases").select("id, name, category").eq("active", true).order("name"),
       supabase.from("kitchen_members").select("profile_id, profiles(full_name, email)").eq("kitchen_id", id),
-      supabase.from("profiles").select("id, full_name, email").eq("role", "cucina").order("full_name"),
+      supabase.from("profiles").select("id, full_name, email").or("role.eq.cucina,allowed_roles.cs.{cucina}").order("full_name"),
     ]);
 
   const memberRows = (members ?? []) as unknown as {

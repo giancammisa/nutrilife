@@ -2,7 +2,19 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { PRIVACY_VERSION } from "@/lib/auth";
+import { PRIVACY_VERSION, ROLE_HOME, type Role } from "@/lib/auth";
+
+const ROLES: Role[] = ["admin", "nutrizionista", "cliente", "cucina"];
+
+// Cambia vista: passa a un altro dei propri ruoli permessi (lo controlla il database).
+export async function switchRole(formData: FormData) {
+  const role = String(formData.get("role") ?? "") as Role;
+  if (!ROLES.includes(role)) return;
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("switch_my_role", { p_role: role });
+  if (error) redirect("/home");
+  redirect(ROLE_HOME[role]);
+}
 
 export async function signOut() {
   const supabase = await createClient();

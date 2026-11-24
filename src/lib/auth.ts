@@ -12,6 +12,8 @@ export type Profile = {
   active: boolean;
   privacy_consent_at: string | null;
   privacy_consent_version: string | null;
+  /** Ruoli tra cui l'account puo' passare con "Cambia vista" (vuoto = solo il suo). */
+  allowed_roles: Role[];
 };
 
 // Versione dell'informativa privacy: se cambia il testo, si aumenta e tutti ridanno il consenso.
@@ -52,11 +54,14 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id, role, full_name, active, privacy_consent_at, privacy_consent_version")
+    .select("*")
     .eq("id", userId)
     .single();
 
-  return (data as Profile | null) ?? null;
+  if (!data) return null;
+  // "*" cosi' l'app funziona anche prima che la colonna allowed_roles esista nel database.
+  const row = data as Omit<Profile, "allowed_roles"> & { allowed_roles?: Role[] | null };
+  return { ...row, allowed_roles: row.allowed_roles ?? [] };
 });
 
 // Da usare in cima a ogni pagina protetta: controlla accesso, consenso, account attivo e ruolo.
