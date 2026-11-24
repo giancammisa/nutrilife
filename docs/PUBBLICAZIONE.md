@@ -20,7 +20,7 @@ Lista dal controllo finale del passo 10 (23/11/2026). Le voci con ⚠️ bloccan
 ## 3. Privacy (dati sulla salute: allergie e intolleranze)
 - ⚠️ Far rivedere `src/app/privacy/page.tsx` a un consulente privacy e completare le parti `[tra parentesi quadre]` (titolare, email privacy, tempi di conservazione, fornitori).
 - ⚠️ Dopo la revisione: aumentare `PRIVACY_VERSION` in `src/lib/auth.ts` → tutti ridanno il consenso al primo accesso.
-- Accordi di trattamento (DPA) con Supabase, Resend, Vercel; registro dei trattamenti; valutare con il consulente se serve la valutazione d'impatto (DPIA) per i dati sanitari.
+- Accordi di trattamento (DPA) con Supabase, Resend, Vercel e **Anthropic** (lettura dei piani dieta con l'AI: inserirla anche nell'informativa); registro dei trattamenti; valutare con il consulente se serve la valutazione d'impatto (DPIA) per i dati sanitari.
 - Procedura per le richieste di cancellazione/accesso ai dati (per ora manuale via email).
 
 ## 4. Dati e configurazione

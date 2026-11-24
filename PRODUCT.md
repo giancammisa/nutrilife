@@ -28,7 +28,7 @@ Una cucina di quartiere che lavora con un menu componibile di basi (proteine, ca
 
 ## Capabilities and Constraints
 - Next.js 16 + Supabase (UE) + Tailwind 4 + shadcn/ui; interfaccia in italiano.
-- Funzioni v1 complete (passi 0–10 in docs/PIANO.md). Fuori v1: pagamenti in app, AI, recensioni, notifiche.
+- Funzioni v1 complete (passi 0–10 in docs/PIANO.md). Fuori v1: pagamenti in app, recensioni, notifiche. AI solo per leggere il piano dieta (PDF/foto) e proporre i pasti tipo, sempre rivisti e confermati dal nutrizionista; il file non viene salvato.
 - Privacy: niente anamnesi/peso/esami; allergie solo con consenso specifico.
 
 ## Brand Commitments

@@ -3,6 +3,7 @@ import { RoleArea } from "@/components/role-area";
 import { MealBlob, MealLegend } from "@/components/brand";
 import { ActionForm } from "@/components/action-form";
 import { BasePicker } from "@/components/base-picker";
+import { DietPlanImport } from "./diet-plan-import";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,8 @@ import {
 } from "../../actions";
 
 export const metadata = { title: "Paziente · NutriLife" };
+// La lettura del piano con l'AI può richiedere fino a un minuto.
+export const maxDuration = 120;
 
 type Template = {
   id: string;
@@ -83,6 +86,8 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
       {active.map((t) => (
         <TemplateCard key={t.id} template={t} patientId={patientId} bases={bases ?? []} />
       ))}
+
+      <DietPlanImport patientId={patientId} bases={bases ?? []} />
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
         <h2 className="section-title">Nuovo pasto tipo</h2>
