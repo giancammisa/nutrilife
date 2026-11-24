@@ -73,3 +73,9 @@ Regole nel database: l'ordine passa da un'unica funzione che controlla orario li
 - Urbanist: sottile e grande per titoli e numeri, 600 per i nomi.
 - Segno: tre cerchi fusi. Mossa firma: pasto in cerchi fusi (proteina rosa, carboidrato lime, verdura verde).
 - Motto: **Cucina 3.0**.
+
+
+## Prossimi passi v2 (decisi il 24/11/2026)
+- **Catalogo basi:** obiettivo ~100–150 basi coprendo i gruppi alimentari (proteine animali e vegetali, latticini, cereali e derivati, tuberi, verdure, frutta, grassi e frutta secca): è l'ordine di grandezza con cui un nutrizionista compone diete senza sentirsi limitato. Nuova categoria **Frutta** (SQL `0010`). Catalogo di prova in `supabase/seed/basi_prova.sql` (~106 basi).
+- **Passo 11 · Alternative nel pasto tipo:** per ogni parte del pasto il nutrizionista mette 2–4 alternative, ognuna con i suoi grammi (es. pollo 150 g / merluzzo 200 g). Il cliente ne sceglie una per parte quando ordina. Dati: `meal_template_items.choice_group` (stesso numero = alternative). L'ordine riceve le scelte e controlla una sola scelta per gruppo.
+- **Passo 12 · Ordine da più punti vendita:** per ogni parte del pasto il cliente sceglie il punto vendita (es. pollo dalla gastronomia, piselli lessati da **Soleterra Primizie**, fruttivendolo con laboratorio). Nasce un ordine per ogni punto, legati da un `basket_id`, ognuno con il suo biglietto di ritiro e il suo costo fisso. Il vincolo "un ordine per cliente, giorno e momento" diventa "per punto vendita". Annullare annulla tutto il pasto. Ogni cucina vede e prepara solo la sua parte.
