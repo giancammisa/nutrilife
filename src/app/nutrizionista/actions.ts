@@ -82,10 +82,31 @@ export async function addTemplateItem(_prev: FormState, formData: FormData): Pro
   if (!baseId) return { error: "Scegli una base.", ok: null };
   if (!g) return { error: "Indica i grammi (da 1 a 1000).", ok: null };
 
+  const altOf = uuid(formData, "alt_of");
   const { supabase } = await nutritionist();
+
+  // In alternativa a un'altra base: stesso gruppo di scelta (se non c'è, se ne crea uno nuovo).
+  let group: number | null = null;
+  if (altOf) {
+    const { data: rows } = await supabase
+      .from("meal_template_items")
+      .select("id, choice_group")
+      .eq("template_id", templateId);
+    const target = rows?.find((r) => r.id === altOf);
+    if (!target) return { error: "La base di riferimento non è in questo pasto.", ok: null };
+    group = target.choice_group ?? Math.max(0, ...(rows ?? []).map((r) => r.choice_group ?? 0)) + 1;
+    if (target.choice_group == null) {
+      const { error: upErr } = await supabase
+        .from("meal_template_items")
+        .update({ choice_group: group })
+        .eq("id", altOf);
+      if (upErr) return { error: dbError(upErr.code), ok: null };
+    }
+  }
+
   const { error } = await supabase
     .from("meal_template_items")
-    .insert({ template_id: templateId, base_id: baseId, grams: g });
+    .insert({ template_id: templateId, base_id: baseId, grams: g, choice_group: group });
   if (error) {
     return {
       error: error.code === "23505" ? "Questa base è già nel pasto tipo." : dbError(error.code),
@@ -94,7 +115,7 @@ export async function addTemplateItem(_prev: FormState, formData: FormData): Pro
   }
 
   revalidatePath(`/nutrizionista/pazienti/${patientId}`);
-  return { error: null, ok: "Base aggiunta." };
+  return { error: null, ok: group ? "Alternativa aggiunta." : "Base aggiunta." };
 }
 
 export async function updateItemGrams(_prev: FormState, formData: FormData): Promise<FormState> {

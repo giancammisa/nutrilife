@@ -28,7 +28,7 @@ type Template = {
   name: string;
   meal_slot: "pranzo" | "cena";
   notes: string | null;
-  meal_template_items: { id: string; grams: number; bases: { name: string; category: string } | null }[];
+  meal_template_items: { id: string; grams: number; choice_group: number | null; bases: { name: string; category: string } | null }[];
 };
 
 type Order = {
@@ -66,7 +66,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         .maybeSingle(),
       supabase
         .from("meal_templates")
-        .select("id, name, meal_slot, notes, meal_template_items(id, grams, bases(name, category))")
+        .select("id, name, meal_slot, notes, meal_template_items(id, grams, choice_group, bases(name, category))")
         .eq("patient_id", profile.id)
         .eq("active", true)
         .order("meal_slot")
@@ -229,17 +229,29 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
                   </span>
                 </div>
                 <MealBlob
-                  items={t.meal_template_items.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))}
+                  items={t.meal_template_items
+                    .filter((i, idx, all) => i.choice_group == null || all.findIndex((x) => x.choice_group === i.choice_group) === idx)
+                    .map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))}
                   size={44}
                   outline="var(--ink)"
                 />
               </div>
               <ul className="flex flex-col gap-1">
                 {[...t.meal_template_items]
-                  .sort((a, b) => order(a.bases?.category ?? "") - order(b.bases?.category ?? ""))
+                  .sort(
+                    (a, b) =>
+                      order(a.bases?.category ?? "") - order(b.bases?.category ?? "") ||
+                      (a.choice_group ?? 0) - (b.choice_group ?? 0),
+                  )
                   .map((i) => (
                     <li key={i.id} className="flex justify-between gap-3 text-sm">
-                      <span>{i.bases?.name}</span>
+                      <span>
+                        {i.bases?.name}
+                        {i.choice_group != null &&
+                          t.meal_template_items.filter((x) => x.choice_group === i.choice_group).length > 1 && (
+                            <span className="ml-2 text-xs text-muted-foreground">a scelta</span>
+                          )}
+                      </span>
                       <span className="num">{i.grams} g</span>
                     </li>
                   ))}

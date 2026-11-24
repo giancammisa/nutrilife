@@ -28,6 +28,7 @@ type Template = {
   meal_template_items: {
     id: string;
     grams: number;
+    choice_group: number | null;
     bases: { id: string; name: string; category: string } | null;
   }[];
 };
@@ -48,7 +49,7 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
       .maybeSingle(),
     supabase
       .from("meal_templates")
-      .select("id, name, meal_slot, notes, active, meal_template_items(id, grams, bases(id, name, category))")
+      .select("id, name, meal_slot, notes, active, meal_template_items(id, grams, choice_group, bases(id, name, category))")
       .eq("patient_id", patientId)
       .order("meal_slot")
       .order("name"),
@@ -146,11 +147,23 @@ function TemplateCard({
 }) {
   const items = [...t.meal_template_items].sort((a, b) => {
     const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
-    return order(a.bases?.category ?? "") - order(b.bases?.category ?? "");
+    return (
+      order(a.bases?.category ?? "") - order(b.bases?.category ?? "") ||
+      (a.choice_group ?? 0) - (b.choice_group ?? 0)
+    );
   });
+  // Per i totali e il disegno conta la prima alternativa di ogni gruppo.
+  const seen = new Set<number>();
+  const shown = items.filter((i) => {
+    if (i.choice_group == null) return true;
+    if (seen.has(i.choice_group)) return false;
+    seen.add(i.choice_group);
+    return true;
+  });
+  const groupSize = (g: number | null) => (g == null ? 0 : items.filter((x) => x.choice_group === g).length);
   const used = new Set(items.map((i) => i.bases?.id));
   const addable = bases.filter((b) => !used.has(b.id));
-  const total = items.reduce((sum, i) => sum + i.grams, 0);
+  const total = shown.reduce((sum, i) => sum + i.grams, 0);
 
   return (
     <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
@@ -162,7 +175,7 @@ function TemplateCard({
           </span>
           {items.length > 0 && (
             <div className="mt-3 flex flex-col gap-2">
-              <MealBlob items={items.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))} size={52} />
+              <MealBlob items={shown.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))} size={52} />
               <MealLegend />
             </div>
           )}
@@ -185,7 +198,14 @@ function TemplateCard({
           <li key={i.id} className="flex flex-col gap-2 py-3">
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium">{i.bases?.name}</span>
-              <span className="text-xs text-muted-foreground">{categoryLabel(i.bases?.category ?? "")}</span>
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                {groupSize(i.choice_group) > 1 && (
+                  <span className="rounded-full bg-lemon px-2 py-0.5 font-semibold text-ink">
+                    a scelta · gruppo {i.choice_group}
+                  </span>
+                )}
+                {categoryLabel(i.bases?.category ?? "")}
+              </span>
             </div>
             <div className="flex items-end gap-2">
               <div className="flex-1">
@@ -226,6 +246,27 @@ function TemplateCard({
             <input type="hidden" name="template_id" value={t.id} />
             <input type="hidden" name="patient_id" value={patientId} />
             <BasePicker bases={addable} />
+            {items.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor={`alt-${t.id}`}>In alternativa a (facoltativo)</Label>
+                <select
+                  id={`alt-${t.id}`}
+                  name="alt_of"
+                  defaultValue=""
+                  className="h-11 rounded-lg border border-input bg-white/70 px-3 text-base"
+                >
+                  <option value="">No, base fissa (c&apos;è sempre)</option>
+                  {items.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.bases?.name} {i.grams} g
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm text-muted-foreground">
+                  Se scegli una base qui, il cliente sceglierà tra le due (o più) quando ordina.
+                </p>
+              </div>
+            )}
             <div className="flex flex-col gap-2">
               <Label htmlFor={`grams-${t.id}`}>Grammi</Label>
               <Input

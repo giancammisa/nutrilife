@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth";
 import { isAllergenCode } from "@/lib/allergens";
 import { DATE_RE } from "@/lib/dates";
-import { text, uuid, type FormState } from "@/lib/form";
+import { text, UUID, uuid, type FormState } from "@/lib/form";
 import { createClient } from "@/lib/supabase/server";
 
 async function client() {
@@ -55,6 +55,7 @@ const ORDER_ERRORS: [string, string][] = [
   ["non disponibile", "Questo pasto non è disponibile in questa gastronomia."],
   ["14 giorni", "Puoi ordinare al massimo 14 giorni prima."],
   ["Pasto tipo non valido", "Pasto tipo non valido."],
+  ["alternative", "Scegli una base per ogni scelta del pasto."],
 ];
 
 export async function placeOrder(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -71,6 +72,7 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
     p_kitchen: kitchenId,
     p_pickup: day,
     p_ack_unverified: formData.get("ack_unverified") === "on",
+    p_items: formData.getAll("items").map(String).filter((v) => UUID.test(v)),
   });
   if (error) {
     const known = ORDER_ERRORS.find(([key]) => error.message.includes(key));

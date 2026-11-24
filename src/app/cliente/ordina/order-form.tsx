@@ -4,16 +4,34 @@ import { useActionState, useState } from "react";
 import { placeOrder } from "../actions";
 import type { FormState } from "@/lib/form";
 import { allergenName } from "@/lib/allergens";
-import { formatEuro } from "@/lib/pricing";
+import { formatEuro, mealPriceCents } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { MealBlob } from "@/components/brand";
 
-export type Option = {
-  templateId: string;
+type Item = { id: string; baseId: string; name: string; grams: number; category: string; group: number | null };
+
+type TemplateView = {
+  id: string;
+  name: string;
+  slot: "pranzo" | "cena";
+  taken: boolean;
+  items: Item[];
+};
+
+type KitchenView = { id: string; name: string; address: string | null; feeCents: number };
+type KitchenBaseView = {
   kitchenId: string;
+  baseId: string;
+  allergens: string[];
+  declared: boolean;
+  available: boolean;
+  priceCents: number | null;
+};
+
+type Option = {
   available: boolean;
   priceCents: number | null;
   allergens: string[];
@@ -22,13 +40,38 @@ export type Option = {
   intolerance: string[];
 };
 
-type TemplateView = {
-  id: string;
-  name: string;
-  slot: "pranzo" | "cena";
-  taken: boolean;
-  items: { name: string; grams: number; category: string }[];
-};
+// Righe del pasto: le fisse + l'alternativa scelta per ogni gruppo (la prima se non scelta).
+function chosenItems(t: TemplateView, choices: Record<number, string>): Item[] {
+  const firstOf = new Map<number, string>();
+  for (const i of t.items) if (i.group != null && !firstOf.has(i.group)) firstOf.set(i.group, i.id);
+  return t.items.filter((i) => i.group == null || i.id === (choices[i.group] ?? firstOf.get(i.group)));
+}
+
+// Stesse regole del database: disponibilita, prezzo, allergeni.
+function optionFor(
+  items: Item[],
+  k: KitchenView,
+  kbs: KitchenBaseView[],
+  allergies: string[],
+  intolerances: string[],
+): Option {
+  const lines = items.map((i) => ({ i, kb: kbs.find((x) => x.kitchenId === k.id && x.baseId === i.baseId) }));
+  const available = lines.length > 0 && lines.every((l) => l.kb && l.kb.available && l.kb.priceCents);
+  const allergens = [...new Set(lines.flatMap((l) => l.kb?.allergens ?? []))].sort();
+  return {
+    available,
+    priceCents: available
+      ? mealPriceCents(
+          lines.map((l) => ({ grams: l.i.grams, pricePerKgCents: l.kb!.priceCents! })),
+          k.feeCents,
+        )
+      : null,
+    allergens,
+    unverified: lines.some((l) => l.kb && !l.kb.declared),
+    conflict: allergens.filter((a) => allergies.includes(a)),
+    intolerance: allergens.filter((a) => intolerances.includes(a)),
+  };
+}
 
 const SLOT_LABEL = { pranzo: "Pranzo", cena: "Cena" } as const;
 
@@ -66,12 +109,16 @@ export function OrderForm({
   day,
   templates,
   kitchens,
-  options,
+  kitchenBases,
+  allergies,
+  intolerances,
 }: {
   day: string;
   templates: TemplateView[];
-  kitchens: { id: string; name: string; address: string | null }[];
-  options: Option[];
+  kitchens: KitchenView[];
+  kitchenBases: KitchenBaseView[];
+  allergies: string[];
+  intolerances: string[];
 }) {
   const firstFree = templates.find((t) => !t.taken);
   const [templateId, setTemplateId] = useState<string | null>(firstFree?.id ?? null);
@@ -79,10 +126,20 @@ export function OrderForm({
     kitchens.length === 1 ? kitchens[0].id : null,
   );
   const [ack, setAck] = useState(false);
+  const [choices, setChoices] = useState<Record<number, string>>({});
   const [state, action, pending] = useActionState<FormState, FormData>(placeOrder, { error: null, ok: null });
 
-  const option = options.find((o) => o.templateId === templateId && o.kitchenId === kitchenId) ?? null;
   const template = templates.find((t) => t.id === templateId) ?? null;
+  const items = template ? chosenItems(template, choices) : [];
+  const optionAt = (k: KitchenView) => optionFor(items, k, kitchenBases, allergies, intolerances);
+  const kitchen = kitchens.find((k) => k.id === kitchenId) ?? null;
+  const option = template && kitchen ? optionAt(kitchen) : null;
+  // Gruppi di alternative del pasto scelto (solo quelli con almeno due basi)
+  const groups = template
+    ? [...new Set(template.items.filter((i) => i.group != null).map((i) => i.group as number))]
+        .map((g) => template.items.filter((i) => i.group === g))
+        .filter((alts) => alts.length > 1)
+    : [];
   const blocked = Boolean(option && option.conflict.length > 0);
   const canSubmit =
     Boolean(option?.available) && !blocked && (!option?.unverified || ack) && !template?.taken;
@@ -92,6 +149,9 @@ export function OrderForm({
       <input type="hidden" name="day" value={day} />
       <input type="hidden" name="template_id" value={templateId ?? ""} />
       <input type="hidden" name="kitchen_id" value={kitchenId ?? ""} />
+      {items.map((i) => (
+        <input key={i.id} type="hidden" name="items" value={i.id} />
+      ))}
 
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Pasto tipo">
         <h2 className="section-title">Quale pasto</h2>
@@ -102,6 +162,7 @@ export function OrderForm({
             disabled={t.taken}
             onSelect={() => {
               setTemplateId(t.id);
+              setChoices({});
               setAck(false);
             }}
           >
@@ -110,21 +171,59 @@ export function OrderForm({
                 <span className="text-base font-semibold">{t.name}</span>
                 <span className="text-xs font-semibold uppercase text-muted-foreground">{SLOT_LABEL[t.slot]}</span>
               </span>
-              <MealBlob items={t.items} size={40} outline={templateId === t.id ? "var(--ink)" : undefined} />
+              <MealBlob items={t.id === templateId ? items : chosenItems(t, {})} size={40} />
             </span>
             <span className="text-sm text-muted-foreground">
               {t.taken
                 ? `Hai già ordinato il ${SLOT_LABEL[t.slot].toLowerCase()} di questo giorno`
-                : t.items.map((i) => `${i.name} ${i.grams} g`).join(" · ")}
+                : (t.id === templateId ? items : chosenItems(t, {})).map((i) => `${i.name} ${i.grams} g`).join(" · ")}
             </span>
           </Choice>
         ))}
       </section>
 
+      {groups.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="section-title">Scegli tu</h2>
+            <p className="text-sm text-muted-foreground">Il tuo nutrizionista ti lascia scegliere tra queste basi.</p>
+          </div>
+          {groups.map((alts) => {
+            const g = alts[0].group as number;
+            const current = choices[g] ?? alts[0].id;
+            return (
+              <div key={g} role="radiogroup" aria-label={`Scelta ${g}`} className="flex flex-wrap gap-2">
+                {alts.map((i) => (
+                  <button
+                    key={i.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={current === i.id}
+                    onClick={() => {
+                      setChoices((c) => ({ ...c, [g]: i.id }));
+                      setAck(false);
+                    }}
+                    className={cn(
+                      "inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors",
+                      current === i.id ? "border-ink bg-ink text-paper" : "border-ink/15 bg-white/70 hover:bg-white",
+                    )}
+                  >
+                    {i.name}
+                    <span className={cn("num text-xs", current === i.id ? "text-lemon" : "text-muted-foreground")}>
+                      {i.grams} g
+                    </span>
+                  </button>
+                ))}
+              </div>
+            );
+          })}
+        </section>
+      )}
+
       <section className="flex flex-col gap-2" role="radiogroup" aria-label="Gastronomia">
         <h2 className="section-title">Dove lo ritiri</h2>
         {kitchens.map((k) => {
-          const o = options.find((x) => x.templateId === templateId && x.kitchenId === k.id);
+          const o = template ? optionAt(k) : null;
           return (
             <Choice
               key={k.id}

@@ -3,9 +3,8 @@ import { RoleArea } from "@/components/role-area";
 import { requireProfile } from "@/lib/auth";
 import { BASE_CATEGORIES } from "@/lib/allergens";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
-import { mealPriceCents } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
-import { OrderForm, type Option } from "./order-form";
+import { OrderForm } from "./order-form";
 
 export const metadata = { title: "Ordina · NutriLife" };
 
@@ -13,7 +12,7 @@ type Template = {
   id: string;
   name: string;
   meal_slot: "pranzo" | "cena";
-  meal_template_items: { base_id: string; grams: number; bases: { name: string; category: string } | null }[];
+  meal_template_items: { id: string; base_id: string; grams: number; choice_group: number | null; bases: { name: string; category: string } | null }[];
 };
 
 type KitchenBase = {
@@ -40,7 +39,7 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
   const [{ data: tplData }, { data: kitchens }, { data: me }, { data: dayOrders }] = await Promise.all([
     supabase
       .from("meal_templates")
-      .select("id, name, meal_slot, meal_template_items(base_id, grams, bases(name, category))")
+      .select("id, name, meal_slot, meal_template_items(id, base_id, grams, choice_group, bases(name, category))")
       .eq("patient_id", profile.id)
       .eq("active", true)
       .order("meal_slot")
@@ -70,34 +69,6 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
   const takenSlots = new Set((dayOrders ?? []).map((o) => o.meal_slot as string));
   const catOrder = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
 
-  // Per ogni pasto tipo e gastronomia: disponibilità, prezzo e allergeni (come farà il database).
-  const options: Option[] = templates.flatMap((t) =>
-    (kitchens ?? []).map((k) => {
-      const lines = t.meal_template_items.map((i) => ({
-        item: i,
-        kb: kitchenBases.find((kb) => kb.kitchen_id === k.id && kb.base_id === i.base_id),
-      }));
-      const available =
-        lines.length > 0 && lines.every((l) => l.kb && l.kb.available && l.kb.price_per_kg_cents);
-      const allergens = [...new Set(lines.flatMap((l) => l.kb?.allergens ?? []))].sort();
-      return {
-        templateId: t.id,
-        kitchenId: k.id,
-        available,
-        priceCents: available
-          ? mealPriceCents(
-              lines.map((l) => ({ grams: l.item.grams, pricePerKgCents: l.kb!.price_per_kg_cents! })),
-              k.fixed_fee_cents ?? 0,
-            )
-          : null,
-        allergens,
-        unverified: lines.some((l) => l.kb && !l.kb.allergens_declared),
-        conflict: allergens.filter((a) => allergies.includes(a)),
-        intolerance: allergens.filter((a) => intolerances.includes(a)),
-      };
-    }),
-  );
-
   return (
     <RoleArea profile={profile} title={`Ordina per ${formatDay(day)}`} back={{ href: "/cliente", label: "La mia settimana" }}>
       <p className="text-muted-foreground">
@@ -117,11 +88,36 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
             slot: t.meal_slot,
             taken: takenSlots.has(t.meal_slot),
             items: [...t.meal_template_items]
-              .sort((a, b) => catOrder(a.bases?.category ?? "") - catOrder(b.bases?.category ?? ""))
-              .map((i) => ({ name: i.bases?.name ?? "", grams: i.grams, category: i.bases?.category ?? "altro" })),
+              .sort(
+                (a, b) =>
+                  catOrder(a.bases?.category ?? "") - catOrder(b.bases?.category ?? "") ||
+                  (a.choice_group ?? 0) - (b.choice_group ?? 0),
+              )
+              .map((i) => ({
+                id: i.id,
+                baseId: i.base_id,
+                name: i.bases?.name ?? "",
+                grams: i.grams,
+                category: i.bases?.category ?? "altro",
+                group: i.choice_group,
+              })),
           }))}
-          kitchens={(kitchens ?? []).map((k) => ({ id: k.id, name: k.name, address: k.address }))}
-          options={options}
+          kitchens={(kitchens ?? []).map((k) => ({
+            id: k.id,
+            name: k.name,
+            address: k.address,
+            feeCents: k.fixed_fee_cents ?? 0,
+          }))}
+          kitchenBases={kitchenBases.map((kb) => ({
+            kitchenId: kb.kitchen_id,
+            baseId: kb.base_id,
+            allergens: kb.allergens,
+            declared: kb.allergens_declared,
+            available: kb.available,
+            priceCents: kb.price_per_kg_cents,
+          }))}
+          allergies={allergies}
+          intolerances={intolerances}
         />
       )}
     </RoleArea>
