@@ -130,7 +130,7 @@ export function DayArc({
   return (
     <section
       ref={wrap}
-      className="relative -mx-5 overflow-hidden rounded-b-[36px] sm:mx-0"
+      className="relative isolate -mx-5 overflow-hidden rounded-b-[36px] sm:mx-0"
       aria-label="Giorni della settimana"
     >
       {/* il banner: anello esterno di vetro rosa → bianco, interno un po' più scuro */}

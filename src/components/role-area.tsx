@@ -23,7 +23,7 @@ export async function RoleArea({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-ink/5 bg-white/45 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-5 py-3">
           <Link href="/home" aria-label="NutriLife, vai alla tua area" className="text-lg">
             <Wordmark />
