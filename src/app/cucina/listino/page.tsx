@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { RoleArea } from "@/components/role-area";
 import { ActionForm } from "@/components/action-form";
+import { BasePicker } from "@/components/base-picker";
 import { AllergenBadges } from "@/components/allergen-badges";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,25 +127,7 @@ export default async function ListinoPage({ searchParams }: PageProps<"/cucina/l
         ) : (
           <ActionForm action={addBase} submitLabel="Aggiungi al listino" resetOnSuccess>
             <input type="hidden" name="kitchen_id" value={kitchen.id} />
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="base_id">Base dal catalogo</Label>
-              <select
-                id="base_id"
-                name="base_id"
-                required
-                defaultValue=""
-                className="h-12 rounded-lg border border-input bg-white/70 px-3 text-base"
-              >
-                <option value="" disabled>
-                  Scegli…
-                </option>
-                {addable.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name} ({categoryLabel(b.category)})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <BasePicker bases={addable} label="Base dal catalogo" />
           </ActionForm>
         )}
       </section>

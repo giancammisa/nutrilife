@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { RoleArea } from "@/components/role-area";
 import { MealBlob, MealLegend } from "@/components/brand";
 import { ActionForm } from "@/components/action-form";
+import { BasePicker } from "@/components/base-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -224,33 +225,7 @@ function TemplateCard({
           <ActionForm action={addTemplateItem} submitLabel="Aggiungi base" resetOnSuccess>
             <input type="hidden" name="template_id" value={t.id} />
             <input type="hidden" name="patient_id" value={patientId} />
-            <div className="flex flex-col gap-2">
-              <Label htmlFor={`base-${t.id}`}>Base</Label>
-              <select
-                id={`base-${t.id}`}
-                name="base_id"
-                required
-                defaultValue=""
-                className="h-11 rounded-lg border border-input bg-background px-3 text-base"
-              >
-                <option value="" disabled>
-                  Scegli…
-                </option>
-                {BASE_CATEGORIES.map((c) => {
-                  const options = addable.filter((b) => b.category === c.value);
-                  if (options.length === 0) return null;
-                  return (
-                    <optgroup key={c.value} label={c.label}>
-                      {options.map((b) => (
-                        <option key={b.id} value={b.id}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  );
-                })}
-              </select>
-            </div>
+            <BasePicker bases={addable} />
             <div className="flex flex-col gap-2">
               <Label htmlFor={`grams-${t.id}`}>Grammi</Label>
               <Input
