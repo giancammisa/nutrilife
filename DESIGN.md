@@ -41,7 +41,7 @@ colors:
 typography:
   hero:
     fontFamily: "Urbanist, system-ui, sans-serif"
-    fontSize: "3rem"
+    fontSize: "5rem"
     fontWeight: 600
     lineHeight: 0.95
     letterSpacing: "-0.03em"
@@ -222,7 +222,7 @@ Intestazione di vetro bianco: segno + NutriLife a sinistra; "Prova", ruolo e Esc
 ### Nastro dei giorni (cliente)
 `DayArc` in `src/app/cliente/day-arc.tsx`: su fondo piatto, un **banner ad arco di vetro** (una grande ciambella: anello esterno di vetro sfumato dal rosa `#F4B3AC` al bianco, così si stacca dai bollini bianchi, a taglio vivo (nessun bordo); interno salvia scuro `#D3DCCC`) a tutta larghezza. Fascia spessa 66px, quanto i bollini laterali: quello al centro sborda. I 7 giorni sono bollini bianchi da 76px che scorrono a metà della fascia: al centro più grandi (×1.14) con contorno nero e trattino nero sotto, ai lati più piccoli (×0.84) e più in basso. Giorno già ordinato: bollino lime con spunta nera; ordini chiusi senza ordine: sbiadito. Dentro l'arco, sotto: data, orario limite, ordini del giorno (schede lime) o pulsante nero Ordina. Tastiera: frecce sinistra/destra.
 ### Segno animato (prima pagina)
-`AnimatedMark` in `src/components/brand.tsx`: il segno dei tre cerchi in grande (128px) accanto al logotipo "NutriLife" (3rem/600) con sotto il motto "Cucina 3.0" (1.6rem). Cerchi nei colori del pasto (verde verdura, lime carboidrato, rosa proteina) con la silhouette nera fusa sotto; si allontanano e si riavvicinano (6–8 s) e il collo nero li tiene uniti. Fermo con "riduci movimento".
+`AnimatedMark` in `src/components/brand.tsx`: il segno dei tre cerchi in grande (128px) accanto al logotipo "NutriLife" (5rem/600) con sotto il motto "Cucina 3.0" (2rem). Cerchi nei colori del pasto (verde verdura, lime carboidrato, rosa proteina) con la silhouette nera fusa sotto; si allontanano e si riavvicinano (6–8 s) e il collo nero li tiene uniti. Fermo con "riduci movimento".
 ### Sfondo "acqua" (sospeso: per ora fondo piatto ovunque)
 `LivingBackground` in `src/components/living-background.tsx`: sul salvia, sei macchie morbide solo nei verdi chiari (menta, verde leggero, verde un po. più vivo qua e là) e bianco, leggerissime, che si muovono vivaci (9–15 s, con un punto intermedio, avanti e indietro) più un velo di riflessi bianchi che ondeggia, come luce sott'acqua. Solo `transform`, nessun video da scaricare; con "riduci movimento" resta fermo. Solo all'ingresso: le aree riservate restano a fondo piatto.
 ### Accesso
