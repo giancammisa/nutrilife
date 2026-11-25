@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, Ticket } from "lucide-react";
+import { ArrowRight, BadgeCheck, Flame, Ticket } from "lucide-react";
 import { pickupCode } from "@/lib/pickup";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
@@ -198,6 +198,16 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
           </span>
         </span>
         <ArrowRight aria-hidden className="size-5 shrink-0" />
+      </Link>
+      <Link
+        href="/cliente/premi"
+        className="flex items-center justify-between gap-3 rounded-[24px] bg-ink p-4 text-sm text-paper transition-colors hover:bg-ink/90"
+      >
+        <span className="flex flex-col">
+          <span className="font-semibold">I miei progressi</span>
+          <span className="text-paper/70">Serie, traguardi e card da condividere</span>
+        </span>
+        <Flame aria-hidden className="size-5 shrink-0 text-lemon" />
       </Link>
       <Link
         href="/cliente/piatti"

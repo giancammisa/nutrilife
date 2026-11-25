@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
       { source: "/_next/:path*", headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }] },
     ];
   },
+  // Font della card "I miei progressi" (lette dal disco al momento di creare l'immagine)
+  outputFileTracingIncludes: {
+    "/cliente/premi/card": ["./node_modules/@fontsource/urbanist/files/urbanist-latin-*-normal.woff"],
+  },
   // Piani dieta (PDF/foto) fino a 4 MB nelle azioni del server
   experimental: { serverActions: { bodySizeLimit: "5mb" } },
   // Cache Components disattivato: le pagine dipendono da chi è collegato (Supabase).
