@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element -- immagine generata dal server (next/og), non una pagina */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 import { requireProfile } from "@/lib/auth";
 import { getRewards, type Rewards } from "@/lib/rewards";
+import { auraSvg, CREAM, INK, LIME, ringSvg, svgData } from "./aura";
 
 // Solo in sviluppo: ?demo=1 mostra la card con numeri finti, senza accesso.
 const DEMO: Rewards = {
@@ -21,11 +23,6 @@ const DEMO: Rewards = {
 
 export const runtime = "nodejs";
 
-const INK = "#0B0B0B";
-const SALVIA = "#DFE6DA";
-const LIME = "#EDFF8C";
-const SAGE = "#9EE6A0";
-const ROSE = "#F4B3AC";
 
 const MONTHS = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 
@@ -67,6 +64,20 @@ export async function GET(request: NextRequest) {
     tipo !== "serie" && `${r.streakWeeks} ${r.streakWeeks === 1 ? "settimana" : "settimane"} di fila`,
   ].filter((p): p is string => Boolean(p));
 
+  // Avanzamento verso il prossimo traguardo: riempie l'anello e fa crescere la luce al centro
+  const next = (n: number, steps: number[]) => {
+    const target = steps.find((x) => x > n) ?? steps[steps.length - 1];
+    return Math.min(1, n / target);
+  };
+  const progress =
+    tipo === "pasti"
+      ? next(r.verifiedMeals, [10, 25, 50, 100, 200])
+      : tipo === "mese"
+        ? Math.min(1, r.monthMeals / 20)
+        : tipo === "traguardo"
+          ? 1
+          : next(r.streakWeeks, [4, 12, 26, 52]);
+
   const [light, semi, bold] = await Promise.all([font(300), font(600), font(700)]);
 
   return new ImageResponse(
@@ -77,67 +88,69 @@ export async function GET(request: NextRequest) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          background: SALVIA,
-          padding: "110px 90px 120px",
+          position: "relative",
           fontFamily: "Urbanist",
           color: INK,
+          background: CREAM,
         }}
       >
+        {/* aura: sagoma sfumata con la luce dei progressi (disegno originale) */}
+        <img src={svgData(auraSvg(progress))} width={1080} height={1920} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+
         {/* intestazione */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "100px 90px 0" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 84, fontWeight: 700, letterSpacing: -3 }}>NutriLife</span>
-            <span style={{ fontSize: 44, fontWeight: 300 }}>
+            <span style={{ fontSize: 80, fontWeight: 700, letterSpacing: -3 }}>NutriLife</span>
+            <span style={{ fontSize: 42, fontWeight: 300 }}>
               <b style={{ fontWeight: 600 }}>Cucina</b>&nbsp;3.0
             </span>
           </div>
-          <div style={{ display: "flex", position: "relative", width: 190, height: 170 }}>
-            <div style={{ position: "absolute", left: 0, top: 50, width: 120, height: 120, borderRadius: 999, background: SAGE, border: `8px solid ${INK}` }} />
-            <div style={{ position: "absolute", left: 100, top: 0, width: 80, height: 80, borderRadius: 999, background: LIME, border: `8px solid ${INK}` }} />
-            <div style={{ position: "absolute", left: 120, top: 100, width: 64, height: 64, borderRadius: 999, background: ROSE, border: `8px solid ${INK}` }} />
+          {/* stellina */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 150, height: 150, borderRadius: 999, background: INK }}>
+            <svg width="92" height="92" viewBox="0 0 24 24">
+              <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill={LIME} />
+            </svg>
           </div>
         </div>
 
-        {/* cerchi grandi del pasto con il numero */}
-        <div style={{ display: "flex", flex: 1, alignItems: "center", justifyContent: "center", position: "relative" }}>
-          <div style={{ position: "absolute", left: -40, top: 120, width: 560, height: 560, borderRadius: 999, background: SAGE }} />
-          <div style={{ position: "absolute", right: -20, top: 40, width: 380, height: 380, borderRadius: 999, background: LIME }} />
-          <div style={{ position: "absolute", left: 40, bottom: -10, width: 340, height: 340, borderRadius: 999, background: ROSE }} />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              background: INK,
-              color: "#F5F5F4",
-              borderRadius: 64,
-              padding: "70px 80px 80px",
-              width: 820,
-            }}
-          >
-            <span style={{ fontSize: big.length > 3 ? 220 : 300, fontWeight: 300, lineHeight: 1, color: LIME, letterSpacing: -10 }}>
-              {big}
-            </span>
-            <span style={{ fontSize: 76, fontWeight: 600, marginTop: 10, textAlign: "center", letterSpacing: -2 }}>{label}</span>
-            <span style={{ fontSize: 40, fontWeight: 300, marginTop: 24, textAlign: "center", color: "rgba(245,245,244,0.75)" }}>
-              {sub}
-            </span>
+        {/* anello con il numero, sul petto della sagoma */}
+        <div style={{ display: "flex", position: "absolute", left: 210, top: 640, width: 660, height: 660 }}>
+          <img src={svgData(ringSvg(progress))} width={660} height={660} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 660, height: 660 }}>
+            <span style={{ fontSize: big.length > 3 ? 200 : 270, fontWeight: 300, lineHeight: 1, letterSpacing: -10 }}>{big}</span>
           </div>
         </div>
 
-        {/* numeri */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 20, justifyContent: "center", marginBottom: 60 }}>
-          {pills.map((p) => (
-            <span
-              key={p}
-              style={{ display: "flex", background: "rgba(255,255,255,0.75)", borderRadius: 999, padding: "18px 34px", fontSize: 38, fontWeight: 600 }}
-            >
-              {p}
-            </span>
-          ))}
+        {/* testo e numeri in basso, su vetro bianco */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            position: "absolute",
+            left: 80,
+            right: 80,
+            top: 1360,
+            padding: "44px 40px 48px",
+            borderRadius: 56,
+            background: "rgba(255,255,255,0.62)",
+          }}
+        >
+          <span style={{ fontSize: 76, fontWeight: 600, textAlign: "center", letterSpacing: -2 }}>{label}</span>
+          <span style={{ fontSize: 38, fontWeight: 300, marginTop: 12, textAlign: "center" }}>{sub}</span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, justifyContent: "center", marginTop: 30 }}>
+            {pills.map((p) => (
+              <span
+                key={p}
+                style={{ display: "flex", background: INK, color: "#F5F5F4", borderRadius: 999, padding: "14px 28px", fontSize: 34, fontWeight: 600 }}
+              >
+                {p}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <span style={{ display: "flex", justifyContent: "center", fontSize: 36, fontWeight: 300 }}>
+        <span style={{ display: "flex", position: "absolute", left: 0, right: 0, bottom: 70, justifyContent: "center", fontSize: 34, fontWeight: 300 }}>
           Pesato al grammo da laboratori artigiani vicino a te
         </span>
       </div>
