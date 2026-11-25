@@ -12,6 +12,7 @@ type Template = {
   id: string;
   name: string;
   meal_slot: "pranzo" | "cena";
+  nutritionist_id: string | null;
   meal_template_items: { id: string; base_id: string; grams: number; choice_group: number | null; bases: { name: string; category: string } | null }[];
 };
 
@@ -39,7 +40,7 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
   const [{ data: tplData }, { data: kitchens }, { data: me }, { data: dayOrders }] = await Promise.all([
     supabase
       .from("meal_templates")
-      .select("id, name, meal_slot, meal_template_items(id, base_id, grams, choice_group, bases(name, category))")
+      .select("id, name, meal_slot, nutritionist_id, meal_template_items(id, base_id, grams, choice_group, bases(name, category))")
       .eq("patient_id", profile.id)
       .eq("active", true)
       .order("meal_slot")
@@ -86,6 +87,7 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
             id: t.id,
             name: t.name,
             slot: t.meal_slot,
+            verified: Boolean(t.nutritionist_id),
             taken: takenSlots.has(t.meal_slot),
             items: [...t.meal_template_items]
               .sort(

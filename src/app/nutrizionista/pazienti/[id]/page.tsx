@@ -54,6 +54,8 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
       .from("meal_templates")
       .select("id, name, meal_slot, notes, active, meal_template_items(id, grams, choice_group, bases(id, name, category))")
       .eq("patient_id", patientId)
+      // solo i pasti preparati da questo nutrizionista (non i piatti composti dal paziente)
+      .eq("nutritionist_id", profile.id)
       .order("meal_slot")
       .order("name"),
     supabase.from("bases").select("id, name, category").eq("active", true).order("name"),

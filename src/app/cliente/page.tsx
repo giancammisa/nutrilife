@@ -1,4 +1,4 @@
-import { ArrowRight, Ticket } from "lucide-react";
+import { ArrowRight, BadgeCheck, Ticket } from "lucide-react";
 import { pickupCode } from "@/lib/pickup";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
@@ -28,6 +28,7 @@ type Template = {
   name: string;
   meal_slot: "pranzo" | "cena";
   notes: string | null;
+  nutritionist_id: string | null;
   meal_template_items: { id: string; grams: number; choice_group: number | null; bases: { name: string; category: string } | null }[];
 };
 
@@ -67,7 +68,7 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         .maybeSingle(),
       supabase
         .from("meal_templates")
-        .select("id, name, meal_slot, notes, meal_template_items(id, grams, choice_group, bases(name, category))")
+        .select("id, name, meal_slot, notes, nutritionist_id, meal_template_items(id, grams, choice_group, bases(name, category))")
         .eq("patient_id", profile.id)
         .eq("active", true)
         .order("meal_slot")
@@ -91,7 +92,9 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
   const orders = (ordersData ?? []) as unknown as Order[];
   const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
   const myAllergies: string[] = [...(me?.allergies ?? []), ...(me?.intolerances ?? [])];
-  const canOrder = Boolean(link) && templates.length > 0;
+  // Si ordina con i pasti del nutrizionista oppure con i propri piatti (servono almeno una base)
+  const canOrder = templates.some((t) => t.meal_template_items.length > 0);
+  const verifiedCount = templates.filter((t) => t.nutritionist_id).length;
   const justOrdered = typeof ordinato === "string" && DATE_RE.test(ordinato) ? ordinato : null;
 
   // Momenti (pranzo/cena) per cui c'è un pasto tipo: il giorno è "pieno" se li ha già ordinati tutti.
@@ -174,15 +177,11 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         </p>
       )}
 
-      {!link && (
-        <p className="rounded-lg bg-muted p-4 text-sm">
-          Non sei ancora collegato a un nutrizionista. Chiedigli il link d&apos;invito di NutriLife.
-        </p>
-      )}
-      {link && templates.length === 0 && (
-        <p className="rounded-lg bg-muted p-4 text-sm">
-          {nutritionist ?? "Il tuo nutrizionista"} non ha ancora preparato i tuoi pasti tipo: quando
-          saranno pronti potrai ordinare.
+      {templates.length === 0 && (
+        <p className="rounded-[20px] bg-muted p-4 text-sm">
+          {link
+            ? `${nutritionist ?? "Il tuo nutrizionista"} non ha ancora preparato i tuoi pasti tipo. Intanto puoi comporre i tuoi piatti.`
+            : "Componi i tuoi piatti pesati in \"I miei piatti\", oppure chiedi al tuo nutrizionista il link d'invito di NutriLife."}
         </p>
       )}
 
@@ -201,6 +200,16 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         <ArrowRight aria-hidden className="size-5 shrink-0" />
       </Link>
       <Link
+        href="/cliente/piatti"
+        className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
+      >
+        <span className="flex flex-col">
+          <span className="font-medium">I miei piatti</span>
+          <span className="text-muted-foreground">Componi i tuoi piatti pesati</span>
+        </span>
+        <ArrowRight aria-hidden className="size-5 shrink-0" />
+      </Link>
+      <Link
         href="/cliente/ordini"
         className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
       >
@@ -213,7 +222,11 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         <section className="flex flex-col gap-3">
           <div className="flex flex-col">
             <h2 className="section-title">I tuoi pasti tipo</h2>
-            <p className="text-sm text-muted-foreground">Preparati da {nutritionist ?? "il tuo nutrizionista"}</p>
+            <p className="text-sm text-muted-foreground">
+              {verifiedCount > 0
+                ? `Quelli con il bollino sono preparati da ${nutritionist ?? "il tuo nutrizionista"}`
+                : "Composti da te"}
+            </p>
           </div>
           {templates.map((t, idx) => (
             <article
@@ -228,6 +241,16 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
                   <h3 className="card-title">{t.name}</h3>
+                  {t.nutritionist_id ? (
+                    <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-ink px-2.5 py-0.5 text-[11px] font-semibold text-paper">
+                      <BadgeCheck className="size-3.5 text-lemon" aria-hidden />
+                      Verificato dal nutrizionista
+                    </span>
+                  ) : (
+                    <span className="mt-1 w-fit rounded-full bg-white/70 px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                      Il mio piatto
+                    </span>
+                  )}
                   <span className="text-xs font-semibold uppercase text-muted-foreground">
                     {SLOT_LABEL[t.meal_slot]}
                   </span>

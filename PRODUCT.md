@@ -9,6 +9,7 @@ web
 (Mobile-first web app, installabile come PWA dalla schermata Home.)
 
 ## Users
+- **Cliente libero**: chiunque voglia piatti pesati al grammo, anche senza nutrizionista; compone i suoi piatti.
 - **Cliente/paziente** (pubblico principale — *ipotesi di lavoro, da confermare*): persona che segue il piano di un nutrizionista e vuole i pasti già preparati e pesati senza cucinare. Usa l'app dal telefono, di solito in pochi minuti: guarda la settimana, ordina entro le 18:00 del giorno prima, ritira in gastronomia.
 - **Nutrizionista**: inserisce per ogni paziente 3–4 pasti tipo (basi + grammature) e lo invita con un link. Il piano completo resta nel suo software.
 - **Cucina partner (gastronomia partner, ovunque)**: legge gli ordini di domani, il riepilogo di produzione in kg, stampa le etichette, segna pronto/ritirato. Spesso in piedi, mani occupate, schermo in cucina.

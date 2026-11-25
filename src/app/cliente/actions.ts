@@ -120,3 +120,104 @@ export async function cancelOrder(_prev: FormState, formData: FormData): Promise
   revalidatePath("/cliente/ordini");
   return { error: null, ok: "Ordine annullato." };
 }
+
+// ── I miei piatti (cliente senza nutrizionista, o in aggiunta) ──
+// Il database permette al cliente di modificare solo i piatti suoi (senza nutrizionista).
+
+const DISH_SLOTS = ["pranzo", "cena"];
+
+function grams(formData: FormData): number | null {
+  const value = Number(text(formData, "grams"));
+  return Number.isInteger(value) && value >= 1 && value <= 1000 ? value : null;
+}
+
+function dbMessage(code: string | undefined): string {
+  if (code === "23505") return "Questa base è già nel piatto.";
+  if (code === "42501") return "Questo piatto non si può modificare.";
+  return "Operazione non riuscita. Riprova.";
+}
+
+export async function createDish(_prev: FormState, formData: FormData): Promise<FormState> {
+  const name = text(formData, "name").slice(0, 60);
+  const slot = text(formData, "meal_slot");
+  if (name.length < 1) return { error: "Dai un nome al piatto (es. Pranzo leggero).", ok: null };
+  if (!DISH_SLOTS.includes(slot)) return { error: "Scegli pranzo o cena.", ok: null };
+
+  const { profile, supabase } = await client();
+  const { error } = await supabase
+    .from("meal_templates")
+    .insert({ patient_id: profile.id, nutritionist_id: null, name, meal_slot: slot });
+  if (error) return { error: dbMessage(error.code), ok: null };
+
+  revalidatePath("/cliente/piatti");
+  revalidatePath("/cliente");
+  return { error: null, ok: `Piatto "${name}" creato. Ora aggiungi le basi.` };
+}
+
+export async function addDishItem(_prev: FormState, formData: FormData): Promise<FormState> {
+  const templateId = uuid(formData, "template_id");
+  const baseId = uuid(formData, "base_id");
+  const g = grams(formData);
+  if (!templateId) return { error: "Piatto non valido.", ok: null };
+  if (!baseId) return { error: "Scegli una base.", ok: null };
+  if (!g) return { error: "Indica i grammi (da 1 a 1000).", ok: null };
+
+  const altOf = uuid(formData, "alt_of");
+  const { supabase } = await client();
+
+  let group: number | null = null;
+  if (altOf) {
+    const { data: rows } = await supabase
+      .from("meal_template_items")
+      .select("id, choice_group")
+      .eq("template_id", templateId);
+    const target = rows?.find((r) => r.id === altOf);
+    if (!target) return { error: "La base di riferimento non è in questo piatto.", ok: null };
+    group = target.choice_group ?? Math.max(0, ...(rows ?? []).map((r) => r.choice_group ?? 0)) + 1;
+    if (target.choice_group == null) {
+      const { error: upErr } = await supabase.from("meal_template_items").update({ choice_group: group }).eq("id", altOf);
+      if (upErr) return { error: dbMessage(upErr.code), ok: null };
+    }
+  }
+
+  const { error } = await supabase
+    .from("meal_template_items")
+    .insert({ template_id: templateId, base_id: baseId, grams: g, choice_group: group });
+  if (error) return { error: dbMessage(error.code), ok: null };
+
+  revalidatePath("/cliente/piatti");
+  revalidatePath("/cliente");
+  return { error: null, ok: group ? "Alternativa aggiunta." : "Base aggiunta." };
+}
+
+export async function updateDishGrams(_prev: FormState, formData: FormData): Promise<FormState> {
+  const itemId = uuid(formData, "item_id");
+  const g = grams(formData);
+  if (!itemId) return { error: "Riga non valida.", ok: null };
+  if (!g) return { error: "Grammi da 1 a 1000.", ok: null };
+
+  const { supabase } = await client();
+  const { data, error } = await supabase.from("meal_template_items").update({ grams: g }).eq("id", itemId).select("id");
+  if (error || !data?.length) return { error: dbMessage(error?.code ?? "42501"), ok: null };
+
+  revalidatePath("/cliente/piatti");
+  return { error: null, ok: "Salvato." };
+}
+
+export async function removeDishItem(formData: FormData): Promise<void> {
+  const itemId = uuid(formData, "item_id");
+  if (!itemId) return;
+  const { supabase } = await client();
+  await supabase.from("meal_template_items").delete().eq("id", itemId);
+  revalidatePath("/cliente/piatti");
+  revalidatePath("/cliente");
+}
+
+export async function archiveDish(formData: FormData): Promise<void> {
+  const templateId = uuid(formData, "template_id");
+  if (!templateId) return;
+  const { supabase } = await client();
+  await supabase.from("meal_templates").update({ active: false }).eq("id", templateId).is("nutritionist_id", null);
+  revalidatePath("/cliente/piatti");
+  revalidatePath("/cliente");
+}
