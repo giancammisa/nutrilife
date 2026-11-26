@@ -221,3 +221,11 @@ export async function archiveDish(formData: FormData): Promise<void> {
   revalidatePath("/cliente/piatti");
   revalidatePath("/cliente");
 }
+
+// ── Condivisione degli ordini con il nutrizionista ──────
+
+export async function setShareOrders(formData: FormData): Promise<void> {
+  const { profile, supabase } = await client();
+  await supabase.from("profiles").update({ share_orders: formData.get("share") === "true" }).eq("id", profile.id);
+  revalidatePath("/cliente");
+}

@@ -14,6 +14,8 @@ export type Profile = {
   privacy_consent_version: string | null;
   /** Ruoli tra cui l'account puo' passare con "Cambia vista" (vuoto = solo il suo). */
   allowed_roles: Role[];
+  /** Il cliente condivide i suoi ordini ritirati con il suo nutrizionista (SQL 0015). */
+  share_orders: boolean;
 };
 
 // Versione dell'informativa privacy: se cambia il testo, si aumenta e tutti ridanno il consenso.
@@ -60,8 +62,11 @@ export const getProfile = cache(async (): Promise<Profile | null> => {
 
   if (!data) return null;
   // "*" cosi' l'app funziona anche prima che la colonna allowed_roles esista nel database.
-  const row = data as Omit<Profile, "allowed_roles"> & { allowed_roles?: Role[] | null };
-  return { ...row, allowed_roles: row.allowed_roles ?? [] };
+  const row = data as Omit<Profile, "allowed_roles" | "share_orders"> & {
+    allowed_roles?: Role[] | null;
+    share_orders?: boolean | null;
+  };
+  return { ...row, allowed_roles: row.allowed_roles ?? [], share_orders: row.share_orders ?? false };
 });
 
 // Da usare in cima a ogni pagina protetta: controlla accesso, consenso, account attivo e ruolo.

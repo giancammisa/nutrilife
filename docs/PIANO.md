@@ -84,43 +84,12 @@ Regole nel database: l'ordine passa da un'unica funzione che controlla orario li
 - **Passo 13 · Cliente libero (25/11/2026):** chiunque si iscrive senza invito e compone i suoi piatti in "I miei piatti" (`/cliente/piatti`): basi, grammi e alternative. I suoi piatti hanno `nutritionist_id` vuoto; quelli del nutrizionista hanno il bollino "Verificato dal nutrizionista". Il nutrizionista vede solo i pasti che ha preparato lui. SQL `0014` eseguito su Supabase (25/11/2026).
 - **Passo 14 · Premi e storie (25/11/2026):** `/cliente/premi` con serie (settimane di fila con almeno 3 pasti verificati ritirati), numeri del mese e traguardi (1/10/25/50/100 pasti, 4 e 12 settimane, 10 kg di verdure). Card verticale 1080×1920 generata dall'app (`/cliente/premi/card`) e pulsante Condividi. Contano solo pasti del nutrizionista ritirati; un pasto diviso tra più punti conta una volta. Nessun nome, allergia o peso nella card. Nessun SQL.
 
-## Fase 3 · Piano a regole (decisa il 26/11/2026, da fare)
-Perché: i piani veri dei nutrizionisti non sono pasti fissi ma **regole** ("carboidrati a scelta tra riso 70 g, pasta 70 g, pane 120 g"; "pesce grasso 1 volta a settimana"). Il "pasto tipo" fisso viene sostituito dal **piano a regole del paziente**; il cliente compone ogni pasto dentro le regole e il pasto è **verificato**. Il cliente libero continua a comporre senza regole (non verificato).
+## Passo 15 · Ordini liberi, punti e Gold (deciso il 26/11/2026)
+Scelta: l'app **non controlla la dieta**. Un piano a regole (parti, grammi, giornate, limiti settimanali, ritocchi con versioni) è stato valutato e **scartato per ora**: troppo impegnativo per cliente e nutrizionista.
+- **Il cliente ordina libero**: compone i suoi piatti e li ordina. I "pasti tipo" del nutrizionista e l'import del PDF sono **messi da parte** (non compaiono più; codice e dati restano, si possono riaccendere).
+- **Punti automatici**: 10 per ogni pasto pesato ritirato (un carrello = un pasto), 20 per ogni settimana con almeno 3 pasti. Serie, traguardi (1/10/25/50/100 pasti, 4 e 12 settimane) e card per le storie restano. **Niente bonus verdure.**
+- **Gold dal nutrizionista**: al controllo vede il riepilogo degli ordini ritirati degli ultimi 90 giorni (pasti, settimane con 3+ pasti, grammi medi per categoria, basi più ordinate, ultimi pasti) e assegna il Gold. Il Gold ha solo data e nome del nutrizionista: nessuna nota, nessun dato sanitario. Card da condividere "Obiettivo raggiunto".
+- **Consenso**: il nutrizionista vede gli ordini solo se il paziente attiva "Condividi i miei ordini" (spento di default, lo spegne quando vuole).
+- SQL `0015_ordini_liberi_gold.sql`: colonna `profiles.share_orders`, funzione `patient_orders`, tabella `gold_awards` con RLS.
 
-**Il piano del paziente (lo modifica solo il nutrizionista)**
-- Parte da uno **schema base** del nutrizionista (es. "sportivo", "dimagrimento") o dal PDF letto dall'AI; poi si personalizza.
-- Per ogni momento (pranzo, cena): le **parti** (carboidrato, proteina, verdura, condimento), ognuna con **opzioni e grammi** (riso 70 g / pane 120 g). Parti **facoltative** ("insalata se la desideri").
-- **Tipi di giornata:** con allenamento / senza (stesse parti, grammi diversi). Il cliente sceglie "oggi mi alleno?" prima di ordinare.
-- **Regole collegate:** "se scegli pesce grasso, olio a metà".
-- **Limiti settimanali per gruppo** (carne bianca max 2, rossa 1, pesce magro 3, pesce grasso 1, legumi 1, uova max 4, affettati 2). Ogni base ha il suo gruppo; l'app conta la settimana e avvisa.
-- **Pasti liberi** (es. sabato cena, domenica pranzo): non si ordinano e non rompono la serie dei premi.
-- **Scadenza** del piano; poco prima avviso a cliente e nutrizionista ("prenota il controllo").
-- **Note di preparazione** per parte (patate lessate e raffreddate, pane tostato, legumi passati) visibili alla cucina.
-- Colazione e merende (spesso prodotti confezionati): mostrate come promemoria, senza ordine.
-
-**Ritocchi rapidi in mezzo ai controlli (dal telefono)**
-- Tocco su una voce: cambia grammi, togli, aggiungi, metti in pausa. Nota breve facoltativa per il paziente.
-- Vale **da domani** (o da oggi / da una data); può avere una **data di fine** ("2 settimane senza pane la sera") e poi torna da solo come prima.
-- Dietro, ogni ritocco è una **versione** con data e nota; il nutrizionista vede un diario delle modifiche e può **annullare** l'ultimo ritocco.
-- Gli ordini già ritirati restano legati alla versione di allora (premi e storico onesti).
-- Ordini futuri che non rispettano più il piano: avviso al cliente ("aggiorna o tieni"); se lo tiene, quel pasto non è verificato.
-- Al cliente: avviso "La dott.ssa ha aggiornato il piano".
-
-**Crudo e cotto**
-- I grammi del piano sono a **crudo e pulito**; la cucina vende cotto. Ogni base ha un coefficiente crudo→cotto (es. riso 50 g → 125 g, pasta corta 50 → 100 g, ceci 50 → 140 g).
-- Etichetta con entrambi: "riso 70 g crudo = 175 g nel piatto". Più data di preparazione, "consumare entro" e conservazione (pranzo e cena ritirati insieme).
-
-**Verificato e privacy**
-- Verificato = composto dentro il piano di un nutrizionista **iscritto**. Un PDF caricato dal cliente di un nutrizionista non iscritto non è verificato.
-- L'import del PDF toglie nome, misure, contatti; il file non si salva. Misure e peso non entrano nell'app.
-
-**Ordine di lavoro**
-| # | Passo |
-|---|---|
-| 15 | Piano a regole per paziente (parti, opzioni, grammi, facoltative, giornate) + schemi base del nutrizionista |
-| 16 | Composizione guidata del pasto per il cliente (sostituisce la scelta del pasto tipo) |
-| 17 | Ritocchi rapidi con versioni, data inizio/fine, nota, annulla; controllo degli ordini futuri |
-| 18 | Crudo/cotto sulle basi e sull'etichetta, data di preparazione e scadenza |
-| 19 | Gruppi e limiti settimanali, regole collegate, pasti liberi nei premi |
-| 20 | Import PDF adattato al piano a regole |
-Servono nuove tabelle e 1–2 SQL da eseguire su Supabase (con conferma). I pasti tipo attuali restano finché la migrazione non è pronta.
+**Idee per dopo (non decise):** grammi crudo→cotto sulle basi e sull'etichetta; data di preparazione e "consumare entro" sull'etichetta; note di preparazione per la cucina.

@@ -19,16 +19,11 @@ export default async function NutrizionistaPage() {
   const profile = await requireProfile(["nutrizionista"]);
   const supabase = await createClient();
 
-  const [{ data: links }, { data: templates }, { data: invites }] = await Promise.all([
+  const [{ data: links }, { data: invites }] = await Promise.all([
     supabase
       .from("nutritionist_patients")
       .select("patient_id, created_at, patient:profiles!nutritionist_patients_patient_id_fkey(full_name, email)")
       .eq("nutritionist_id", profile.id),
-    supabase
-      .from("meal_templates")
-      .select("patient_id")
-      .eq("nutritionist_id", profile.id)
-      .eq("active", true),
     supabase
       .from("invites")
       .select("id, label, expires_at, accepted_at")
@@ -41,10 +36,6 @@ export default async function NutrizionistaPage() {
   const patients = ((links ?? []) as unknown as PatientRow[]).sort((a, b) =>
     (a.patient?.full_name ?? "").localeCompare(b.patient?.full_name ?? "", "it"),
   );
-  const countByPatient = new Map<string, number>();
-  for (const t of templates ?? []) {
-    countByPatient.set(t.patient_id, (countByPatient.get(t.patient_id) ?? 0) + 1);
-  }
 
   return (
     <RoleArea profile={profile} title="I tuoi pazienti">
@@ -55,7 +46,6 @@ export default async function NutrizionistaPage() {
           </p>
         )}
         {patients.map((p) => {
-          const count = countByPatient.get(p.patient_id) ?? 0;
           return (
             <Link
               key={p.patient_id}
@@ -65,7 +55,7 @@ export default async function NutrizionistaPage() {
               <span className="flex min-w-0 flex-col">
                 <span className="truncate font-medium">{p.patient?.full_name || p.patient?.email}</span>
                 <span className="text-sm text-muted-foreground">
-                  {count === 0 ? "Nessun pasto tipo" : count === 1 ? "1 pasto tipo" : `${count} pasti tipo`}
+                  Riepilogo ordini e Gold
                 </span>
               </span>
               <ArrowRight aria-hidden className="size-5 shrink-0" />

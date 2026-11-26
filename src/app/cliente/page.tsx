@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, Flame, Ticket } from "lucide-react";
+import { ArrowRight, Flame, Ticket } from "lucide-react";
 import { pickupCode } from "@/lib/pickup";
 import Link from "next/link";
 import { RoleArea } from "@/components/role-area";
@@ -9,6 +9,7 @@ import { allergenName, BASE_CATEGORIES } from "@/lib/allergens";
 import { FoodPhoto } from "@/components/food-art";
 import { MealBlob } from "@/components/brand";
 import { DayArc, type ArcDay } from "./day-arc";
+import { setShareOrders } from "./actions";
 import { addDays, DATE_RE, formatCutoff, formatDay, isOrderOpen, romeToday } from "@/lib/dates";
 
 const weekdayLongFmt = new Intl.DateTimeFormat("it-IT", { weekday: "long", timeZone: "UTC" });
@@ -70,6 +71,8 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
         .from("meal_templates")
         .select("id, name, meal_slot, notes, nutritionist_id, meal_template_items(id, grams, choice_group, bases(name, category))")
         .eq("patient_id", profile.id)
+        // solo i piatti composti dal cliente (i pasti tipo del nutrizionista sono messi da parte)
+        .is("nutritionist_id", null)
         .eq("active", true)
         .order("meal_slot")
         .order("name"),
@@ -92,9 +95,8 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
   const orders = (ordersData ?? []) as unknown as Order[];
   const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
   const myAllergies: string[] = [...(me?.allergies ?? []), ...(me?.intolerances ?? [])];
-  // Si ordina con i pasti del nutrizionista oppure con i propri piatti (servono almeno una base)
+  // Si ordina con i propri piatti (serve almeno una base)
   const canOrder = templates.some((t) => t.meal_template_items.length > 0);
-  const verifiedCount = templates.filter((t) => t.nutritionist_id).length;
   const justOrdered = typeof ordinato === "string" && DATE_RE.test(ordinato) ? ordinato : null;
 
   // Momenti (pranzo/cena) per cui c'è un pasto tipo: il giorno è "pieno" se li ha già ordinati tutti.
@@ -179,14 +181,31 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
 
       {templates.length === 0 && (
         <p className="rounded-[20px] bg-muted p-4 text-sm">
-          {link
-            ? `${nutritionist ?? "Il tuo nutrizionista"} non ha ancora preparato i tuoi pasti tipo. Intanto puoi comporre i tuoi piatti.`
-            : "Componi i tuoi piatti pesati in \"I miei piatti\", oppure chiedi al tuo nutrizionista il link d'invito di NutriLife."}
+          Componi il tuo primo piatto pesato in &quot;I miei piatti&quot;: scegli le basi e i grammi, poi ordinalo.
         </p>
       )}
 
       <DayArc days={arcDays} panels={panels} initial={initialDay} />
 
+      {link && (
+        <form
+          action={setShareOrders}
+          className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm"
+        >
+          <input type="hidden" name="share" value={profile.share_orders ? "false" : "true"} />
+          <span className="flex flex-col">
+            <span className="font-medium">Condividi i miei ordini con {nutritionist ?? "il mio nutrizionista"}</span>
+            <span className="text-muted-foreground">
+              {profile.share_orders
+                ? "Attivo: vede i pasti ritirati degli ultimi 90 giorni, per valutare il Gold."
+                : "Spento: non vede i tuoi ordini. Attivalo per ricevere il Gold al controllo."}
+            </span>
+          </span>
+          <Button type="submit" variant={profile.share_orders ? "outline" : "default"} size="sm" className="shrink-0 rounded-full">
+            {profile.share_orders ? "Spegni" : "Attiva"}
+          </Button>
+        </form>
+      )}
       <Link
         href="/cliente/allergie"
         className="flex items-center justify-between gap-3 rounded-lg border bg-card p-4 text-sm transition-colors hover:border-primary"
@@ -231,11 +250,9 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
       {templates.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col">
-            <h2 className="section-title">I tuoi pasti tipo</h2>
+            <h2 className="section-title">I tuoi piatti</h2>
             <p className="text-sm text-muted-foreground">
-              {verifiedCount > 0
-                ? `Quelli con il bollino sono preparati da ${nutritionist ?? "il tuo nutrizionista"}`
-                : "Composti da te"}
+              {nutritionist ? `Il Gold lo assegna ${nutritionist} dopo il controllo` : "Composti da te"}
             </p>
           </div>
           {templates.map((t, idx) => (
@@ -251,16 +268,6 @@ export default async function ClientePage({ searchParams }: PageProps<"/cliente"
               <div className="flex items-center justify-between gap-3">
                 <div className="flex flex-col">
                   <h3 className="card-title">{t.name}</h3>
-                  {t.nutritionist_id ? (
-                    <span className="mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-ink px-2.5 py-0.5 text-[11px] font-semibold text-paper">
-                      <BadgeCheck className="size-3.5 text-lemon" aria-hidden />
-                      Verificato dal nutrizionista
-                    </span>
-                  ) : (
-                    <span className="mt-1 w-fit rounded-full bg-white/70 px-2.5 py-0.5 text-[11px] font-semibold text-ink">
-                      Il mio piatto
-                    </span>
-                  )}
                   <span className="text-xs font-semibold uppercase text-muted-foreground">
                     {SLOT_LABEL[t.meal_slot]}
                   </span>

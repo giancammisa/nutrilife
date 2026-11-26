@@ -42,6 +42,7 @@ export default async function OrdinaPage({ searchParams }: PageProps<"/cliente/o
       .from("meal_templates")
       .select("id, name, meal_slot, nutritionist_id, meal_template_items(id, base_id, grams, choice_group, bases(name, category))")
       .eq("patient_id", profile.id)
+      .is("nutritionist_id", null)
       .eq("active", true)
       .order("meal_slot")
       .order("name"),

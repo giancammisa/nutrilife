@@ -48,7 +48,7 @@ export default async function PiattiPage() {
     <RoleArea profile={profile} title="I miei piatti" back={{ href: "/cliente", label: "La mia settimana" }}>
       <p className="text-muted-foreground">
         Componi i tuoi piatti con le basi e i grammi che vuoi: li cucinano e li pesano al grammo i laboratori vicino a
-        te. I pasti preparati dal tuo nutrizionista restano a parte, con il bollino &quot;Verificato&quot;.
+        te.
       </p>
 
       {dishes.map((d) => (

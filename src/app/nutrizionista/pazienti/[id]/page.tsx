@@ -1,296 +1,195 @@
 import { notFound } from "next/navigation";
+import { Award, Lock } from "lucide-react";
 import { RoleArea } from "@/components/role-area";
-import { MealBlob, MealLegend } from "@/components/brand";
-import { ActionForm } from "@/components/action-form";
-import { BasePicker } from "@/components/base-picker";
-import { DietPlanImport } from "./diet-plan-import";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { requireProfile } from "@/lib/auth";
 import { BASE_CATEGORIES, categoryLabel } from "@/lib/allergens";
+import { formatDay } from "@/lib/dates";
+import { WEEK_TARGET, weekStart } from "@/lib/rewards";
 import { createClient } from "@/lib/supabase/server";
-import {
-  addTemplateItem,
-  createTemplate,
-  removeTemplateItem,
-  setTemplateActive,
-  updateItemGrams,
-} from "../../actions";
+import { awardGold, removeGold } from "../../actions";
 
 export const metadata = { title: "Paziente · NutriLife" };
-// La lettura del piano con l'AI può richiedere fino a un minuto.
-export const maxDuration = 120;
 
-type Template = {
-  id: string;
-  name: string;
-  meal_slot: "pranzo" | "cena";
-  notes: string | null;
-  active: boolean;
-  meal_template_items: {
-    id: string;
-    grams: number;
-    choice_group: number | null;
-    bases: { id: string; name: string; category: string } | null;
-  }[];
-};
+// Il nutrizionista non prepara più i pasti: al controllo guarda come ha ordinato il paziente
+// (solo se lui ha acconsentito) e assegna il Gold. I pasti tipo sono messi da parte (codice conservato).
+
+type Row = { date: string; slot: "pranzo" | "cena"; basket: string; base: string; category: string; grams: number };
+type Summary = { shared: boolean; rows: Row[] } | null;
 
 const SLOT_LABEL = { pranzo: "Pranzo", cena: "Cena" } as const;
+const DAYS = 90;
 
 export default async function PazientePage({ params }: PageProps<"/nutrizionista/pazienti/[id]">) {
   const profile = await requireProfile(["nutrizionista"]);
   const { id: patientId } = await params;
   const supabase = await createClient();
 
-  const [{ data: link }, { data: templatesData }, { data: bases }] = await Promise.all([
+  const [{ data: link }, { data: summaryData, error: summaryError }, { data: goldData }] = await Promise.all([
     supabase
       .from("nutritionist_patients")
       .select("patient:profiles!nutritionist_patients_patient_id_fkey(full_name, email)")
       .eq("nutritionist_id", profile.id)
       .eq("patient_id", patientId)
       .maybeSingle(),
+    supabase.rpc("patient_orders", { p_patient: patientId }),
     supabase
-      .from("meal_templates")
-      .select("id, name, meal_slot, notes, active, meal_template_items(id, grams, choice_group, bases(id, name, category))")
-      .eq("patient_id", patientId)
-      // solo i pasti preparati da questo nutrizionista (non i piatti composti dal paziente)
-      .eq("nutritionist_id", profile.id)
-      .order("meal_slot")
-      .order("name"),
-    supabase.from("bases").select("id, name, category").eq("active", true).order("name"),
+      .from("gold_awards")
+      .select("id, awarded_on, nutritionist_id")
+      .eq("client_id", patientId)
+      .order("awarded_on", { ascending: false }),
   ]);
 
   // Solo i propri pazienti: per gli altri la pagina non esiste.
   if (!link) notFound();
   const patient = (link as unknown as { patient: { full_name: string | null; email: string | null } | null })
     .patient;
+  const name = patient?.full_name || patient?.email || "Il paziente";
+  const summary = (summaryError ? null : summaryData) as Summary;
+  const golds = (goldData ?? []) as { id: string; awarded_on: string; nutritionist_id: string | null }[];
+  const rows = summary?.rows ?? [];
 
-  const templates = (templatesData ?? []) as unknown as Template[];
-  const active = templates.filter((t) => t.active);
-  const inactive = templates.filter((t) => !t.active);
+  // Un pasto = un carrello (anche se diviso tra più punti vendita)
+  const meals = new Map<string, { date: string; slot: Row["slot"]; items: Row[] }>();
+  for (const r of rows) {
+    const m = meals.get(r.basket) ?? { date: r.date, slot: r.slot, items: [] };
+    m.items.push(r);
+    meals.set(r.basket, m);
+  }
+  const list = [...meals.values()].sort((a, b) => b.date.localeCompare(a.date) || a.slot.localeCompare(b.slot));
+
+  const perWeek = new Map<string, number>();
+  for (const m of list) perWeek.set(weekStart(m.date), (perWeek.get(weekStart(m.date)) ?? 0) + 1);
+  const weeksDone = [...perWeek.values()].filter((n) => n >= WEEK_TARGET).length;
+
+  // Grammi medi per pasto, per categoria
+  const avg = BASE_CATEGORIES.map((c) => ({
+    label: categoryLabel(c.value),
+    grams: list.length
+      ? Math.round(rows.filter((r) => r.category === c.value).reduce((s, r) => s + r.grams, 0) / list.length)
+      : 0,
+  })).filter((x) => x.grams > 0);
+
+  // Basi ordinate più spesso
+  const freq = new Map<string, number>();
+  for (const r of rows) freq.set(r.base, (freq.get(r.base) ?? 0) + 1);
+  const top = [...freq.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
 
   return (
-    <RoleArea
-      profile={profile}
-      title={patient?.full_name || patient?.email || "Paziente"}
-      back={{ href: "/nutrizionista", label: "I tuoi pazienti" }}
-    >
+    <RoleArea profile={profile} title={name} back={{ href: "/nutrizionista", label: "I tuoi pazienti" }}>
       <p className="text-muted-foreground">
-        Prepara 3-4 pasti tipo con basi e grammature. Il paziente sceglierà quale farsi preparare
-        ogni giorno.
+        Al controllo guarda come ha ordinato negli ultimi {DAYS} giorni e, se l&apos;andamento ti convince, assegna il
+        Gold. Il paziente lo vede nei suoi progressi e può condividerlo.
       </p>
 
-      {active.length === 0 && (
-        <p className="rounded-lg bg-muted p-4 text-sm">Nessun pasto tipo. Creane uno qui sotto.</p>
-      )}
+      <section className="flex flex-col gap-4 rounded-[28px] border bg-card p-5">
+        <h2 className="section-title">Ordini degli ultimi {DAYS} giorni</h2>
 
-      {active.map((t) => (
-        <TemplateCard key={t.id} template={t} patientId={patientId} bases={bases ?? []} />
-      ))}
-
-      <DietPlanImport patientId={patientId} bases={bases ?? []} />
-
-      <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="section-title">Nuovo pasto tipo</h2>
-        <ActionForm action={createTemplate} submitLabel="Crea pasto tipo" resetOnSuccess>
-          <input type="hidden" name="patient_id" value={patientId} />
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input id="name" name="name" required maxLength={60} placeholder="Pranzo A" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="meal_slot">Momento</Label>
-            <select
-              id="meal_slot"
-              name="meal_slot"
-              required
-              defaultValue="pranzo"
-              className="h-11 rounded-lg border border-input bg-background px-3 text-base"
-            >
-              <option value="pranzo">Pranzo</option>
-              <option value="cena">Cena</option>
-            </select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="notes">Note per la cucina (facoltative)</Label>
-            <Input id="notes" name="notes" maxLength={300} placeholder="Es. senza sale aggiunto" />
-          </div>
-        </ActionForm>
-      </section>
-
-      {inactive.length > 0 && (
-        <section className="flex flex-col gap-2">
-          <h2 className="section-title">Pasti tipo archiviati</h2>
-          {inactive.map((t) => (
-            <div key={t.id} className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3 text-sm">
-              <span>
-                {t.name} · {SLOT_LABEL[t.meal_slot]}
-              </span>
-              <form action={setTemplateActive}>
-                <input type="hidden" name="template_id" value={t.id} />
-                <input type="hidden" name="patient_id" value={patientId} />
-                <input type="hidden" name="active" value="true" />
-                <Button type="submit" variant="ghost" size="sm">
-                  Ripristina
-                </Button>
-              </form>
-            </div>
-          ))}
-        </section>
-      )}
-    </RoleArea>
-  );
-}
-
-function TemplateCard({
-  template: t,
-  patientId,
-  bases,
-}: {
-  template: Template;
-  patientId: string;
-  bases: { id: string; name: string; category: string }[];
-}) {
-  const items = [...t.meal_template_items].sort((a, b) => {
-    const order = (c: string) => BASE_CATEGORIES.findIndex((x) => x.value === c);
-    return (
-      order(a.bases?.category ?? "") - order(b.bases?.category ?? "") ||
-      (a.choice_group ?? 0) - (b.choice_group ?? 0)
-    );
-  });
-  // Per i totali e il disegno conta la prima alternativa di ogni gruppo.
-  const seen = new Set<number>();
-  const shown = items.filter((i) => {
-    if (i.choice_group == null) return true;
-    if (seen.has(i.choice_group)) return false;
-    seen.add(i.choice_group);
-    return true;
-  });
-  const groupSize = (g: number | null) => (g == null ? 0 : items.filter((x) => x.choice_group === g).length);
-  const used = new Set(items.map((i) => i.bases?.id));
-  const addable = bases.filter((b) => !used.has(b.id));
-  const total = shown.reduce((sum, i) => sum + i.grams, 0);
-
-  return (
-    <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col">
-          <h2 className="section-title">{t.name}</h2>
-          <span className="text-sm text-muted-foreground">
-            {SLOT_LABEL[t.meal_slot]} · <span className="num text-foreground">{total} g</span> in tutto
-          </span>
-          {items.length > 0 && (
-            <div className="mt-3 flex flex-col gap-2">
-              <MealBlob items={shown.map((i) => ({ category: i.bases?.category ?? "altro", grams: i.grams }))} size={52} />
-              <MealLegend />
-            </div>
-          )}
-          {t.notes && <span className="text-sm">Note: {t.notes}</span>}
-        </div>
-        <form action={setTemplateActive}>
-          <input type="hidden" name="template_id" value={t.id} />
-          <input type="hidden" name="patient_id" value={patientId} />
-          <input type="hidden" name="active" value="false" />
-          <Button type="submit" variant="ghost" size="sm">
-            Archivia
-          </Button>
-        </form>
-      </div>
-
-      {items.length === 0 && <p className="text-sm text-muted-foreground">Nessuna base. Aggiungine una.</p>}
-
-      <ul className="flex flex-col divide-y">
-        {items.map((i) => (
-          <li key={i.id} className="flex flex-col gap-2 py-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-medium">{i.bases?.name}</span>
-              <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                {groupSize(i.choice_group) > 1 && (
-                  <span className="rounded-full bg-lemon px-2 py-0.5 font-semibold text-ink">
-                    a scelta · gruppo {i.choice_group}
-                  </span>
-                )}
-                {categoryLabel(i.bases?.category ?? "")}
-              </span>
-            </div>
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <ActionForm action={updateItemGrams} submitLabel="Aggiorna grammi">
-                  <input type="hidden" name="item_id" value={i.id} />
-                  <input type="hidden" name="patient_id" value={patientId} />
-                  <div className="flex items-center gap-2">
-                    <Input
-                      name="grams"
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      max={1000}
-                      required
-                      defaultValue={i.grams}
-                      aria-label={`Grammi di ${i.bases?.name}`}
-                      className="h-11 w-28 text-base"
-                    />
-                    <span className="text-sm text-muted-foreground">grammi</span>
-                  </div>
-                </ActionForm>
+        {!summary ? (
+          <p className="text-sm text-muted-foreground">Riepilogo non disponibile in questo momento.</p>
+        ) : !summary.shared ? (
+          <p className="flex items-start gap-3 rounded-[20px] bg-muted p-4 text-sm">
+            <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
+            <span>
+              {name} non ha ancora condiviso i suoi ordini con te. Può attivarlo dalla sua app, in &quot;La mia
+              settimana&quot;.
+            </span>
+          </p>
+        ) : list.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nessun pasto ritirato negli ultimi {DAYS} giorni.</p>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1 rounded-[20px] bg-grad-lime p-4 text-ink">
+                <span className="display text-4xl">{list.length}</span>
+                <span className="text-sm font-semibold">pasti ritirati</span>
+              </div>
+              <div className="flex flex-col gap-1 rounded-[20px] bg-grad-leaf p-4 text-ink">
+                <span className="display text-4xl">{weeksDone}</span>
+                <span className="text-sm font-semibold">settimane con {WEEK_TARGET}+ pasti</span>
               </div>
             </div>
-            <form action={removeTemplateItem} className="self-start">
-              <input type="hidden" name="item_id" value={i.id} />
-              <input type="hidden" name="patient_id" value={patientId} />
-              <Button type="submit" variant="ghost" size="sm" className="text-destructive">
-                Togli {i.bases?.name}
-              </Button>
-            </form>
-          </li>
-        ))}
-      </ul>
 
-      {addable.length > 0 && (
-        <div className="rounded-lg bg-muted/50 p-4">
-          <ActionForm action={addTemplateItem} submitLabel="Aggiungi base" resetOnSuccess>
-            <input type="hidden" name="template_id" value={t.id} />
-            <input type="hidden" name="patient_id" value={patientId} />
-            <BasePicker bases={addable} />
-            {items.length > 0 && (
+            {avg.length > 0 && (
               <div className="flex flex-col gap-2">
-                <Label htmlFor={`alt-${t.id}`}>In alternativa a (facoltativo)</Label>
-                <select
-                  id={`alt-${t.id}`}
-                  name="alt_of"
-                  defaultValue=""
-                  className="h-11 rounded-lg border border-input bg-white/70 px-3 text-base"
-                >
-                  <option value="">No, base fissa (c&apos;è sempre)</option>
-                  {items.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.bases?.name} {i.grams} g
-                    </option>
+                <h3 className="card-title">In media per pasto</h3>
+                <ul className="flex flex-col gap-1">
+                  {avg.map((a) => (
+                    <li key={a.label} className="flex justify-between gap-3 text-sm">
+                      <span>{a.label}</span>
+                      <span className="num">{a.grams} g</span>
+                    </li>
                   ))}
-                </select>
-                <p className="text-sm text-muted-foreground">
-                  Se scegli una base qui, il cliente sceglierà tra le due (o più) quando ordina.
-                </p>
+                </ul>
               </div>
             )}
+
             <div className="flex flex-col gap-2">
-              <Label htmlFor={`grams-${t.id}`}>Grammi</Label>
-              <Input
-                id={`grams-${t.id}`}
-                name="grams"
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={1000}
-                required
-                placeholder="150"
-                className="h-11 text-base"
-              />
+              <h3 className="card-title">Basi più ordinate</h3>
+              <ul className="flex flex-wrap gap-2">
+                {top.map(([base, n]) => (
+                  <li key={base} className="rounded-full border bg-white/70 px-3 py-1 text-sm">
+                    {base} <span className="num text-muted-foreground">×{n}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </ActionForm>
+
+            <div className="flex flex-col gap-2">
+              <h3 className="card-title">Ultimi pasti</h3>
+              <ul className="flex flex-col divide-y">
+                {list.slice(0, 12).map((m, i) => (
+                  <li key={i} className="flex flex-col gap-1 py-3">
+                    <span className="text-sm font-semibold">
+                      {formatDay(m.date)} · {SLOT_LABEL[m.slot]}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {m.items.map((it) => `${it.base} ${it.grams} g`).join(" · ")}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-[28px] bg-ink p-5 text-paper">
+        <div className="flex items-center gap-3">
+          <span className="inline-flex size-11 items-center justify-center rounded-full bg-lemon text-ink">
+            <Award className="size-5" aria-hidden />
+          </span>
+          <h2 className="section-title">Gold</h2>
         </div>
-      )}
-    </section>
+        <p className="text-sm text-paper/75">
+          Assegnalo dopo il controllo, quando gli obiettivi concordati sono raggiunti. Non contiene note né dati
+          sanitari: solo la data e il tuo nome.
+        </p>
+        {golds.length > 0 && (
+          <ul className="flex flex-col gap-2">
+            {golds.map((g) => (
+              <li key={g.id} className="flex items-center justify-between gap-3 rounded-[18px] bg-white/10 px-4 py-2 text-sm">
+                <span>Gold del {formatDay(g.awarded_on)}</span>
+                {g.nutritionist_id === profile.id && (
+                  <form action={removeGold}>
+                    <input type="hidden" name="gold_id" value={g.id} />
+                    <input type="hidden" name="patient_id" value={patientId} />
+                    <Button type="submit" variant="ghost" size="sm" className="text-paper hover:bg-white/10 hover:text-paper">
+                      Togli
+                    </Button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        <form action={awardGold}>
+          <input type="hidden" name="patient_id" value={patientId} />
+          <Button type="submit" className="h-12 w-full rounded-full bg-lemon text-base text-ink hover:bg-lemon/90">
+            <Award aria-hidden /> Assegna il Gold
+          </Button>
+        </form>
+      </section>
+    </RoleArea>
   );
 }

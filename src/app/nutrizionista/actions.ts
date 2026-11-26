@@ -237,3 +237,23 @@ export async function createTemplatesFromPlan(
   revalidatePath(`/nutrizionista/pazienti/${patientId}`);
   return { error: null, ok: `${created} ${created === 1 ? "pasto tipo creato" : "pasti tipo creati"}.` };
 }
+
+// ── Gold (dopo il controllo) ────────────────────────────
+
+export async function awardGold(formData: FormData): Promise<void> {
+  const patientId = uuid(formData, "patient_id");
+  if (!patientId) return;
+  const { profile, supabase } = await nutritionist();
+  // RLS: solo ai propri pazienti
+  await supabase.from("gold_awards").insert({ client_id: patientId, nutritionist_id: profile.id });
+  revalidatePath(`/nutrizionista/pazienti/${patientId}`);
+}
+
+export async function removeGold(formData: FormData): Promise<void> {
+  const goldId = uuid(formData, "gold_id");
+  const patientId = uuid(formData, "patient_id");
+  if (!goldId || !patientId) return;
+  const { profile, supabase } = await nutritionist();
+  await supabase.from("gold_awards").delete().eq("id", goldId).eq("nutritionist_id", profile.id);
+  revalidatePath(`/nutrizionista/pazienti/${patientId}`);
+}

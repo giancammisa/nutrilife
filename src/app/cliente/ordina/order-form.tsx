@@ -190,7 +190,6 @@ export function OrderForm({
                 <span className="text-base font-semibold">{t.name}</span>
                 <span className="text-xs font-semibold uppercase text-muted-foreground">
                   {SLOT_LABEL[t.slot]}
-                  {t.verified ? " · verificato dal nutrizionista" : " · il mio piatto"}
                 </span>
               </span>
               <MealBlob items={t.id === templateId ? items : chosenItems(t, {})} size={40} />

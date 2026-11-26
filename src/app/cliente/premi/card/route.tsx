@@ -9,12 +9,13 @@ import { auraSvg, CREAM, INK, LIME, ringSvg, svgData } from "./aura";
 
 // Solo in sviluppo: ?demo=1 mostra la card con numeri finti, senza accesso.
 const DEMO: Rewards = {
-  verifiedMeals: 18,
+  meals: 18,
+  points: 260,
   streakWeeks: 4,
   thisWeek: 2,
   monthMeals: 11,
   monthKg: { proteina: 1.6, carboidrato: 0.9, verdura: 2.2, frutta: 0 },
-  totalVegKg: 6.4,
+  golds: [{ id: "demo", awardedOn: "2026-11-20", nutritionist: null }],
   milestones: [{ id: "mese", title: "Un mese di fila", detail: "", done: true, progress: 1 }],
 };
 
@@ -31,8 +32,6 @@ async function font(weight: number) {
   return readFile(file);
 }
 
-const kg = (n: number) => n.toFixed(1).replace(".", ",");
-
 export async function GET(request: NextRequest) {
   const demo = process.env.NODE_ENV === "development" && request.nextUrl.searchParams.get("demo") === "1";
   const r = demo ? DEMO : await getRewards((await requireProfile(["cliente"])).id);
@@ -44,26 +43,32 @@ export async function GET(request: NextRequest) {
 
   let big = String(r.streakWeeks);
   let label = r.streakWeeks === 1 ? "settimana di fila" : "settimane di fila";
-  let sub = "rispettando il piano del mio nutrizionista";
+  let sub = "di pasti pesati al grammo";
   if (tipo === "pasti") {
-    big = String(r.verifiedMeals);
-    label = r.verifiedMeals === 1 ? "pasto verificato" : "pasti verificati";
-    sub = "preparati secondo il mio nutrizionista";
+    big = String(r.meals);
+    label = r.meals === 1 ? "pasto pesato" : "pasti pesati";
+    sub = "preparati al grammo per me";
   } else if (tipo === "mese") {
     big = String(r.monthMeals);
     label = r.monthMeals === 1 ? `pasto a ${month}` : `pasti a ${month}`;
-    sub = "verificati dal mio nutrizionista";
+    sub = "pesati al grammo";
   } else if (tipo === "traguardo") {
     const m = r.milestones.find((x) => x.id === request.nextUrl.searchParams.get("id") && x.done);
     big = "✓";
     label = m ? m.title : "Traguardo";
-    sub = "con il piano del mio nutrizionista";
+    sub = "un pasto pesato alla volta";
+  } else if (tipo === "gold") {
+    const g = r.golds.find((x) => x.id === request.nextUrl.searchParams.get("id"));
+    if (!g) return new Response("Non trovato", { status: 404 });
+    big = "Gold";
+    label = "Obiettivo raggiunto";
+    sub = "valutato dal mio nutrizionista";
   }
 
   // Numeri sotto la card, senza ripetere quello grande
   const pills = [
-    tipo !== "pasti" && `${r.verifiedMeals} pasti verificati`,
-    `${kg(r.totalVegKg)} kg di verdure`,
+    tipo !== "pasti" && `${r.meals} ${r.meals === 1 ? "pasto" : "pasti"}`,
+    `${r.points} punti`,
     tipo !== "serie" && `${r.streakWeeks} ${r.streakWeeks === 1 ? "settimana" : "settimane"} di fila`,
   ].filter((p): p is string => Boolean(p));
 
@@ -74,10 +79,10 @@ export async function GET(request: NextRequest) {
   };
   const progress =
     tipo === "pasti"
-      ? next(r.verifiedMeals, [10, 25, 50, 100, 200])
+      ? next(r.meals, [10, 25, 50, 100, 200])
       : tipo === "mese"
         ? Math.min(1, r.monthMeals / 20)
-        : tipo === "traguardo"
+        : tipo === "traguardo" || tipo === "gold"
           ? 1
           : next(r.streakWeeks, [4, 12, 26, 52]);
 
