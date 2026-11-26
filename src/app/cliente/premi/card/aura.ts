@@ -45,14 +45,23 @@ export function auraSvg(progress: number): string {
 }
 
 // Anello di avanzamento attorno al numero, con piccole stelline.
-export function ringSvg(progress: number): string {
+export function ringSvg(progress: number, photo = false): string {
   const r = 290;
   const c = 2 * Math.PI * r;
   const dash = (c * Math.max(0.04, progress)).toFixed(1);
   const sparkle = (x: number, y: number, s: number) =>
     `<path transform="translate(${x} ${y}) scale(${s})" d="M0 -20 C 3 -5 5 -3 20 0 C 5 3 3 5 0 20 C -3 5 -5 3 -20 0 C -5 -3 -3 -5 0 -20 Z" fill="${INK}"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="660" height="660" viewBox="0 0 660 660">
-<circle cx="330" cy="330" r="${r}" fill="rgba(255,255,255,0.35)" stroke="rgba(255,255,255,0.75)" stroke-width="22"/>
+<defs>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+    <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.18"/>
+    <stop offset="1" stop-color="#ffffff" stop-opacity="0.38"/>
+  </linearGradient>
+</defs>
+${photo ? "" : `<circle cx="330" cy="330" r="${r - 11}" fill="url(#glass)"/>`}
+<circle cx="330" cy="330" r="${r - 26}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="3"/>
+<circle cx="330" cy="330" r="${r}" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="22"/>
 <circle cx="330" cy="330" r="${r}" fill="none" stroke="${INK}" stroke-width="22" stroke-linecap="round" stroke-dasharray="${dash} ${c.toFixed(1)}" transform="rotate(-90 330 330)"/>
 ${sparkle(590, 90, 1.4)}${sparkle(80, 560, 1)}${sparkle(610, 520, 0.7)}
 </svg>`;

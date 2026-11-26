@@ -37,6 +37,9 @@ export async function GET(request: NextRequest) {
   const demo = process.env.NODE_ENV === "development" && request.nextUrl.searchParams.get("demo") === "1";
   const r = demo ? DEMO : await getRewards((await requireProfile(["cliente"])).id);
   const tipo = request.nextUrl.searchParams.get("tipo") ?? "serie";
+  // fondo=foto: solo grafica su fondo trasparente; la foto la mette il telefono (non arriva mai qui)
+  const photo = request.nextUrl.searchParams.get("fondo") === "foto";
+  const paper = "#F5F5F4";
   const month = MONTHS[Number(new Date().toISOString().slice(5, 7)) - 1];
 
   let big = String(r.streakWeeks);
@@ -91,15 +94,23 @@ export async function GET(request: NextRequest) {
           position: "relative",
           fontFamily: "Urbanist",
           color: INK,
-          background: CREAM,
+          background: photo ? "transparent" : CREAM,
         }}
       >
-        {/* aura: sagoma sfumata con la luce dei progressi (disegno originale) */}
-        <img src={svgData(auraSvg(progress))} width={1080} height={1920} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+        {photo ? (
+          <>
+            {/* velature scure in alto e in basso per leggere bene sopra qualsiasi foto */}
+            <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: 520, background: "linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0))" }} />
+            <div style={{ position: "absolute", left: 0, top: 1560, width: 1080, height: 360, background: "linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.72))" }} />
+          </>
+        ) : (
+          /* aura: sagoma sfumata con la luce dei progressi (disegno originale) */
+          <img src={svgData(auraSvg(progress))} width={1080} height={1920} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+        )}
 
         {/* intestazione */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "100px 90px 0" }}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", flexDirection: "column", color: photo ? paper : INK }}>
             <span style={{ fontSize: 80, fontWeight: 700, letterSpacing: -3 }}>NutriLife</span>
             <span style={{ fontSize: 42, fontWeight: 300 }}>
               <b style={{ fontWeight: 600 }}>Cucina</b>&nbsp;3.0
@@ -115,7 +126,7 @@ export async function GET(request: NextRequest) {
 
         {/* anello con il numero, sul petto della sagoma */}
         <div style={{ display: "flex", position: "absolute", left: 210, top: 640, width: 660, height: 660 }}>
-          <img src={svgData(ringSvg(progress))} width={660} height={660} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+          <img src={svgData(ringSvg(progress, photo))} width={660} height={660} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 660, height: 660 }}>
             <span style={{ fontSize: big.length > 3 ? 200 : 270, fontWeight: 300, lineHeight: 1, letterSpacing: -10 }}>{big}</span>
           </div>
@@ -150,7 +161,7 @@ export async function GET(request: NextRequest) {
           </div>
         </div>
 
-        <span style={{ display: "flex", position: "absolute", left: 0, right: 0, bottom: 70, justifyContent: "center", fontSize: 34, fontWeight: 300 }}>
+        <span style={{ display: "flex", position: "absolute", left: 0, right: 0, bottom: 70, justifyContent: "center", fontSize: 34, fontWeight: photo ? 600 : 300, color: photo ? paper : INK }}>
           Pesato al grammo da laboratori artigiani vicino a te
         </span>
       </div>

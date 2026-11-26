@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Award, Flame, Lock, Sparkles, Star } from "lucide-react";
 import { RoleArea } from "@/components/role-area";
 import { requireProfile } from "@/lib/auth";
@@ -6,6 +5,7 @@ import { getRewards, WEEK_TARGET } from "@/lib/rewards";
 import { cn } from "@/lib/utils";
 import { CountUp } from "./count-up";
 import { ShareCard } from "./share-button";
+import { StoryMaker } from "./story-maker";
 
 export const metadata = { title: "I miei progressi · NutriLife" };
 
@@ -89,21 +89,7 @@ export default async function PremiPage() {
             Un&apos;immagine verticale con i tuoi numeri. Non contiene il tuo nome, le allergie o il nutrizionista.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Image
-            src="/cliente/premi/card?tipo=serie"
-            alt="Anteprima della card con la tua serie"
-            width={270}
-            height={480}
-            unoptimized
-            className="w-36 shrink-0 rounded-[18px] border"
-          />
-          <div className="flex flex-1 flex-col justify-end gap-2">
-            <ShareCard href="/cliente/premi/card?tipo=serie" label="Condividi la serie" />
-            <ShareCard href="/cliente/premi/card?tipo=pasti" label="Condividi i pasti" />
-            <ShareCard href="/cliente/premi/card?tipo=mese" label="Condividi il mese" />
-          </div>
-        </div>
+        <StoryMaker />
       </section>
 
       {/* traguardi */}
