@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { BASE_CATEGORIES, isAllergenCode } from "@/lib/allergens";
-import { dbError as baseDbError, text, uuid as id, type FormState } from "@/lib/form";
+import { dbError as baseDbError, text, uuid as id, type FormState, uuids } from "@/lib/form";
 import { formatEuro, parseEuroToCents, parsePercent } from "@/lib/pricing";
 
 // Ogni azione ricontrolla che sia l'admin: non ci si fida della pagina.
@@ -140,24 +140,29 @@ export async function updateUser(_prev: FormState, formData: FormData): Promise<
 
 export async function addBaseToKitchen(_prev: FormState, formData: FormData): Promise<FormState> {
   const kitchenId = id(formData, "kitchen_id");
-  const baseId = id(formData, "base_id");
+  const baseIds = uuids(formData, "base_id");
   if (!kitchenId) return { error: "Gastronomia non valida.", ok: null };
-  if (!baseId) return { error: "Scegli una base dal catalogo.", ok: null };
+  if (baseIds.length === 0) return { error: "Scegli almeno una base dal catalogo.", ok: null };
 
   const supabase = await adminClient();
-  // Nasce "non verificata": gli allergeni vanno dichiarati esplicitamente.
+  // Nascono "non verificate": gli allergeni vanno dichiarati esplicitamente.
   const { error } = await supabase
     .from("kitchen_bases")
-    .insert({ kitchen_id: kitchenId, base_id: baseId });
+    .insert(baseIds.map((base_id) => ({ kitchen_id: kitchenId, base_id })));
   if (error) {
     return {
-      error: error.code === "23505" ? "Questa base è già nella gastronomia." : dbError(error.code),
+      error: error.code === "23505" ? "Una di queste basi è già nella gastronomia." : dbError(error.code),
       ok: null,
     };
   }
 
   revalidatePath(`/admin/cucine/${kitchenId}`);
-  return { error: null, ok: "Base aggiunta. Ora dichiara i suoi allergeni." };
+  return {
+    error: null,
+    ok: baseIds.length === 1
+      ? "Base aggiunta. Ora dichiara i suoi allergeni."
+      : `${baseIds.length} basi aggiunte. Ora dichiara i loro allergeni.`,
+  };
 }
 
 export async function updateKitchenBase(_prev: FormState, formData: FormData): Promise<FormState> {

@@ -99,7 +99,7 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
       </section>
 
       <section className="flex flex-col gap-4 rounded-lg border bg-card p-5">
-        <h2 className="section-title">Aggiungi una base</h2>
+        <h2 className="section-title">Aggiungi basi</h2>
         {addable.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Tutte le basi del catalogo sono già qui.{" "}
@@ -108,9 +108,9 @@ export default async function CucinaPage({ params }: PageProps<"/admin/cucine/[i
             </Link>
           </p>
         ) : (
-          <ActionForm action={addBaseToKitchen} submitLabel="Aggiungi alla gastronomia" resetOnSuccess>
+          <ActionForm action={addBaseToKitchen} submitLabel="Aggiungi le basi scelte" resetOnSuccess>
             <input type="hidden" name="kitchen_id" value={kitchen.id} />
-            <BasePicker bases={addable} label="Base dal catalogo" />
+            <BasePicker bases={addable} label="Basi dal catalogo" multiple />
           </ActionForm>
         )}
       </section>

@@ -119,15 +119,15 @@ export default async function ListinoPage({ searchParams }: PageProps<"/cucina/l
       </section>
 
       <section className="flex flex-col gap-4 rounded-[28px] border bg-card p-5">
-        <h2 className="section-title">Aggiungi una base</h2>
+        <h2 className="section-title">Aggiungi basi</h2>
         {addable.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Hai già tutte le basi del catalogo. Per una base nuova chiedi all&apos;admin di aggiungerla al catalogo.
           </p>
         ) : (
-          <ActionForm action={addBase} submitLabel="Aggiungi al listino" resetOnSuccess>
+          <ActionForm action={addBase} submitLabel="Aggiungi le basi scelte" resetOnSuccess>
             <input type="hidden" name="kitchen_id" value={kitchen.id} />
-            <BasePicker bases={addable} label="Base dal catalogo" />
+            <BasePicker bases={addable} label="Basi dal catalogo" multiple />
           </ActionForm>
         )}
       </section>

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth";
 import { isAllergenCode } from "@/lib/allergens";
-import { dbError, text, uuid as id, type FormState } from "@/lib/form";
+import { dbError, text, uuid as id, uuids, type FormState } from "@/lib/form";
 import { createClient } from "@/lib/supabase/server";
 import { formatEuro, parseEuroToCents, parsePercent } from "@/lib/pricing";
 
@@ -21,21 +21,28 @@ function refresh(kitchenBaseId?: string) {
 
 export async function addBase(_prev: FormState, formData: FormData): Promise<FormState> {
   const kitchenId = id(formData, "kitchen_id");
-  const baseId = id(formData, "base_id");
+  const baseIds = uuids(formData, "base_id");
   if (!kitchenId) return { error: "Gastronomia non valida.", ok: null };
-  if (!baseId) return { error: "Scegli una base dal catalogo.", ok: null };
+  if (baseIds.length === 0) return { error: "Scegli almeno una base dal catalogo.", ok: null };
 
   const supabase = await kitchenClient();
-  // Nasce senza prezzo e con allergeni "non verificati": vanno dichiarati.
-  const { error } = await supabase.from("kitchen_bases").insert({ kitchen_id: kitchenId, base_id: baseId });
+  // Nascono senza prezzo e con allergeni "non verificati": vanno dichiarati.
+  const { error } = await supabase
+    .from("kitchen_bases")
+    .insert(baseIds.map((base_id) => ({ kitchen_id: kitchenId, base_id })));
   if (error) {
     return {
-      error: error.code === "23505" ? "Questa base è già nel tuo listino." : dbError(error.code),
+      error: error.code === "23505" ? "Una di queste basi è già nel tuo listino." : dbError(error.code),
       ok: null,
     };
   }
   refresh();
-  return { error: null, ok: "Base aggiunta. Ora metti prezzo e allergeni." };
+  return {
+    error: null,
+    ok: baseIds.length === 1
+      ? "Base aggiunta. Ora metti prezzo e allergeni."
+      : `${baseIds.length} basi aggiunte. Ora metti prezzi e allergeni.`,
+  };
 }
 
 export async function updateBase(_prev: FormState, formData: FormData): Promise<FormState> {

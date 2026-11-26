@@ -8,6 +8,11 @@ export function text(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "").trim();
 }
 
+// Tutti i valori UUID validi di un campo ripetuto (es. più basi scelte), senza doppioni.
+export function uuids(formData: FormData, key: string, max = 300): string[] {
+  return [...new Set(formData.getAll(key).map(String).filter((v) => UUID.test(v)))].slice(0, max);
+}
+
 export function uuid(formData: FormData, key: string): string | null {
   const value = text(formData, key);
   return UUID.test(value) ? value : null;
