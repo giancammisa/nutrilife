@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Award, Lock } from "lucide-react";
 import { RoleArea } from "@/components/role-area";
-import { Button } from "@/components/ui/button";
+import { PendingButton } from "@/components/pending-button";
 import { requireProfile } from "@/lib/auth";
 import { BASE_CATEGORIES, categoryLabel } from "@/lib/allergens";
 import { formatDay } from "@/lib/dates";
@@ -174,9 +174,14 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
                   <form action={removeGold}>
                     <input type="hidden" name="gold_id" value={g.id} />
                     <input type="hidden" name="patient_id" value={patientId} />
-                    <Button type="submit" variant="ghost" size="sm" className="text-paper hover:bg-white/10 hover:text-paper">
+                    <PendingButton
+                      pendingLabel="Tolgo…"
+                      variant="ghost"
+                      size="sm"
+                      className="text-paper hover:bg-white/10 hover:text-paper"
+                    >
                       Togli
-                    </Button>
+                    </PendingButton>
                   </form>
                 )}
               </li>
@@ -185,9 +190,12 @@ export default async function PazientePage({ params }: PageProps<"/nutrizionista
         )}
         <form action={awardGold}>
           <input type="hidden" name="patient_id" value={patientId} />
-          <Button type="submit" className="h-12 w-full rounded-full bg-lemon text-base text-ink hover:bg-lemon/90">
+          <PendingButton
+            pendingLabel="Assegno…"
+            className="h-12 w-full rounded-full bg-lemon text-base text-ink hover:bg-lemon/90"
+          >
             <Award aria-hidden /> Assegna il Gold
-          </Button>
+          </PendingButton>
         </form>
       </section>
     </RoleArea>
