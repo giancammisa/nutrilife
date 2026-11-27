@@ -90,6 +90,6 @@ Scelta: l'app **non controlla la dieta**. Un piano a regole (parti, grammi, gior
 - **Punti automatici**: 10 per ogni pasto pesato ritirato (un carrello = un pasto), 20 per ogni settimana con almeno 3 pasti. Serie, traguardi (1/10/25/50/100 pasti, 4 e 12 settimane) e card per le storie restano. **Niente bonus verdure.**
 - **Gold dal nutrizionista**: al controllo vede il riepilogo degli ordini ritirati degli ultimi 90 giorni (pasti, settimane con 3+ pasti, grammi medi per categoria, basi più ordinate, ultimi pasti) e assegna il Gold. Il Gold ha solo data e nome del nutrizionista: nessuna nota, nessun dato sanitario. Card da condividere "Obiettivo raggiunto".
 - **Consenso**: il nutrizionista vede gli ordini solo se il paziente attiva "Condividi i miei ordini" (spento di default, lo spegne quando vuole).
-- SQL `0015_ordini_liberi_gold.sql`: colonna `profiles.share_orders`, funzione `patient_orders`, tabella `gold_awards` con RLS.
+- SQL `0015_ordini_liberi_gold.sql`: colonna `profiles.share_orders`, funzione `patient_orders`, tabella `gold_awards` con RLS. SQL `0015` eseguito su Supabase (27/11/2026).
 
 **Idee per dopo (non decise):** grammi crudo→cotto sulle basi e sull'etichetta; data di preparazione e "consumare entro" sull'etichetta; note di preparazione per la cucina.
